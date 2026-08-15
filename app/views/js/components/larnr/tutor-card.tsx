@@ -1,21 +1,28 @@
-import { BadgeCheck, MapPin, Clock, Video, Building2, Star } from "lucide-react";
+import { BadgeCheck, MapPin, Clock, Video, Building2, Star } from 'lucide-react';
 
-import Avatar from "@/components/larnr/avatar.jsx";
-import { displayAmount, getCurrencyCookie } from "@/utils/currency.jsx";
+import Avatar from '@/components/larnr/avatar';
+import { displayAmount, getCurrencyCookie } from '@/utils/currency';
+import type { Tutor, AuthProps } from '@/types';
 
 const FORMAT_LABELS = {
-    ONLINE: "Online",
-    IN_PERSON: "In-person",
-    BOTH: "Online & In-person",
-};
+    ONLINE: 'Online',
+    IN_PERSON: 'In-person',
+    BOTH: 'Online & In-person',
+} as const;
 
 const LEVEL_LABELS = {
-    ENTRY: "Entry",
-    MID: "Mid",
-    SENIOR: "Senior",
-};
+    ENTRY: 'Entry',
+    MID: 'Mid',
+    SENIOR: 'Senior',
+} as const;
 
-export default function TutorCard({ tutor, onBook, auth }) {
+interface Props {
+    tutor: Tutor;
+    onBook: (tutor: Tutor) => void;
+    auth: AuthProps;
+}
+
+export default function TutorCard({ tutor, onBook, auth }: Props) {
     const rate = displayAmount(tutor.rate, getCurrencyCookie() || tutor.currency, auth, tutor);
 
     return (
@@ -44,11 +51,11 @@ export default function TutorCard({ tutor, onBook, auth }) {
 
                     <div className="hidden text-right sm:block">
                         <p className="font-display text-lg font-bold text-primary">
-                            {tutor.rate > 0 ? `${rate.text}/hr` : "Rate on request"}
+                            {tutor.rate > 0 ? `${rate.text}/hr` : 'Rate on request'}
                         </p>
                         {rate.note && (
                             <p className="text-xs text-base-content/50">
-                                ≈ {rate.note} · { getCurrencyCookie() || tutor.currency}
+                                ≈ {rate.note} · {getCurrencyCookie() || tutor.currency}
                             </p>
                         )}
                         {!rate.note && (
@@ -67,10 +74,10 @@ export default function TutorCard({ tutor, onBook, auth }) {
                                     key={i}
                                     className={`size-3.5 ${
                                         tutor.rating >= i
-                                            ? "fill-amber-400 text-amber-400"
+                                            ? 'fill-amber-400 text-amber-400'
                                             : tutor.rating >= i - 0.5
-                                              ? "fill-amber-400/50 text-amber-400"
-                                              : "text-base-content/40"
+                                            ? 'fill-amber-400/50 text-amber-400'
+                                            : 'text-base-content/40'
                                     }`}
                                 />
                             ))}
@@ -83,9 +90,9 @@ export default function TutorCard({ tutor, onBook, auth }) {
                         </span>
                     )}
                     <span className="flex items-center gap-1">
-                        {tutor.format === "ONLINE" ? (
+                        {tutor.format === 'ONLINE' ? (
                             <Video className="size-3.5" />
-                        ) : tutor.format === "IN_PERSON" ? (
+                        ) : tutor.format === 'IN_PERSON' ? (
                             <Building2 className="size-3.5" />
                         ) : (
                             <Building2 className="size-3.5" />
@@ -95,8 +102,8 @@ export default function TutorCard({ tutor, onBook, auth }) {
                     <span className="flex items-center gap-1">
                         <Clock className="size-3.5" />
                         {tutor.slotsAvailable > 0
-                            ? `${tutor.slotsAvailable} slot${tutor.slotsAvailable > 1 ? "s" : ""} available`
-                            : "No slots yet"}
+                            ? `${tutor.slotsAvailable} slot${tutor.slotsAvailable > 1 ? 's' : ''} available`
+                            : 'No slots yet'}
                     </span>
                 </div>
 
@@ -125,13 +132,13 @@ export default function TutorCard({ tutor, onBook, auth }) {
                         );
                     })}
                     <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                        {LEVEL_LABELS[tutor.level] ?? tutor.level}
+                        {LEVEL_LABELS[tutor.level as keyof typeof LEVEL_LABELS] ?? tutor.level}
                     </span>
                 </div>
 
                 <div className="card-actions mt-1 flex items-center justify-between">
                     <p className="font-display text-lg font-bold text-primary sm:hidden">
-                        {tutor.rate > 0 ? `${rate.text}/hr` : "Rate on request"}
+                        {tutor.rate > 0 ? `${rate.text}/hr` : 'Rate on request'}
                     </p>
                     <button
                         onClick={() => onBook(tutor)}

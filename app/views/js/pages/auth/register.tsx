@@ -1,37 +1,52 @@
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from '@inertiajs/react';
 import {
     GraduationCap,
     User,
     Mail,
     Phone,
     Lock,
-    GraduationCap as TutorIcon,
     UserRound,
     AlertCircle,
-} from "lucide-react";
+} from 'lucide-react';
 
-import ThemeToggle from "@/components/larnr/theme-toggle.jsx";
+import ThemeToggle from '@/components/larnr/theme-toggle';
+
+interface FormData {
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    role: 'STUDENT' | 'TUTOR';
+    password: string;
+    confirmPassword: string;
+}
+
+interface RoleOption {
+    value: 'STUDENT' | 'TUTOR';
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    desc: string;
+}
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        role: "STUDENT",
-        password: "",
-        confirmPassword: "",
+    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
+        fullName: '',
+        email: '',
+        phoneNumber: '',
+        role: 'STUDENT',
+        password: '',
+        confirmPassword: '',
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/auth/register", {
-            onFinish: () => reset("password", "confirmPassword"),
+        post('/auth/register', {
+            onFinish: () => reset('password', 'confirmPassword'),
         });
     };
 
-    const roles = [
-        { value: "STUDENT", label: "I'm a Student", icon: UserRound, desc: "Find tutors & book lessons" },
-        { value: "TUTOR", label: "I'm a Tutor", icon: TutorIcon, desc: "Teach & grow your students" },
+    const roles: RoleOption[] = [
+        { value: 'STUDENT', label: "I'm a Student", icon: UserRound, desc: 'Find tutors & book lessons' },
+        { value: 'TUTOR', label: "I'm a Tutor", icon: GraduationCap, desc: 'Teach & grow your students' },
     ];
 
     return (
@@ -68,7 +83,7 @@ export default function Register() {
                         <AlertCircle className="size-4 shrink-0" />
                         <span>
                             {errors.auth ||
-                                "Please fix the highlighted fields and try again."}
+                                'Please fix the highlighted fields and try again.'}
                         </span>
                     </div>
                 )}
@@ -79,18 +94,18 @@ export default function Register() {
                             <button
                                 key={r.value}
                                 type="button"
-                                onClick={() => setData("role", r.value)}
+                                onClick={() => setData('role', r.value)}
                                 className={`rounded-2xl border p-3 text-left transition-colors ${
                                     data.role === r.value
-                                        ? "border-primary bg-primary/15"
-                                        : "border-base-content/10 bg-base-content/5 hover:border-base-content/25"
+                                        ? 'border-primary bg-primary/15'
+                                        : 'border-base-content/10 bg-base-content/5 hover:border-base-content/25'
                                 }`}
                             >
                                 <r.icon
                                     className={`size-5 ${
                                         data.role === r.value
-                                            ? "text-primary"
-                                            : "text-base-content/60"
+                                            ? 'text-primary'
+                                            : 'text-base-content/60'
                                     }`}
                                 />
                                 <p className="mt-1.5 text-sm font-medium text-base-content">{r.label}</p>
@@ -108,7 +123,7 @@ export default function Register() {
                                 name="fullName"
                                 placeholder="Your full name"
                                 value={data.fullName}
-                                onChange={(e) => setData("fullName", e.target.value)}
+                                onChange={(e) => setData('fullName', e.target.value)}
                             />
                         </label>
                         {errors.fullName && (
@@ -125,7 +140,7 @@ export default function Register() {
                                 name="email"
                                 placeholder="you@example.com"
                                 value={data.email}
-                                onChange={(e) => setData("email", e.target.value)}
+                                onChange={(e) => setData('email', e.target.value)}
                             />
                         </label>
                         {errors.email && (
@@ -142,7 +157,7 @@ export default function Register() {
                                 name="phoneNumber"
                                 placeholder="+91 98765 43210"
                                 value={data.phoneNumber}
-                                onChange={(e) => setData("phoneNumber", e.target.value)}
+                                onChange={(e) => setData('phoneNumber', e.target.value)}
                             />
                         </label>
                     </div>
@@ -157,7 +172,7 @@ export default function Register() {
                                     name="password"
                                     placeholder="••••••••"
                                     value={data.password}
-                                    onChange={(e) => setData("password", e.target.value)}
+                                    onChange={(e) => setData('password', e.target.value)}
                                 />
                             </label>
                             {errors.password && (
@@ -175,7 +190,7 @@ export default function Register() {
                                     placeholder="••••••••"
                                     value={data.confirmPassword}
                                     onChange={(e) =>
-                                        setData("confirmPassword", e.target.value)
+                                        setData('confirmPassword', e.target.value)
                                     }
                                 />
                             </label>
@@ -192,12 +207,12 @@ export default function Register() {
                         className="btn btn-primary mt-2 w-full rounded-full"
                         disabled={processing}
                     >
-                        {processing ? "Creating account..." : "Create Account"}
+                        {processing ? 'Creating account...' : 'Create Account'}
                     </button>
                 </form>
 
                 <div className="mt-6 text-center text-sm text-base-content/60">
-                    Already have an account?{" "}
+                    Already have an account?{' '}
                     <Link
                         href="/auth/login"
                         className="font-medium text-primary hover:text-primary"

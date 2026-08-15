@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link } from '@inertiajs/react';
 import {
     BadgeCheck,
     MapPin,
@@ -12,16 +12,23 @@ import {
     ArrowRight,
     GraduationCap,
     ArrowUpRight,
-} from "lucide-react";
+} from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import Avatar from "@/components/larnr/avatar.jsx";
-import { FORMAT_LABELS, LEVEL_LABELS, STATUS_BADGE, statusLabel, formatDateTime } from "@/utils/tutor.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import Avatar from '@/components/larnr/avatar';
+import { FORMAT_LABELS, LEVEL_LABELS, STATUS_BADGE, statusLabel, formatDateTime } from '@/utils/tutor';
+import { displayAmount } from '@/utils/currency';
+import type { TutorIndexProps, TutorProfile, TutorSubject, AuthProps, Enquiry, Stats } from '@/types';
 
-function StatCard({ icon: Icon, label, value, accent, href }) {
+function StatCard({ icon: Icon, label, value, accent, href }: {
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    value: number | string;
+    accent?: string;
+    href?: string;
+}) {
     const inner = (
         <div className="card card-border border-base-content/10 bg-base-content/[0.04] transition-colors hover:border-primary/30 hover:bg-base-content/[0.06]">
             <div className="card-body flex-row items-center gap-4 py-5">
@@ -29,7 +36,7 @@ function StatCard({ icon: Icon, label, value, accent, href }) {
                     <Icon className="size-5" />
                 </span>
                 <div>
-                    <p className={`font-display text-2xl font-bold ${accent ?? "text-base-content"}`}>
+                    <p className={`font-display text-2xl font-bold ${accent ?? 'text-base-content'}`}>
                         {value}
                     </p>
                     <p className="text-xs text-base-content/50">{label}</p>
@@ -41,7 +48,7 @@ function StatCard({ icon: Icon, label, value, accent, href }) {
     return href ? <Link href={href}>{inner}</Link> : inner;
 }
 
-function ProfileHeader({ profile, auth }) {
+function ProfileHeader({ profile, auth }: { profile: TutorProfile; auth: AuthProps }) {
     const rate = displayAmount(profile.rate, profile.currency, auth);
 
     return (
@@ -72,7 +79,7 @@ function ProfileHeader({ profile, auth }) {
                                 </span>
                             )}
                             <span className="flex items-center gap-1">
-                                {profile.format === "ONLINE" ? (
+                                {profile.format === 'ONLINE' ? (
                                     <Video className="size-3.5" />
                                 ) : (
                                     <Building2 className="size-3.5" />
@@ -83,16 +90,16 @@ function ProfileHeader({ profile, auth }) {
                                 <Star className="size-3.5 fill-amber-400 text-amber-400" />
                                 {Number(profile.rating).toFixed(1)}
                             </span>
-                            <span>{LEVEL_LABELS[profile.level] ?? profile.level}</span>
+                            <span>{LEVEL_LABELS[profile.level as keyof typeof LEVEL_LABELS] ?? profile.level}</span>
                         </div>
                     </div>
                 </div>
                 <div className="mt-4 text-left sm:mt-0 sm:text-right">
                     <p className="font-display text-3xl font-bold text-primary">
-                        {profile.rate > 0 ? rate.text : "—"}
+                        {profile.rate > 0 ? rate.text : '—'}
                     </p>
                     <p className="text-xs text-base-content/50">
-                        {profile.rate > 0 ? `per hour · ${profile.currency}` : "per hour"}
+                        {profile.rate > 0 ? `per hour · ${profile.currency}` : 'per hour'}
                     </p>
                     {rate.note && (
                         <p className="text-xs text-base-content/50">≈ {rate.note}</p>
@@ -109,7 +116,7 @@ function ProfileHeader({ profile, auth }) {
     );
 }
 
-function EnquiriesPreview({ enquiries }) {
+function EnquiriesPreview({ enquiries }: { enquiries: Enquiry[] }) {
     return (
         <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
             <div className="card-body gap-4">
@@ -142,13 +149,13 @@ function EnquiriesPreview({ enquiries }) {
                             <div className="min-w-0">
                                 <p className="truncate text-sm font-medium text-base-content">{e.student}</p>
                                 <p className="text-xs text-base-content/50">
-                                    {e.subject ?? "Any"} · {formatDateTime(e.scheduled_at)}
+                                    {e.subject ?? 'Any'} · {formatDateTime(e.scheduled_at)}
                                 </p>
                                 {e.notes && (
                                     <p className="mt-0.5 truncate text-xs text-base-content/50">"{e.notes}"</p>
                                 )}
                             </div>
-                            <span className={`badge badge-sm ${STATUS_BADGE[e.status] ?? "badge-neutral"}`}>
+                            <span className={`badge badge-sm ${STATUS_BADGE[e.status as keyof typeof STATUS_BADGE] ?? 'badge-neutral'}`}>
                                 {statusLabel(e.status)}
                             </span>
                         </div>
@@ -159,7 +166,7 @@ function EnquiriesPreview({ enquiries }) {
     );
 }
 
-export default function TutorIndex({ profile, subjects, stats, recentEnquiries, pendingReview, auth }) {
+export default function TutorIndex(props: TutorIndexProps) {
     return (
         <div className="min-h-screen bg-base-100 text-base-content">
             <Head title="Tutor Dashboard" />
@@ -169,12 +176,12 @@ export default function TutorIndex({ profile, subjects, stats, recentEnquiries, 
             </div>
 
             <div className="relative z-10">
-                <Navbar auth={auth} />
+                <Navbar auth={props.auth} />
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
                     <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                        {pendingReview && (
+                        {props.pendingReview && (
                             <div className="card card-border border-warning/30 bg-warning/10">
                                 <div className="card-body flex-row items-center gap-3 py-3">
                                     <Clock className="size-4 shrink-0 text-warning" />
@@ -192,13 +199,13 @@ export default function TutorIndex({ profile, subjects, stats, recentEnquiries, 
                             </div>
                         )}
 
-                        <ProfileHeader profile={profile} auth={auth} />
+                        <ProfileHeader profile={props.profile} auth={props.auth} />
 
                         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                            <StatCard icon={CalendarCheck} label="Total slots" value={stats.slots} href="/tutor/availability" />
-                            <StatCard icon={Clock} label="Upcoming & open" value={stats.open} accent="text-success" href="/tutor/availability" />
-                            <StatCard icon={Inbox} label="Enquiries" value={stats.enquiries} accent="text-info" href="/tutor/enquiries" />
-                            <StatCard icon={MessageSquare} label="Pending requests" value={stats.pending} accent="text-warning" href="/tutor/enquiries" />
+                            <StatCard icon={CalendarCheck} label="Total slots" value={props.stats.slots} href="/tutor/availability" />
+                            <StatCard icon={Clock} label="Upcoming & open" value={props.stats.open} accent="text-success" href="/tutor/availability" />
+                            <StatCard icon={Inbox} label="Enquiries" value={props.stats.enquiries} accent="text-info" href="/tutor/enquiries" />
+                            <StatCard icon={MessageSquare} label="Pending requests" value={props.stats.pending} accent="text-warning" href="/tutor/enquiries" />
                         </div>
 
                         <div className="grid gap-6 lg:grid-cols-5">
@@ -222,13 +229,13 @@ export default function TutorIndex({ profile, subjects, stats, recentEnquiries, 
                                             </Link>
                                         </div>
                                         <div className="mt-3 flex flex-wrap gap-2">
-                                            {subjects.length === 0 && (
+                                            {props.subjects.length === 0 && (
                                                 <span className="text-sm text-base-content/50">
                                                     No subjects linked yet.
                                                 </span>
                                             )}
-                                            {subjects.map((s) => {
-                                                const subj = displayAmount(s.rate_cents, profile.currency, auth);
+                                            {props.subjects.map((s) => {
+                                                const subj = displayAmount(s.rate_cents, props.profile.currency, props.auth);
                                                 return (
                                                     <span
                                                         key={s.id}
@@ -287,7 +294,7 @@ export default function TutorIndex({ profile, subjects, stats, recentEnquiries, 
                             </div>
 
                             <div className="lg:col-span-3">
-                                <EnquiriesPreview enquiries={recentEnquiries} />
+                                <EnquiriesPreview enquiries={props.recentEnquiries} />
                             </div>
                         </div>
                     </div>

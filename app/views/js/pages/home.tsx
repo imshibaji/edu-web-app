@@ -1,10 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Head, Link, router } from "@inertiajs/react";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     Search,
-    MapPin,
-    Video,
-    Building2,
     BadgeCheck,
     Users,
     Clock,
@@ -13,44 +10,43 @@ import {
     GraduationCap,
     BookOpenCheck,
     MessageCircle,
-    Sparkles,
     ArrowRight,
     ChevronRight,
-    TrendingUp
-} from "lucide-react";
+    TrendingUp,
+} from 'lucide-react';
 
-import { displayAmount, getCurrencyCookie, convertCents, RATES, SYMBOLS } from "@/utils/currency.jsx";
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import TutorCard from "@/components/larnr/tutor-card.jsx";
-import BookTrialModal from "@/components/larnr/book-trial-modal.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import Hero from "@/components/larnr/hero";
-import SectionHeading from "@/components/larnr/section-heading";
+import { getCurrencyCookie } from '@/utils/currency';
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import TutorCard from '@/components/larnr/tutor-card';
+import BookTrialModal from '@/components/larnr/book-trial-modal';
+import FlashToast from '@/components/larnr/flash-toast';
+import Hero from '@/components/larnr/hero';
+import SectionHeading from '@/components/larnr/section-heading';
+import type { HomeProps, AuthProps, Tutor } from '@/types';
 
 const LEVELS = [
-    { value: "", label: "All levels" },
-    { value: "ENTRY", label: "Entry" },
-    { value: "MID", label: "Mid" },
-    { value: "SENIOR", label: "Senior" },
-];
+    { value: '', label: 'All levels' },
+    { value: 'ENTRY', label: 'Entry' },
+    { value: 'MID', label: 'Mid' },
+    { value: 'SENIOR', label: 'Senior' },
+] as const;
 
-export default function Home(props) {
-    const { tutors, total, cities, cityBreakdown, specialties, subjects, stats, filters, auth } =
-        props;
+export default function Home(props: HomeProps) {
+    const { tutors, total, cities, cityBreakdown, specialties, subjects, stats, filters, auth } = props;
 
     const [query, setQuery] = useState(filters.keyword);
     const [city, setCity] = useState(filters.city);
     const [format, setFormat] = useState(filters.format);
     const [level, setLevel] = useState(filters.experience);
     const [perPage, setPerPage] = useState(filters.perPage);
-    const [selectedTutor, setSelectedTutor] = useState(null);
-    const debounceRef = useRef(null);
+    const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const mountedRef = useRef(false);
 
-    const applyFilters = (patch, opts = {}) => {
+    const applyFilters = (patch: Record<string, unknown> = {}, opts: Record<string, unknown> = {}) => {
         router.get(
-            "/",
+            '/',
             { keyword: query, city, format, experience: level, perPage, ...patch },
             { preserveState: true, preserveScroll: true, replace: true, ...opts },
         );
@@ -61,9 +57,9 @@ export default function Home(props) {
             mountedRef.current = true;
             return;
         }
-        clearTimeout(debounceRef.current);
+        clearTimeout(debounceRef.current ?? undefined);
         debounceRef.current = setTimeout(() => applyFilters({}), 350);
-        return () => clearTimeout(debounceRef.current);
+        return () => clearTimeout(debounceRef.current ?? undefined);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query]);
 
@@ -89,58 +85,58 @@ export default function Home(props) {
         [cityBreakdown],
     );
 
-    const openBook = (tutor) => {
+    const openBook = (tutor: Tutor) => {
         if (auth?.user) {
             setSelectedTutor(tutor);
         } else {
-            router.visit("/auth/login");
+            router.visit('/auth/login');
         }
     };
 
     const quality = [
         {
             icon: ShieldCheck,
-            title: "Interview-Vetted Tutors",
-            text: "Every educator passes a rigorous interview covering teaching method, subject mastery, and communication.",
+            title: 'Interview-Vetted Tutors',
+            text: 'Every educator passes a rigorous interview covering teaching method, subject mastery, and communication.',
         },
         {
             icon: BadgeCheck,
-            title: "Verified Backgrounds",
-            text: "Qualifications, experience, and credentials are checked before a tutor is listed as verified.",
+            title: 'Verified Backgrounds',
+            text: 'Qualifications, experience, and credentials are checked before a tutor is listed as verified.',
         },
         {
             icon: BookOpenCheck,
-            title: "Structured Lesson Plans",
-            text: "Tutors prepare structured, goal-oriented lessons with clear objectives and practice material.",
+            title: 'Structured Lesson Plans',
+            text: 'Tutors prepare structured, goal-oriented lessons with clear objectives and practice material.',
         },
         {
             icon: MessageCircle,
-            title: "Regular Progress Reviews",
-            text: "Frequent check-ins track your progress so lessons stay aligned with your goals.",
+            title: 'Regular Progress Reviews',
+            text: 'Frequent check-ins track your progress so lessons stay aligned with your goals.',
         },
     ];
 
     const interviewPrep = [
         {
             icon: GraduationCap,
-            title: "Tutor Interview Preparation",
-            text: "Free coaching materials to help you prepare for your tutor interview and win more students.",
-            cta: "Get Prep Materials",
+            title: 'Tutor Interview Preparation',
+            text: 'Free coaching materials to help you prepare for your tutor interview and win more students.',
+            cta: 'Get Prep Materials',
         },
         {
             icon: Users,
-            title: "Why Students Choose Larnr",
-            text: "Premium educators, transparent pricing, and a 1:1 first trial lesson before you commit.",
-            cta: "Meet the Educators",
+            title: 'Why Students Choose Larnr',
+            text: 'Premium educators, transparent pricing, and a 1:1 first trial lesson before you commit.',
+            cta: 'Meet the Educators',
         },
     ];
 
     const statsItems = [
-        { label: "Total Educators", value: stats.totalTutors, icon: Users, accent: "text-primary" },
-        { label: "Verified Tutors", value: stats.verifiedCount, icon: BadgeCheck, accent: "text-success" },
-        { label: "Active Right Now", value: stats.activeNow, icon: Clock, accent: "text-secondary" },
-        { label: "Avg. Hourly Rate", value: `${getCurrencyCookie() === 'INR' ? '₹' : '$'}${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: "text-warning" },
-        { label: "Cities Covered", value: stats.citiesCount, icon: Globe, accent: "text-info" },
+        { label: 'Total Educators', value: stats.totalTutors, icon: Users, accent: 'text-primary' },
+        { label: 'Verified Tutors', value: stats.verifiedCount, icon: BadgeCheck, accent: 'text-success' },
+        { label: 'Active Right Now', value: stats.activeNow, icon: Clock, accent: 'text-secondary' },
+        { label: 'Avg. Hourly Rate', value: `${getCurrencyCookie() === 'INR' ? '₹' : '$'}${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: 'text-warning' },
+        { label: 'Cities Covered', value: stats.citiesCount, icon: Globe, accent: 'text-info' },
     ];
 
     return (
@@ -180,8 +176,8 @@ export default function Home(props) {
                                         onClick={() => setLevel(l.value)}
                                         className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
                                             level === l.value
-                                                ? "border-primary bg-primary/20 text-primary"
-                                                : "border-base-content/10 bg-base-content/5 text-base-content/60 hover:text-base-content"
+                                                ? 'border-primary bg-primary/20 text-primary'
+                                                : 'border-base-content/10 bg-base-content/5 text-base-content/60 hover:text-base-content'
                                         }`}
                                     >
                                         {l.label}
@@ -196,8 +192,8 @@ export default function Home(props) {
                                         onClick={() => setPerPage(n)}
                                         className={`rounded-full px-3.5 py-1 text-xs font-medium transition-colors ${
                                             perPage === n
-                                                ? "bg-indigo-500 text-white"
-                                                : "text-base-content/60 hover:text-base-content"
+                                                ? 'bg-indigo-500 text-white'
+                                                : 'text-base-content/60 hover:text-base-content'
                                         }`}
                                     >
                                         {n}
@@ -220,10 +216,10 @@ export default function Home(props) {
                                         </p>
                                         <button
                                             onClick={() => {
-                                                setQuery("");
-                                                setCity("");
-                                                setFormat("");
-                                                setLevel("");
+                                                setQuery('');
+                                                setCity('');
+                                                setFormat('');
+                                                setLevel('');
                                             }}
                                             className="btn btn-ghost btn-sm mt-2 rounded-full"
                                         >
@@ -242,8 +238,8 @@ export default function Home(props) {
                             Showing {tutors.length} of {total} educators
                             {total > tutors.length && (
                                 <>
-                                    {" "}
-                                    ·{" "}
+                                    {' '}
+                                    ·{' '}
                                     <button
                                         onClick={() => setPerPage(Math.max(perPage, 15))}
                                         className="link link-hover text-primary"
@@ -299,7 +295,7 @@ export default function Home(props) {
                                             <div className="mb-1.5 flex items-center justify-between text-sm">
                                                 <span className="text-base-content/80">{c.city}</span>
                                                 <span className="text-xs text-base-content/50">
-                                                    {c.count} tutor{c.count > 1 ? "s" : ""}
+                                                    {c.count} tutor{c.count > 1 ? 's' : ''}
                                                 </span>
                                             </div>
                                             <div className="h-2 overflow-hidden rounded-full bg-base-content/5">
@@ -393,7 +389,7 @@ export default function Home(props) {
                                         </p>
                                         <div className="card-actions mt-4">
                                             <Link
-                                                href={c.title.startsWith("Why") ? "/#educators" : "/auth/register"}
+                                                href={c.title.startsWith('Why') ? '/#educators' : '/auth/register'}
                                                 className="btn btn-ghost btn-sm rounded-full text-primary"
                                             >
                                                 {c.cta}
@@ -421,10 +417,10 @@ export default function Home(props) {
                                 </p>
                                 <div className="card-actions mt-4 flex flex-wrap justify-center gap-3">
                                     <Link
-                                        href={auth?.user ? "/dashboard" : "/auth/register"}
+                                        href={auth?.user ? '/dashboard' : '/auth/register'}
                                         className="btn btn-primary rounded-full px-8"
                                     >
-                                        {auth?.user ? "Go to Dashboard" : "Get Started"}
+                                        {auth?.user ? 'Go to Dashboard' : 'Get Started'}
                                         <ArrowRight className="size-4" />
                                     </Link>
                                     <Link

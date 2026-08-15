@@ -1,23 +1,31 @@
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { Mail, Lock, Save, Coins } from "lucide-react";
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { Mail, Lock, Save, Coins } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import { getInitials } from "@/utils/index.jsx";
-import { CURRENCIES } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import { getInitials } from '@/utils/index';
+import { CURRENCIES } from '@/utils/currency';
+import type { AuthProps } from '@/types';
 
-export default function ProfileSettings({ name, email, errors, baseCurrency }) {
-    const { auth } = usePage().props;
+interface Props {
+    name: string;
+    email: string;
+    errors: Record<string, string>;
+    baseCurrency: string;
+}
+
+export default function ProfileSettings({ name, email, errors, baseCurrency }: Props) {
+    const { auth } = usePage().props as { auth: AuthProps };
     const { data, setData, patch, processing } = useForm({
-        email: email ?? "",
-        password: "",
-        baseCurrency: baseCurrency ?? "USD",
+        email: email ?? '',
+        password: '',
+        baseCurrency: baseCurrency ?? 'USD',
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        patch("/settings/profile");
+        patch('/settings/profile');
     };
 
     return (
@@ -48,14 +56,14 @@ export default function ProfileSettings({ name, email, errors, baseCurrency }) {
                         <div className="card-body">
                             <div className="flex items-center gap-4 border-b border-base-content/10 pb-5">
                                 <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-lg font-bold text-white">
-                                    {getInitials(name || "U")}
+                                    {getInitials(name || 'U')}
                                 </span>
                                 <div>
                                     <p className="font-display text-lg font-semibold text-base-content">
-                                        {name ?? "User"}
+                                        {name ?? 'User'}
                                     </p>
                                     <p className="text-sm text-base-content/60">
-                                        {email ?? "No email set"}
+                                        {email ?? 'No email set'}
                                     </p>
                                 </div>
                             </div>
@@ -69,7 +77,7 @@ export default function ProfileSettings({ name, email, errors, baseCurrency }) {
                                             type="email"
                                             name="email"
                                             value={data.email}
-                                            onChange={(e) => setData("email", e.target.value)}
+                                            onChange={(e) => setData('email', e.target.value)}
                                         />
                                     </label>
                                     {errors?.email && (
@@ -88,7 +96,7 @@ export default function ProfileSettings({ name, email, errors, baseCurrency }) {
                                             name="password"
                                             placeholder="••••••••"
                                             value={data.password}
-                                            onChange={(e) => setData("password", e.target.value)}
+                                            onChange={(e) => setData('password', e.target.value)}
                                         />
                                     </label>
                                     {errors?.password && (
@@ -104,7 +112,7 @@ export default function ProfileSettings({ name, email, errors, baseCurrency }) {
                                             name="baseCurrency"
                                             className="w-full cursor-pointer bg-transparent"
                                             value={data.baseCurrency}
-                                            onChange={(e) => setData("baseCurrency", e.target.value)}
+                                            onChange={(e) => setData('baseCurrency', e.target.value)}
                                         >
                                             {CURRENCIES.map((c) => (
                                                 <option key={c.code} value={c.code}>
@@ -129,7 +137,7 @@ export default function ProfileSettings({ name, email, errors, baseCurrency }) {
                                         disabled={processing}
                                     >
                                         <Save className="size-4" />
-                                        {processing ? "Saving..." : "Save changes"}
+                                        {processing ? 'Saving...' : 'Save changes'}
                                     </button>
                                 </div>
                             </form>

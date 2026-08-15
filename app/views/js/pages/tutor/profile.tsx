@@ -1,47 +1,48 @@
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
-import { Save, Clock, ImagePlus } from "lucide-react";
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Save, Clock, ImagePlus } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import Avatar from "@/components/larnr/avatar.jsx";
-import { FORMAT_LABELS, LEVEL_LABELS } from "@/utils/tutor.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import Avatar from '@/components/larnr/avatar';
+import { FORMAT_LABELS, LEVEL_LABELS } from '@/utils/tutor';
+import type { TutorProfileProps, AuthProps } from '@/types';
 
-function toDollars(cents) {
+function toDollars(cents: number): number {
     return (Number(cents) || 0) / 100;
 }
 
-export default function TutorProfile({ profile, pending, errors }) {
-    const { auth } = usePage().props;
-    const [preview, setPreview] = useState(null);
+export default function TutorProfile(props: TutorProfileProps) {
+    const { auth } = usePage().props as { auth: AuthProps };
+    const [preview, setPreview] = useState<string | null>(null);
 
-    const source = pending ?? profile;
+    const source = props.pending ?? props.profile;
 
     const { data, setData, post, processing } = useForm({
-        fullName: source.full_name ?? "",
-        headline: source.headline ?? "",
-        bio: source.bio ?? "",
-        city: source.city ?? "",
-        format: source.format ?? "ONLINE",
-        experience: source.experience_level ?? "ENTRY",
+        fullName: source.full_name ?? '',
+        headline: source.headline ?? '',
+        bio: source.bio ?? '',
+        city: source.city ?? '',
+        format: source.format ?? 'ONLINE',
+        experience: source.experience_level ?? 'ENTRY',
         rate: toDollars(source.hourly_rate),
-        currency: source.currency ?? "USD",
-        avatar: null,
+        currency: source.currency ?? 'USD',
+        avatar: null as File | null,
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/tutor/profile", { forceFormData: true });
+        post('/tutor/profile', { forceFormData: true });
     };
 
-    const onAvatarChange = (e) => {
+    const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
-        setData("avatar", file);
+        setData('avatar', file);
         setPreview(file ? URL.createObjectURL(file) : null);
     };
 
-    const displayedAvatar = preview ?? (pending?.avatar_url || profile?.avatar);
+    const displayedAvatar = preview ?? (props.pending?.avatar_url || props.profile?.avatar_url);
 
     return (
         <div className="min-h-screen bg-base-100 text-base-content">
@@ -57,7 +58,7 @@ export default function TutorProfile({ profile, pending, errors }) {
 
                 <div className="space-y-6 py-6">
                     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                        {pending && (
+                        {props.pending && (
                             <div className="card card-border border-warning/30 bg-warning/10">
                                 <div className="card-body flex-row items-center gap-3 py-3">
                                     <Clock className="size-4 shrink-0 text-warning" />
@@ -96,7 +97,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                         <label className="cursor-pointer">
                                             <span className="btn btn-outline btn-sm rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5">
                                                 <ImagePlus className="size-4" />
-                                                {displayedAvatar ? "Change photo" : "Upload photo"}
+                                                {displayedAvatar ? 'Change photo' : 'Upload photo'}
                                             </span>
                                             <input
                                                 type="file"
@@ -110,8 +111,8 @@ export default function TutorProfile({ profile, pending, errors }) {
                                             JPG, PNG, WebP or GIF. Under 5MB.
                                         </p>
                                     </div>
-                                    {errors?.avatar && (
-                                        <span className="text-xs text-error">{errors.avatar}</span>
+                                    {props.errors?.avatar && (
+                                        <span className="text-xs text-error">{props.errors.avatar}</span>
                                     )}
 
                                     <div className="divider divider-neutral my-0" />
@@ -124,11 +125,11 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     type="text"
                                                     name="fullName"
                                                     value={data.fullName}
-                                                    onChange={(e) => setData("fullName", e.target.value)}
+                                                    onChange={(e) => setData('fullName', e.target.value)}
                                                 />
                                             </label>
-                                            {errors?.fullName && (
-                                                <span className="text-xs text-error">{errors.fullName}</span>
+                                            {props.errors?.fullName && (
+                                                <span className="text-xs text-error">{props.errors.fullName}</span>
                                             )}
                                         </div>
 
@@ -140,11 +141,11 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     name="headline"
                                                     placeholder="e.g. Experienced Algebra & Calculus tutor"
                                                     value={data.headline}
-                                                    onChange={(e) => setData("headline", e.target.value)}
+                                                    onChange={(e) => setData('headline', e.target.value)}
                                                 />
                                             </label>
-                                            {errors?.headline && (
-                                                <span className="text-xs text-error">{errors.headline}</span>
+                                            {props.errors?.headline && (
+                                                <span className="text-xs text-error">{props.errors.headline}</span>
                                             )}
                                         </div>
 
@@ -157,11 +158,11 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     className="resize-none w-full bg-transparent text-base-content/80 placeholder:text-base-content/50 focus:outline-none"
                                                     placeholder="Tell students about your background and teaching style."
                                                     value={data.bio}
-                                                    onChange={(e) => setData("bio", e.target.value)}
+                                                    onChange={(e) => setData('bio', e.target.value)}
                                                 />
                                             </label>
-                                            {errors?.bio && (
-                                                <span className="text-xs text-error">{errors.bio}</span>
+                                            {props.errors?.bio && (
+                                                <span className="text-xs text-error">{props.errors.bio}</span>
                                             )}
                                         </div>
 
@@ -172,11 +173,11 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     type="text"
                                                     name="city"
                                                     value={data.city}
-                                                    onChange={(e) => setData("city", e.target.value)}
+                                                    onChange={(e) => setData('city', e.target.value)}
                                                 />
                                             </label>
-                                            {errors?.city && (
-                                                <span className="text-xs text-error">{errors.city}</span>
+                                            {props.errors?.city && (
+                                                <span className="text-xs text-error">{props.errors.city}</span>
                                             )}
                                         </div>
 
@@ -186,7 +187,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                 name="format"
                                                 className="select w-full rounded-xl appearance-none border-base-content/10 bg-base-content/5"
                                                 value={data.format}
-                                                onChange={(e) => setData("format", e.target.value)}
+                                                onChange={(e) => setData('format', e.target.value)}
                                             >
                                                 {Object.entries(FORMAT_LABELS).map(([value, label]) => (
                                                     <option key={value} value={value}>
@@ -194,8 +195,8 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     </option>
                                                 ))}
                                             </select>
-                                            {errors?.format && (
-                                                <span className="text-xs text-error">{errors.format}</span>
+                                            {props.errors?.format && (
+                                                <span className="text-xs text-error">{props.errors.format}</span>
                                             )}
                                         </div>
 
@@ -205,7 +206,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                 name="experience"
                                                 className="select w-full rounded-xl appearance-none border-base-content/10 bg-base-content/5"
                                                 value={data.experience}
-                                                onChange={(e) => setData("experience", e.target.value)}
+                                                onChange={(e) => setData('experience', e.target.value)}
                                             >
                                                 {Object.entries(LEVEL_LABELS).map(([value, label]) => (
                                                     <option key={value} value={value}>
@@ -213,8 +214,8 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                     </option>
                                                 ))}
                                             </select>
-                                            {errors?.experience && (
-                                                <span className="text-xs text-error">{errors.experience}</span>
+                                            {props.errors?.experience && (
+                                                <span className="text-xs text-error">{props.errors.experience}</span>
                                             )}
                                         </div>
 
@@ -229,24 +230,24 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                         min="0"
                                                         step="0.01"
                                                         value={data.rate}
-                                                        onChange={(e) => setData("rate", e.target.value)}
+                                                        onChange={(e) => setData('rate', e.target.value)}
                                                     />
                                                 </label>
                                                 <select
                                                     name="currency"
                                                     className="select appearance-none w-28 shrink-0 rounded-xl border-base-content/10 bg-base-content/5"
                                                     value={data.currency}
-                                                    onChange={(e) => setData("currency", e.target.value)}
+                                                    onChange={(e) => setData('currency', e.target.value)}
                                                 >
-                                                    {["USD", "INR", "EUR", "GBP", "AED", "SGD"].map((c) => (
+                                                    {['USD', 'INR', 'EUR', 'GBP', 'AED', 'SGD'].map((c) => (
                                                         <option key={c} value={c}>
                                                             {c}
                                                         </option>
                                                     ))}
                                                 </select>
                                             </div>
-                                            {errors?.rate && (
-                                                <span className="text-xs text-error">{errors.rate}</span>
+                                            {props.errors?.rate && (
+                                                <span className="text-xs text-error">{props.errors.rate}</span>
                                             )}
                                         </div>
                                     </div>
@@ -260,7 +261,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                     disabled={processing}
                                 >
                                     <Save className="size-4" />
-                                    {processing ? "Submitting..." : "Submit for review"}
+                                    {processing ? 'Submitting...' : 'Submit for review'}
                                 </button>
                             </div>
                         </form>

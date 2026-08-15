@@ -1,8 +1,13 @@
-import { usePage } from "@inertiajs/react";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { usePage } from '@inertiajs/react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+
+interface FlashProps {
+    success?: string;
+    error?: string;
+}
 
 export default function FlashToast() {
-    const { flash } = usePage().props;
+    const { flash } = usePage().props as { flash: FlashProps };
 
     if (!flash?.success && !flash?.error) return null;
 
@@ -12,7 +17,7 @@ export default function FlashToast() {
         <div className="toast toast-end toast-top z-50">
             <div
                 className={`alert ${
-                    isSuccess ? "alert-success" : "alert-error"
+                    isSuccess ? 'alert-success' : 'alert-error'
                 } rounded-full border-0 shadow-2xl`}
             >
                 <div className="flex items-center gap-2">

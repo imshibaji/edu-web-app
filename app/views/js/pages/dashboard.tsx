@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link } from '@inertiajs/react';
 import {
     CalendarCheck,
     CalendarPlus,
@@ -8,24 +8,31 @@ import {
     UserRound,
     TrendingUp,
     Activity,
-} from "lucide-react";
+} from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import { getInitials } from "@/utils/index.jsx";
-import { STATUS_BADGE, statusLabel, formatDateTime } from "@/utils/tutor.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import { getInitials } from '@/utils/index';
+import { STATUS_BADGE, statusLabel, formatDateTime } from '@/utils/tutor';
+import { displayAmount } from '@/utils/currency';
+import type { DashboardProps, AuthProps, Booking, Profile, Stats, ActivityItem } from '@/types';
 
-function StatCard({ icon: Icon, label, value, accent }) {
-    return (
+function StatCard({ icon: Icon, label, value, accent, href }: {
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    value: number | string;
+    accent?: string;
+    href?: string;
+}) {
+    const inner = (
         <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
             <div className="card-body flex-row items-center gap-4 py-5">
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-base-content/5 text-base-content/80">
                     <Icon className="size-5" />
                 </span>
                 <div>
-                    <p className={`font-display text-2xl font-bold ${accent ?? "text-base-content"}`}>
+                    <p className={`font-display text-2xl font-bold ${accent ?? 'text-base-content'}`}>
                         {value}
                     </p>
                     <p className="text-xs text-base-content/50">{label}</p>
@@ -33,9 +40,11 @@ function StatCard({ icon: Icon, label, value, accent }) {
             </div>
         </div>
     );
+
+    return href ? <Link href={href}>{inner}</Link> : inner;
 }
 
-function StudentView({ profile, bookings, auth }) {
+function StudentView({ profile, bookings, auth }: { profile: Profile; bookings: Booking[]; auth: AuthProps }) {
     return (
         <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
             <div className="card card-border relative overflow-hidden border-base-content/10 bg-gradient-to-r from-primary/15 via-secondary/10 to-transparent">
@@ -54,7 +63,7 @@ function StudentView({ profile, bookings, auth }) {
                                 </span>
                             </div>
                             <p className="mt-1 text-sm text-base-content/60">
-                                {profile.phone ? `Phone: ${profile.phone}` : "Welcome to Larnr"}
+                                {profile.phone ? `Phone: ${profile.phone}` : 'Welcome to Larnr'}
                             </p>
                         </div>
                     </div>
@@ -69,7 +78,7 @@ function StudentView({ profile, bookings, auth }) {
                 <p className="text-xs text-base-content/50">Your trial lesson requests.</p>
 
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
-                    {bookings.length === 0 && (
+                    {bookings?.length === 0 && (
                         <div className="card card-border col-span-full border-base-content/10 bg-base-content/[0.04]">
                             <div className="card-body items-center py-14 text-center">
                                 <GraduationCap className="size-10 text-base-content/40" />
@@ -88,7 +97,7 @@ function StudentView({ profile, bookings, auth }) {
                             </div>
                         </div>
                     )}
-                    {bookings.map((b) => {
+                    {bookings?.map((b) => {
                         const amount = displayAmount(b.amount, b.currency, auth);
                         return (
                             <div key={b.id} className="card card-border border-base-content/10 bg-base-content/[0.04]">
@@ -111,7 +120,7 @@ function StudentView({ profile, bookings, auth }) {
                                         </div>
                                         <span
                                             className={`badge badge-sm ${
-                                                STATUS_BADGE[b.status] ?? "badge-neutral"
+                                                STATUS_BADGE[b.status as keyof typeof STATUS_BADGE] ?? 'badge-neutral'
                                             }`}
                                         >
                                             {statusLabel(b.status)}
@@ -134,7 +143,7 @@ function StudentView({ profile, bookings, auth }) {
                                                     )}
                                                 </>
                                             ) : (
-                                                "Rate TBD"
+                                                'Rate TBD'
                                             )}
                                         </span>
                                     </div>
@@ -154,13 +163,13 @@ function StudentView({ profile, bookings, auth }) {
     );
 }
 
-function AdminView({ stats, activities }) {
+function AdminView({ stats, activities }: { stats: Stats; activities: ActivityItem[] }) {
     const items = [
-        { icon: Users, label: "Tutors", value: stats.tutors, accent: "text-primary" },
-        { icon: UserRound, label: "Students", value: stats.students, accent: "text-success" },
-        { icon: CalendarCheck, label: "Total bookings", value: stats.bookings, accent: "text-info" },
-        { icon: TrendingUp, label: "Pending payments", value: stats.pending, accent: "text-warning" },
-        { icon: Activity, label: "Activities today", value: stats.activityToday, accent: "text-secondary" },
+        { icon: Users, label: 'Tutors', value: stats.tutors, accent: 'text-primary' },
+        { icon: UserRound, label: 'Students', value: stats.students, accent: 'text-success' },
+        { icon: CalendarCheck, label: 'Total bookings', value: stats.bookings, accent: 'text-info' },
+        { icon: TrendingUp, label: 'Pending payments', value: stats.pending, accent: 'text-warning' },
+        { icon: Activity, label: 'Activities today', value: stats.activityToday, accent: 'text-secondary' },
     ];
 
     return (
@@ -200,12 +209,12 @@ function AdminView({ stats, activities }) {
                         </div>
 
                         <div className="space-y-2">
-                            {activities.length === 0 && (
+                            {activities?.length === 0 && (
                                 <p className="rounded-xl border border-dashed border-base-content/10 p-6 text-center text-sm text-base-content/50">
                                     No activity recorded yet.
                                 </p>
                             )}
-                            {activities.map((a) => (
+                            {activities?.map((a) => (
                                 <div
                                     key={a.id}
                                     className="flex items-center gap-3 rounded-xl bg-base-content/5 px-3 py-2.5"
@@ -253,7 +262,7 @@ function AdminView({ stats, activities }) {
     );
 }
 
-export default function Dashboard(props) {
+export default function Dashboard(props: DashboardProps) {
     const { role, auth } = props;
 
     return (
@@ -268,8 +277,8 @@ export default function Dashboard(props) {
                 <Navbar auth={auth} />
                 <FlashToast />
 
-                {role === "ADMIN" && <AdminView {...props} />}
-                {role === "STUDENT" && <StudentView {...props} />}
+                {role === 'ADMIN' && <AdminView {...props} />}
+                {role === 'STUDENT' && <StudentView {...props} />}
 
                 <Footer />
             </div>

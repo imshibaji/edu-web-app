@@ -1,4 +1,10 @@
-export default function SectionHeading({ eyebrow, title, description }) {
+interface SectionHeadingProps {
+    eyebrow: string;
+    title: string;
+    description?: string;
+}
+
+export default function SectionHeading({ eyebrow, title, description }: SectionHeadingProps) {
     return (
         <div className="mx-auto max-w-2xl text-center">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">

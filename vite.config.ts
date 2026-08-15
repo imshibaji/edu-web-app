@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         leaf({
-            input: ['app/views/js/app.jsx'],
+            input: ['app/views/js/app.tsx'],
             refresh: true,
         }),
         react(),

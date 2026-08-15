@@ -1,4 +1,5 @@
-import { Search,
+import {
+    Search,
     MapPin,
     Video,
     Building2,
@@ -13,28 +14,29 @@ import { Search,
     Sparkles,
     ArrowRight,
     ChevronRight,
-    TrendingUp } from "lucide-react";
-import { displayAmount, getCurrencyCookie, convertCents, RATES, SYMBOLS } from "@/utils/currency.jsx";
-import { usePage } from "@inertiajs/react";
-import { useState } from "react";
+    TrendingUp,
+} from 'lucide-react';
+import { displayAmount, getCurrencyCookie } from '@/utils/currency';
+import { usePage } from '@inertiajs/react';
+import { useState } from 'react';
+
+import type { HomeProps } from '@/types';
 
 const FORMATS = [
-    { value: "", label: "All formats" },
-    { value: "ONLINE", label: "Online" },
-    { value: "IN_PERSON", label: "In-person" },
-    { value: "BOTH", label: "Online & In-person" },
+    { value: '', label: 'All formats' },
+    { value: 'ONLINE', label: 'Online' },
+    { value: 'IN_PERSON', label: 'In-person' },
+    { value: 'BOTH', label: 'Online & In-person' },
 ];
 
-export default function Hero(props) {
-    const { tutors, total, cities, cityBreakdown, specialties, subjects, stats, filters, auth } =
-        props;
+export default function Hero(props: HomeProps) {
+    const { tutors, total, cities, cityBreakdown, specialties, subjects, stats, filters, auth } = props;
     const router = usePage().props.router;
 
     const [query, setQuery] = useState(filters.keyword);
     const [city, setCity] = useState(filters.city);
     const [format, setFormat] = useState(filters.format);
     const [level, setLevel] = useState(filters.experience);
-
 
     return (
         <section className="relative overflow-hidden">
@@ -46,7 +48,7 @@ export default function Hero(props) {
                     </span>
 
                     <h1 className="font-display mt-6 text-4xl font-extrabold leading-tight tracking-tight text-base-content sm:text-6xl">
-                        Find Premium{" "}
+                        Find Premium{' '}
                         <span className="bg-gradient-to-r from-primary via-secondary to-secondary bg-clip-text text-transparent">
                             Tutors & Mentors
                         </span>
@@ -61,12 +63,12 @@ export default function Hero(props) {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
-                            router.get("/", {
+                            router.get('/', {
                                 keyword: query,
                                 city,
                                 format,
                                 experience: level,
-                                perPage,
+                                perPage: filters.perPage,
                             });
                         }}
                         className="mt-8 flex flex-col gap-3 rounded-2xl border border-base-content/10 bg-base-content/5 p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full"
@@ -99,7 +101,7 @@ export default function Hero(props) {
                             </select>
                         </div>
                         <div className="flex items-center gap-2 border-base-content/10 px-3 sm:border-l">
-                            {format === "ONLINE" ? (
+                            {format === 'ONLINE' ? (
                                 <Video className="size-5 shrink-0 text-primary" />
                             ) : (
                                 <Building2 className="size-5 shrink-0 text-primary" />
@@ -125,29 +127,30 @@ export default function Hero(props) {
                     <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-base-content/50">
                         <span className="flex items-center gap-1.5">
                             <Users className="size-4 text-primary" />
-                            <strong className="text-base-content/80">{stats.totalTutors}</strong>{" "}
+                            <strong className="text-base-content/80">{stats.totalTutors}</strong>{' '}
                             educators
                         </span>
                         <span className="flex items-center gap-1.5">
                             <BadgeCheck className="size-4 text-success" />
                             <strong className="text-base-content/80">
                                 {stats.verifiedCount}
-                            </strong>{" "}
+                            </strong>{' '}
                             verified
                         </span>
                         <span className="flex items-center gap-1.5">
                             <Globe className="size-4 text-info" />
                             <strong className="text-base-content/80">
                                 {stats.citiesCount}
-                            </strong>{" "}
+                            </strong>{' '}
                             cities
                         </span>
                         <span className="flex items-center gap-1.5">
                             <TrendingUp className="size-4 text-amber-400" />
-                            from{" "}
+                            from{' '}
                             <strong className="text-base-content/80">
-                                {/* {getCurrencyCookie() === 'INR' ? '₹' : SYMBOLS[getCurrencyCookie()]}{Math.round(stats.avgRate / 100)} */}
-                                {getCurrencyCookie() === 'INR' ? '₹'+Math.round(stats.avgRate / 100) : displayAmount(Math.round(stats.avgRate / 100), getCurrencyCookie()).text}
+                                {getCurrencyCookie() === 'INR'
+                                    ? `₹${Math.round(stats.avgRate / 100)}`
+                                    : displayAmount(Math.round(stats.avgRate / 100), getCurrencyCookie()).text}
                             </strong>
                             /hr avg
                         </span>

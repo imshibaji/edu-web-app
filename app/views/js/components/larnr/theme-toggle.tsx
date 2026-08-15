@@ -1,11 +1,19 @@
-import { Sun, Moon, Monitor, Check } from "lucide-react";
+import { Sun, Moon, Monitor, Check } from 'lucide-react';
 
-import { useTheme } from "@/utils/theme.jsx";
+import { useTheme } from '@/utils/theme';
 
-const OPTIONS = [
-    { mode: "light", label: "Day", icon: Sun },
-    { mode: "dark", label: "Night", icon: Moon },
-    { mode: "system", label: "System", icon: Monitor },
+type ThemeMode = 'light' | 'dark' | 'system';
+
+interface ThemeOption {
+    mode: ThemeMode;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+}
+
+const OPTIONS: ThemeOption[] = [
+    { mode: 'light', label: 'Day', icon: Sun },
+    { mode: 'dark', label: 'Night', icon: Moon },
+    { mode: 'system', label: 'System', icon: Monitor },
 ];
 
 export default function ThemeToggle() {
@@ -35,7 +43,7 @@ export default function ThemeToggle() {
                                 e.currentTarget.blur();
                             }}
                             className={`flex items-center justify-between rounded-lg text-sm ${
-                                mode === m ? "text-primary" : "text-base-content/60"
+                                mode === m ? 'text-primary' : 'text-base-content/60'
                             }`}
                         >
                             <span className="flex items-center gap-2">

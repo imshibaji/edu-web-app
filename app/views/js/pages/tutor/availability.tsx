@@ -1,13 +1,14 @@
-import { Head, router, useForm } from "@inertiajs/react";
-import { CalendarPlus, Trash2, CalendarClock, Clock } from "lucide-react";
+import { Head, router, useForm } from '@inertiajs/react';
+import { CalendarPlus, Trash2, CalendarClock, Clock } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import { getInitials } from "@/utils/index.jsx";
-import { formatDateTime } from "@/utils/tutor.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import { getInitials } from '@/utils/index';
+import { formatDateTime } from '@/utils/tutor';
+import type { TutorAvailabilityProps, AuthProps } from '@/types';
 
-function AddSlotForm({ form, onSubmit }) {
+function AddSlotForm({ form, onSubmit }: { form: ReturnType<typeof useForm<{ start: string; end: string }>>; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void }) {
     return (
         <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
             <div className="card-body gap-4">
@@ -30,7 +31,7 @@ function AddSlotForm({ form, onSubmit }) {
                             type="datetime-local"
                             className="input w-full rounded-xl border-base-content/10 bg-base-content/5 text-sm"
                             value={form.data.start}
-                            onChange={(e) => form.setData("start", e.target.value)}
+                            onChange={(e) => form.setData('start', e.target.value)}
                         />
                     </div>
                     <div className="fieldset">
@@ -39,7 +40,7 @@ function AddSlotForm({ form, onSubmit }) {
                             type="datetime-local"
                             className="input w-full rounded-xl border-base-content/10 bg-base-content/5 text-sm"
                             value={form.data.end}
-                            onChange={(e) => form.setData("end", e.target.value)}
+                            onChange={(e) => form.setData('end', e.target.value)}
                         />
                     </div>
                     {form.errors.start && <p className="text-xs text-error">{form.errors.start}</p>}
@@ -48,7 +49,7 @@ function AddSlotForm({ form, onSubmit }) {
                         className="btn btn-primary btn-sm w-full rounded-full"
                         disabled={form.processing}
                     >
-                        {form.processing ? "Adding..." : "Add slot"}
+                        {form.processing ? 'Adding...' : 'Add slot'}
                     </button>
                 </form>
             </div>
@@ -56,7 +57,7 @@ function AddSlotForm({ form, onSubmit }) {
     );
 }
 
-function SlotList({ slots, onDelete }) {
+function SlotList({ slots, onDelete }: { slots: TutorAvailabilityProps['slots']; onDelete: (id: string) => void }) {
     const upcoming = slots.filter((s) => !s.booked && new Date(s.start) > new Date()).length;
 
     return (
@@ -89,14 +90,14 @@ function SlotList({ slots, onDelete }) {
                         <div
                             key={s.id}
                             className={`card card-border border-base-content/10 bg-base-content/[0.04] ${
-                                !isOpen ? "opacity-60" : ""
+                                !isOpen ? 'opacity-60' : ''
                             }`}
                         >
                             <div className="card-body flex-row items-center justify-between gap-3 py-3.5">
                                 <div className="flex items-center gap-3">
                                     <span
                                         className={`status ${
-                                            s.booked ? "status-error" : "status-success"
+                                            s.booked ? 'status-error' : 'status-success'
                                         }`}
                                     />
                                     <div>
@@ -134,19 +135,19 @@ function SlotList({ slots, onDelete }) {
     );
 }
 
-export default function TutorAvailability({ profile, slots, auth }) {
-    const form = useForm({ start: "", end: "" });
+export default function TutorAvailability(props: TutorAvailabilityProps) {
+    const form = useForm({ start: '', end: '' });
 
-    const submitSlot = (e) => {
+    const submitSlot = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        form.post("/tutor/slots", {
+        form.post('/tutor/slots', {
             onSuccess: () => form.reset(),
             preserveScroll: true,
         });
     };
 
-    const deleteSlot = (id) => {
-        router.post("/tutor/slots/delete", { slot: id }, { preserveScroll: true });
+    const deleteSlot = (id: string) => {
+        router.post('/tutor/slots/delete', { slot: id }, { preserveScroll: true });
     };
 
     return (
@@ -158,7 +159,7 @@ export default function TutorAvailability({ profile, slots, auth }) {
             </div>
 
             <div className="relative z-10">
-                <Navbar auth={auth} />
+                <Navbar auth={props.auth} />
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
@@ -174,9 +175,9 @@ export default function TutorAvailability({ profile, slots, auth }) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
-                                    {getInitials(profile.name)}
+                                    {getInitials(props.profile.name)}
                                 </span>
-                                <span className="text-sm font-medium text-base-content/80">{profile.name}</span>
+                                <span className="text-sm font-medium text-base-content/80">{props.profile.name}</span>
                             </div>
                         </div>
 
@@ -185,7 +186,7 @@ export default function TutorAvailability({ profile, slots, auth }) {
                                 <AddSlotForm form={form} onSubmit={submitSlot} />
                             </div>
                             <div className="lg:col-span-3">
-                                <SlotList slots={slots} onDelete={deleteSlot} />
+                                <SlotList slots={props.slots} onDelete={deleteSlot} />
                             </div>
                         </div>
                     </div>

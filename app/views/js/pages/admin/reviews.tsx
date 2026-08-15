@@ -1,37 +1,38 @@
-import { Head, router, usePage } from "@inertiajs/react";
-import { useState } from "react";
-import { Check, X, Clock, Inbox, UserRound } from "lucide-react";
+import { Head, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Check, X, Clock, Inbox, UserRound } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import Avatar from "@/components/larnr/avatar.jsx";
-import { FORMAT_LABELS, LEVEL_LABELS, formatDateTime } from "@/utils/tutor.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import Avatar from '@/components/larnr/avatar';
+import { FORMAT_LABELS, LEVEL_LABELS, formatDateTime } from '@/utils/tutor';
+import { displayAmount } from '@/utils/currency';
+import type { AdminReviewsProps, Review, AuthProps } from '@/types';
 
 const FIELD_LABELS = {
-    full_name: "Full name",
-    headline: "Headline",
-    bio: "Bio",
-    city: "City",
-    format: "Format",
-    experience_level: "Experience level",
-    hourly_rate: "Hourly rate",
-    currency: "Currency",
-};
+    full_name: 'Full name',
+    headline: 'Headline',
+    bio: 'Bio',
+    city: 'City',
+    format: 'Format',
+    experience_level: 'Experience level',
+    hourly_rate: 'Hourly rate',
+    currency: 'Currency',
+} as const;
 
 const STATUS_BADGE = {
-    PENDING: "badge-warning",
-    APPROVED: "badge-success",
-    REJECTED: "badge-neutral",
-};
+    PENDING: 'badge-warning',
+    APPROVED: 'badge-success',
+    REJECTED: 'badge-neutral',
+} as const;
 
-function displayValue(field, value, currency, auth) {
-    if (value === null || value === undefined || value === "") return "—";
-    if (field === "format") return FORMAT_LABELS[value] ?? value;
-    if (field === "experience_level") return LEVEL_LABELS[value] ?? value;
-    if (field === "hourly_rate") {
-        const amount = displayAmount(value, currency ?? "USD", auth);
+function displayValue(field: string, value: string | number | null | undefined, currency: string | undefined, auth: AuthProps) {
+    if (value === null || value === undefined || value === '') return '—';
+    if (field === 'format') return FORMAT_LABELS[value as keyof typeof FORMAT_LABELS] ?? value;
+    if (field === 'experience_level') return LEVEL_LABELS[value as keyof typeof LEVEL_LABELS] ?? value;
+    if (field === 'hourly_rate') {
+        const amount = displayAmount(Number(value), currency ?? 'USD', auth);
         return (
             <>
                 {amount.text}
@@ -42,28 +43,28 @@ function displayValue(field, value, currency, auth) {
     return value;
 }
 
-function avatarChanged(review) {
-    const live = review.live?.avatar_url;
-    const proposed = review.proposed.avatar_url;
-    return proposed && proposed !== live;
+function avatarChanged(review: Review): boolean {
+    const live = review.live?.avatar_url as string | undefined;
+    const proposed = review.proposed.avatar_url as string | undefined;
+    return Boolean(proposed && proposed !== live);
 }
 
-function ReviewCard({ review, auth }) {
-    const isPending = review.status === "PENDING";
+function ReviewCard({ review, auth }: { review: Review; auth: AuthProps }) {
+    const isPending = review.status === 'PENDING';
 
     const approve = () => {
-        router.post("/admin/reviews/approve", { review: review.id }, { preserveScroll: true });
+        router.post('/admin/reviews/approve', { review: review.id }, { preserveScroll: true });
     };
 
     const reject = () => {
-        if (window.confirm("Reject this review? The public profile stays unchanged.")) {
-            router.post("/admin/reviews/reject", { review: review.id }, { preserveScroll: true });
+        if (window.confirm('Reject this review? The public profile stays unchanged.')) {
+            router.post('/admin/reviews/reject', { review: review.id }, { preserveScroll: true });
         }
     };
 
     const changes = Object.keys(FIELD_LABELS).filter(
         (field) =>
-            (review.proposed[field] ?? "") !== (review.live?.[field] ?? ""),
+            (review.proposed[field] ?? '') !== (review.live?.[field] ?? ''),
     );
 
     return (
@@ -84,7 +85,7 @@ function ReviewCard({ review, auth }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className={`badge badge-sm ${STATUS_BADGE[review.status] ?? "badge-neutral"}`}>
+                        <span className={`badge badge-sm ${STATUS_BADGE[review.status] ?? 'badge-neutral'}`}>
                             {review.status.toLowerCase()}
                         </span>
                     </div>
@@ -110,21 +111,21 @@ function ReviewCard({ review, auth }) {
                                 {changes.map((field) => (
                                     <tr key={field}>
                                         <td className="font-medium text-base-content/80">
-                                            {FIELD_LABELS[field]}
+                                            {FIELD_LABELS[field as keyof typeof FIELD_LABELS]}
                                         </td>
                                         <td className="text-base-content/60">
                                             {displayValue(
                                                 field,
-                                                review.live?.[field],
-                                                review.live?.currency,
+                                                review.live?.[field] as string | number | null,
+                                                review.live?.currency as string,
                                                 auth,
                                             )}
                                         </td>
                                         <td className="text-primary">
                                             {displayValue(
                                                 field,
-                                                review.proposed[field],
-                                                review.proposed.currency,
+                                                review.proposed[field] as string | number | null,
+                                                review.proposed.currency as string,
                                                 auth,
                                             )}
                                         </td>
@@ -135,15 +136,15 @@ function ReviewCard({ review, auth }) {
                                         <td className="font-medium text-base-content/80">Photo</td>
                                         <td className="text-base-content/60">
                                             <Avatar
-                                                src={review.live?.avatar_url}
-                                                name={review.live?.full_name}
+                                                src={review.live?.avatar_url as string}
+                                                name={review.live?.full_name as string}
                                                 className="size-10"
                                                 textClass="text-sm"
                                             />
                                         </td>
                                         <td className="text-primary">
                                             <Avatar
-                                                src={review.proposed.avatar_url}
+                                                src={review.proposed.avatar_url as string}
                                                 name={review.tutorName}
                                                 className="size-10"
                                                 textClass="text-sm"
@@ -156,9 +157,9 @@ function ReviewCard({ review, auth }) {
                     </div>
                 )}
 
-                {review.status !== "PENDING" && (
+                {review.status !== 'PENDING' && (
                     <p className="text-xs text-base-content/50">
-                        {review.reviewer ? `Reviewed by ${review.reviewer}` : "Reviewed"} ·{" "}
+                        {review.reviewer ? `Reviewed by ${review.reviewer}` : 'Reviewed'} ·{' '}
                         {formatDateTime(review.reviewed_at)}
                     </p>
                 )}
@@ -184,19 +185,19 @@ function ReviewCard({ review, auth }) {
     );
 }
 
-export default function AdminReviews({ reviews, errors }) {
-    const { auth } = usePage().props;
-    const [filter, setFilter] = useState("PENDING");
+export default function AdminReviews(props: AdminReviewsProps) {
+    const { auth } = usePage().props as { auth: AuthProps };
+    const [filter, setFilter] = useState('PENDING');
 
     const counts = {
-        PENDING: reviews.filter((r) => r.status === "PENDING").length,
-        APPROVED: reviews.filter((r) => r.status === "APPROVED").length,
-        REJECTED: reviews.filter((r) => r.status === "REJECTED").length,
-        ALL: reviews.length,
+        PENDING: props.reviews.filter((r) => r.status === 'PENDING').length,
+        APPROVED: props.reviews.filter((r) => r.status === 'APPROVED').length,
+        REJECTED: props.reviews.filter((r) => r.status === 'REJECTED').length,
+        ALL: props.reviews.length,
     };
 
-    const visible = filter === "ALL" ? reviews : reviews.filter((r) => r.status === filter);
-    const tabs = ["PENDING", "APPROVED", "REJECTED", "ALL"];
+    const visible = filter === 'ALL' ? props.reviews : props.reviews.filter((r) => r.status === filter);
+    const tabs = ['PENDING', 'APPROVED', 'REJECTED', 'ALL'];
 
     return (
         <div className="min-h-screen bg-base-100 text-base-content">
@@ -228,13 +229,13 @@ export default function AdminReviews({ reviews, errors }) {
                                 onClick={() => setFilter(tab)}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                     filter === tab
-                                        ? "bg-primary/15 text-primary"
-                                        : "bg-base-content/5 text-base-content/60 hover:bg-base-content/10 hover:text-base-content"
+                                        ? 'bg-primary/15 text-primary'
+                                        : 'bg-base-content/5 text-base-content/60 hover:bg-base-content/10 hover:text-base-content'
                                 }`}
                             >
-                                {tab === "ALL"
+                                {tab === 'ALL'
                                     ? `All (${counts.ALL})`
-                                    : `${tab.charAt(0) + tab.slice(1).toLowerCase()} (${counts[tab]})`}
+                                    : `${tab.charAt(0) + tab.slice(1).toLowerCase()} (${counts[tab as keyof typeof counts]})`}
                             </button>
                         ))}
                     </div>
@@ -244,9 +245,9 @@ export default function AdminReviews({ reviews, errors }) {
                             <div className="rounded-2xl border border-dashed border-base-content/10 p-12 text-center">
                                 <Inbox className="mx-auto size-8 text-base-content/40" />
                                 <p className="mt-3 text-sm text-base-content/50">
-                                    {filter === "PENDING"
-                                        ? "No pending reviews. You're all caught up."
-                                        : "No reviews in this category yet."}
+                                    {filter === 'PENDING'
+                                        ? 'No pending reviews. You\'re all caught up.'
+                                        : 'No reviews in this category yet.'}
                                 </p>
                             </div>
                         )}

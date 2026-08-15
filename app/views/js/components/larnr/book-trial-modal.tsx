@@ -1,26 +1,41 @@
-import { useEffect } from "react";
-import { useForm } from "@inertiajs/react";
-import { X, Sparkles, CalendarClock } from "lucide-react";
+import { useEffect } from 'react';
+import { useForm } from '@inertiajs/react';
+import { X, Sparkles, CalendarClock } from 'lucide-react';
 
-export default function BookTrialModal({ tutor, subjects, onClose }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        tutor_id: tutor?.id ?? "",
-        subject_id: "",
-        scheduled_at: "",
-        notes: "",
+import type { Tutor as TutorType, SubjectItem } from '@/types';
+
+interface FormData {
+    tutor_id: string;
+    subject_id: string;
+    scheduled_at: string;
+    notes: string;
+}
+
+interface Props {
+    tutor: TutorType | null;
+    subjects: SubjectItem[];
+    onClose: () => void;
+}
+
+export default function BookTrialModal({ tutor, subjects, onClose }: Props) {
+    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
+        tutor_id: tutor?.id ?? '',
+        subject_id: '',
+        scheduled_at: '',
+        notes: '',
     });
 
     useEffect(() => {
         if (tutor) {
-            reset("subject_id", "scheduled_at", "notes");
-            setData("tutor_id", tutor.id);
+            reset('subject_id', 'scheduled_at', 'notes');
+            setData('tutor_id', tutor.id);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tutor?.id]);
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/enquiry", {
+        post('/enquiry', {
             onSuccess: () => {
                 onClose();
                 reset();
@@ -58,7 +73,7 @@ export default function BookTrialModal({ tutor, subjects, onClose }) {
                         <select
                             className="select appearance-none w-full bg-base-content/5"
                             value={data.subject_id}
-                            onChange={(e) => setData("subject_id", e.target.value)}
+                            onChange={(e) => setData('subject_id', e.target.value)}
                         >
                             <option value="">Any subject</option>
                             {subjects.map((s) => (
@@ -77,7 +92,7 @@ export default function BookTrialModal({ tutor, subjects, onClose }) {
                                 type="datetime-local"
                                 className="grow"
                                 value={data.scheduled_at}
-                                onChange={(e) => setData("scheduled_at", e.target.value)}
+                                onChange={(e) => setData('scheduled_at', e.target.value)}
                             />
                         </label>
                     </div>
@@ -89,7 +104,7 @@ export default function BookTrialModal({ tutor, subjects, onClose }) {
                             rows={3}
                             placeholder="Tell the tutor about your goals, level, and what you'd like to cover..."
                             value={data.notes}
-                            onChange={(e) => setData("notes", e.target.value)}
+                            onChange={(e) => setData('notes', e.target.value)}
                         />
                         {errors.notes && (
                             <span className="text-xs text-error">{errors.notes}</span>
@@ -109,7 +124,7 @@ export default function BookTrialModal({ tutor, subjects, onClose }) {
                             className="btn btn-primary rounded-full px-6"
                             disabled={processing}
                         >
-                            {processing ? "Sending..." : "Send Request"}
+                            {processing ? 'Sending...' : 'Send Request'}
                         </button>
                     </div>
                 </form>

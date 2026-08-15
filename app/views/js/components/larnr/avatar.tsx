@@ -1,6 +1,13 @@
-import { getInitials, avatarSrc } from "@/utils/index.jsx";
+import { getInitials, avatarSrc } from '@/utils/index';
 
-export default function Avatar({ src, name, className = "size-14", textClass = "text-base" }) {
+interface AvatarProps {
+    src: string | null | undefined;
+    name: string;
+    className?: string;
+    textClass?: string;
+}
+
+export default function Avatar({ src, name, className = 'size-14', textClass = 'text-base' }: AvatarProps) {
     const resolved = avatarSrc(src);
 
     if (!resolved) {
@@ -8,7 +15,7 @@ export default function Avatar({ src, name, className = "size-14", textClass = "
             <span
                 className={`grid shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 font-bold text-white ${textClass} ${className}`}
             >
-                {getInitials(name || "U")}
+                {getInitials(name || 'U')}
             </span>
         );
     }
@@ -16,7 +23,7 @@ export default function Avatar({ src, name, className = "size-14", textClass = "
     return (
         <img
             src={resolved}
-            alt={name || "Avatar"}
+            alt={name || 'Avatar'}
             className={`shrink-0 rounded-2xl object-cover ${className}`}
         />
     );

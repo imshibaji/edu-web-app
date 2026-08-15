@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from '@leafphp/vite-plugin/inertia-helpers';
 
-import { initTheme } from '@/utils/theme.jsx';
+import { initTheme } from '@/utils/theme';
 
 initTheme();
 
@@ -14,8 +14,8 @@ createInertiaApp({
   title: (title) => (title ? `${title} · ${appName}` : appName),
   resolve: (name) =>
     resolvePageComponent(
-      `./pages/${name}.jsx`,
-      import.meta.glob('./pages/**/*.jsx')
+      `./pages/${name}.tsx`,
+      import.meta.glob('./pages/**/*.tsx')
     ),
   setup({ el, App, props }) {
     createRoot(el).render(<App {...props} />);

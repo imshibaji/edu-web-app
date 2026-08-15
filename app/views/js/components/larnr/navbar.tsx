@@ -1,45 +1,50 @@
-import { Link, router, usePage } from "@inertiajs/react";
-import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User } from "lucide-react";
+import { Link, router, usePage } from '@inertiajs/react';
+import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User } from 'lucide-react';
 
-import { getInitials } from "@/utils/index.jsx";
-import { CURRENCIES, setCurrencyCookie, getCurrencyCookie } from "@/utils/currency.jsx";
-import ThemeToggle from "@/components/larnr/theme-toggle.jsx";
-import ChangeCurrency from "./change-currency";
+import { getInitials } from '@/utils/index';
+import { CURRENCIES, setCurrencyCookie, getCurrencyCookie } from '@/utils/currency';
+import ThemeToggle from '@/components/larnr/theme-toggle';
+import ChangeCurrency from './change-currency';
+import type { AuthProps, NavLink } from '@/types';
 
-export default function Navbar({ auth }) {
+interface Props {
+    auth: AuthProps;
+}
+
+export default function Navbar({ auth }: Props) {
     const { url } = usePage();
     const user = auth.user;
-    const isTutor = user?.role === "TUTOR";
-    const dashboardHref = isTutor ? "/tutor" : "/dashboard";
+    const isTutor = user?.role === 'TUTOR';
+    const dashboardHref = isTutor ? '/tutor' : '/dashboard';
 
-    const logout = (e) => {
+    const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        router.post("/auth/logout");
+        router.post('/auth/logout');
     };
 
-    const navLinks = isTutor
+    const navLinks: NavLink[] = isTutor
         ? [
-              { label: "Dashboard", href: "/tutor" },
-              { label: "Availability", href: "/tutor/availability" },
-              { label: "Subjects", href: "/tutor/subjects" },
-              { label: "Enquiries", href: "/tutor/enquiries" },
-              { label: "Profile", href: "/tutor/profile" },
-          ]
-        : user?.role === "ADMIN"
-          ? [
-                { label: "Dashboard", href: "/dashboard" },
-                { label: "Reviews", href: "/admin/reviews" },
-                { label: "Activity", href: "/admin/activities" },
-            ]
-          : [
-                { label: "Find Tutors", href: "/#educators" },
-                { label: "Subjects", href: "/#specialties" },
-                { label: "Interview Prep", href: "/#interview" },
-                { label: "About", href: "/#about" },
-            ];
+            { label: 'Dashboard', href: '/tutor' },
+            { label: 'Availability', href: '/tutor/availability' },
+            { label: 'Subjects', href: '/tutor/subjects' },
+            { label: 'Enquiries', href: '/tutor/enquiries' },
+            { label: 'Profile', href: '/tutor/profile' },
+        ]
+        : user?.role === 'ADMIN'
+        ? [
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Reviews', href: '/admin/reviews' },
+            { label: 'Activity', href: '/admin/activities' },
+        ]
+        : [
+            { label: 'Find Tutors', href: '/#educators' },
+            { label: 'Subjects', href: '/#specialties' },
+            { label: 'Interview Prep', href: '/#interview' },
+            { label: 'About', href: '/#about' },
+        ];
 
-    const isActive = (href) => {
-        if (href === "/tutor") return url === "/tutor" || url === "/tutor/";
+    const isActive = (href: string): boolean => {
+        if (href === '/tutor') return url === '/tutor' || url === '/tutor/';
         return url === href || url.startsWith(href);
     };
 
@@ -61,8 +66,8 @@ export default function Navbar({ auth }) {
                                         href={l.href}
                                         className={`text-sm ${
                                             isActive(l.href)
-                                                ? "text-primary"
-                                                : "text-base-content"
+                                                ? 'text-primary'
+                                                : 'text-base-content'
                                         }`}
                                     >
                                         {l.label}
@@ -107,8 +112,8 @@ export default function Navbar({ auth }) {
                                     href={l.href}
                                     className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                         isActive(l.href)
-                                            ? "bg-primary/10 font-medium text-primary"
-                                            : "text-base-content/80 hover:bg-base-content/5 hover:text-base-content"
+                                            ? 'bg-primary/10 font-medium text-primary'
+                                            : 'text-base-content/80 hover:bg-base-content/5 hover:text-base-content'
                                     }`}
                                 >
                                     {l.label}
@@ -125,7 +130,7 @@ export default function Navbar({ auth }) {
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost gap-2 px-1.5">
                                 <span className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
-                                    {getInitials(user.name || user.email || "U")}
+                                    {getInitials(user.name || user.email || 'U')}
                                 </span>
                                 <ChevronDown className="hidden size-4 text-base-content/60 sm:block" />
                             </div>
@@ -148,7 +153,7 @@ export default function Navbar({ auth }) {
                                 </li>
                                 <li>
                                     <span className="block px-4 py-2 text-xs text-base-content/70">
-                                        Base currency: {user?.base_currency ?? "INR"}
+                                        Base currency: {user?.base_currency ?? 'INR'}
                                     </span>
                                 </li>
                                 <li>

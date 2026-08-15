@@ -1,19 +1,25 @@
-import { Head, Link, useForm } from "@inertiajs/react";
-import { GraduationCap, Mail, Lock, AlertCircle } from "lucide-react";
+import { Head, Link, useForm } from '@inertiajs/react';
+import { GraduationCap, Mail, Lock, AlertCircle } from 'lucide-react';
 
-import ThemeToggle from "@/components/larnr/theme-toggle.jsx";
+import ThemeToggle from '@/components/larnr/theme-toggle';
+
+interface FormData {
+    email: string;
+    password: string;
+    remember: boolean;
+}
 
 export default function Login() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: "",
-        password: "",
+    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
+        email: '',
+        password: '',
         remember: false,
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/auth/login", {
-            onFinish: () => reset("password"),
+        post('/auth/login', {
+            onFinish: () => reset('password'),
         });
     };
 
@@ -64,7 +70,7 @@ export default function Login() {
                                 autoComplete="username"
                                 placeholder="you@example.com"
                                 value={data.email}
-                                onChange={(e) => setData("email", e.target.value)}
+                                onChange={(e) => setData('email', e.target.value)}
                             />
                         </label>
                     </div>
@@ -79,7 +85,7 @@ export default function Login() {
                                 autoComplete="current-password"
                                 placeholder="••••••••"
                                 value={data.password}
-                                onChange={(e) => setData("password", e.target.value)}
+                                onChange={(e) => setData('password', e.target.value)}
                             />
                         </label>
                         {errors.password && (
@@ -92,12 +98,12 @@ export default function Login() {
                         className="btn btn-primary mt-2 w-full rounded-full"
                         disabled={processing}
                     >
-                        {processing ? "Signing in..." : "Log in"}
+                        {processing ? 'Signing in...' : 'Log in'}
                     </button>
                 </form>
 
                 <div className="mt-6 text-center text-sm text-base-content/60">
-                    Don't have an account?{" "}
+                    Don't have an account?{' '}
                     <Link
                         href="/auth/register"
                         className="font-medium text-primary hover:text-primary"

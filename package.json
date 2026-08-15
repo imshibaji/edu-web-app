@@ -24,9 +24,12 @@
     "devDependencies": {
         "@leafphp/vite-plugin": "^0.2.1",
         "@tailwindcss/vite": "^4.3.3",
+        "@types/react": "^19.1.0",
+        "@types/react-dom": "^19.1.0",
         "@vitejs/plugin-react": "^6.0.5",
         "daisyui": "^5.7.17",
         "tailwindcss": "^4.3.3",
+        "typescript": "^5.8.2",
         "vite": "^8.2.1"
     }
 }

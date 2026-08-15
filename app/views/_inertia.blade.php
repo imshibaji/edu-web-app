@@ -25,7 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <title inertia>{{ _env('APP_NAME', 'Larnr') }}</title>
     @viteReactRefresh
-    @vite(['/js/app.jsx', "/js/pages/{$page['component']}.jsx"])
+    @vite(['/js/app.tsx', "/js/pages/{$page['component']}.tsx"])
     @inertiaHead
 </head>
 

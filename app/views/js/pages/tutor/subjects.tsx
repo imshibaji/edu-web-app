@@ -1,22 +1,23 @@
-import { Head, router, useForm } from "@inertiajs/react";
-import { useState } from "react";
-import { Plus, Trash2, Pencil, X, Check, BookOpen } from "lucide-react";
+import { Head, router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { Plus, Trash2, Pencil, X, Check, BookOpen } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import { getInitials } from "@/utils/index.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import { getInitials } from '@/utils/index';
+import { displayAmount } from '@/utils/currency';
+import type { TutorSubjectsProps, TutorSubject, CatalogSubject, AuthProps } from '@/types';
 
-function AddSubjectForm({ catalog, currency, errors }) {
+function AddSubjectForm({ catalog, currency, errors }: { catalog: CatalogSubject[]; currency: string; errors: Record<string, string> }) {
     const { data, setData, post, processing, reset } = useForm({
-        subjectId: "",
-        rate: "",
+        subjectId: '',
+        rate: '',
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/tutor/subjects", {
+        post('/tutor/subjects', {
             onSuccess: () => reset(),
             preserveScroll: true,
         });
@@ -44,7 +45,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                             name="subjectId"
                             className="select appearance-none w-full rounded-xl border-base-content/10 bg-base-content/5"
                             value={data.subjectId}
-                            onChange={(e) => setData("subjectId", e.target.value)}
+                            onChange={(e) => setData('subjectId', e.target.value)}
                         >
                             <option value="">Choose a subject…</option>
                             {catalog.map((s) => (
@@ -62,7 +63,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                         <legend className="fieldset-legend">Charge per hour</legend>
                         <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
                             <span className="text-base-content/50">
-                                {currency === "INR" ? "₹" : `${currency} `}
+                                {currency === 'INR' ? '₹' : `${currency} `}
                             </span>
                             <input
                                 type="number"
@@ -71,7 +72,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                                 step="0.01"
                                 placeholder="e.g. 30"
                                 value={data.rate}
-                                onChange={(e) => setData("rate", e.target.value)}
+                                onChange={(e) => setData('rate', e.target.value)}
                             />
                         </label>
                         {errors?.rate && <span className="text-xs text-error">{errors.rate}</span>}
@@ -82,7 +83,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                         className="btn btn-primary btn-sm w-full rounded-full"
                         disabled={processing || catalog.length === 0}
                     >
-                        {processing ? "Adding…" : "Add subject"}
+                        {processing ? 'Adding…' : 'Add subject'}
                     </button>
                 </form>
             </div>
@@ -90,16 +91,16 @@ function AddSubjectForm({ catalog, currency, errors }) {
     );
 }
 
-function SubjectRow({ subject, currency, auth, onRemove }) {
+function SubjectRow({ subject, currency, auth, onRemove }: { subject: TutorSubject; currency: string; auth: AuthProps; onRemove: (id: string) => void }) {
     const [editing, setEditing] = useState(false);
     const { data, setData, post, processing } = useForm({
         subjectId: subject.id,
         rate: subject.rate_cents / 100,
     });
 
-    const save = (e) => {
+    const save = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/tutor/subjects/update", {
+        post('/tutor/subjects/update', {
             preserveScroll: true,
             onSuccess: () => setEditing(false),
         });
@@ -122,7 +123,7 @@ function SubjectRow({ subject, currency, auth, onRemove }) {
                             <form onSubmit={save} className="mt-1 flex items-center gap-2">
                                 <label className="input input-sm w-32 rounded-xl border-base-content/10 bg-base-content/5">
                                     <span className="text-base-content/50">
-                                        {currency === "INR" ? "₹" : `${currency} `}
+                                        {currency === 'INR' ? '₹' : `${currency} `}
                                     </span>
                                     <input
                                         type="number"
@@ -130,7 +131,7 @@ function SubjectRow({ subject, currency, auth, onRemove }) {
                                         min="0"
                                         step="0.01"
                                         value={data.rate}
-                                        onChange={(e) => setData("rate", e.target.value)}
+                                        onChange={(e) => setData('rate', e.target.value)}
                                         autoFocus
                                     />
                                 </label>
@@ -163,7 +164,7 @@ function SubjectRow({ subject, currency, auth, onRemove }) {
                                         )}
                                     </>
                                 ) : (
-                                    "Rate on request"
+                                    'Rate on request'
                                 )}
                             </p>
                         )}
@@ -193,9 +194,9 @@ function SubjectRow({ subject, currency, auth, onRemove }) {
     );
 }
 
-export default function TutorSubjects({ profile, subjects, catalog, errors, auth }) {
-    const removeSubject = (id) => {
-        router.post("/tutor/subjects/remove", { subjectId: id }, { preserveScroll: true });
+export default function TutorSubjects(props: TutorSubjectsProps) {
+    const removeSubject = (id: string) => {
+        router.post('/tutor/subjects/remove', { subjectId: id }, { preserveScroll: true });
     };
 
     return (
@@ -207,7 +208,7 @@ export default function TutorSubjects({ profile, subjects, catalog, errors, auth
             </div>
 
             <div className="relative z-10">
-                <Navbar auth={auth} />
+                <Navbar auth={props.auth} />
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
@@ -223,17 +224,17 @@ export default function TutorSubjects({ profile, subjects, catalog, errors, auth
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
-                                    {getInitials(profile.name)}
+                                    {getInitials(props.profile.name)}
                                 </span>
                                 <span className="text-sm font-medium text-base-content/80">
-                                    {profile.name}
+                                    {props.profile.name}
                                 </span>
                             </div>
                         </div>
 
                         <div className="grid gap-6 lg:grid-cols-5">
                             <div className="lg:col-span-2">
-                                <AddSubjectForm catalog={catalog} currency={profile.currency} errors={errors} />
+                                <AddSubjectForm catalog={props.catalog} currency={props.profile.currency} errors={props.errors} />
                             </div>
 
                             <div className="lg:col-span-3">
@@ -243,13 +244,13 @@ export default function TutorSubjects({ profile, subjects, catalog, errors, auth
                                             Your subjects
                                         </h2>
                                         <p className="text-xs text-base-content/50">
-                                            {subjects.length} total · shown on your public profile
+                                            {props.subjects.length} total · shown on your public profile
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="mt-4 space-y-2">
-                                    {subjects.length === 0 && (
+                                    {props.subjects.length === 0 && (
                                         <div className="rounded-xl border border-dashed border-base-content/10 p-10 text-center">
                                             <BookOpen className="mx-auto size-8 text-base-content/40" />
                                             <p className="mt-2 text-sm text-base-content/50">
@@ -258,12 +259,12 @@ export default function TutorSubjects({ profile, subjects, catalog, errors, auth
                                             </p>
                                         </div>
                                     )}
-                                    {subjects.map((s) => (
+                                    {props.subjects.map((s) => (
                                         <SubjectRow
                                             key={s.id}
                                             subject={s}
-                                            currency={profile.currency}
-                                            auth={auth}
+                                            currency={props.profile.currency}
+                                            auth={props.auth}
                                             onRemove={removeSubject}
                                         />
                                     ))}

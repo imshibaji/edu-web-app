@@ -1,29 +1,30 @@
-import { Head } from "@inertiajs/react";
-import { useState } from "react";
-import { Inbox, CalendarCheck, FileText } from "lucide-react";
+import { Head } from '@inertiajs/react';
+import { useState } from 'react';
+import { Inbox, CalendarCheck, FileText } from 'lucide-react';
 
-import Navbar from "@/components/larnr/navbar.jsx";
-import Footer from "@/components/larnr/footer.jsx";
-import FlashToast from "@/components/larnr/flash-toast.jsx";
-import { getInitials } from "@/utils/index.jsx";
-import { STATUS_BADGE, statusLabel, formatDateTime } from "@/utils/tutor.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import Navbar from '@/components/larnr/navbar';
+import Footer from '@/components/larnr/footer';
+import FlashToast from '@/components/larnr/flash-toast';
+import { getInitials } from '@/utils/index';
+import { STATUS_BADGE, statusLabel, formatDateTime } from '@/utils/tutor';
+import { displayAmount } from '@/utils/currency';
+import type { TutorEnquiriesProps, Enquiry, AuthProps } from '@/types';
 
 const FILTERS = [
-    { key: "ALL", label: "All" },
-    { key: "PENDING_PAYMENT", label: "Pending" },
-    { key: "CONFIRMED", label: "Confirmed" },
-    { key: "COMPLETED", label: "Completed" },
-    { key: "CANCELLED", label: "Cancelled" },
+    { key: 'ALL', label: 'All' },
+    { key: 'PENDING_PAYMENT', label: 'Pending' },
+    { key: 'CONFIRMED', label: 'Confirmed' },
+    { key: 'COMPLETED', label: 'Completed' },
+    { key: 'CANCELLED', label: 'Cancelled' },
 ];
 
-export default function TutorEnquiries({ profile, enquiries, auth }) {
-    const [filter, setFilter] = useState("ALL");
+export default function TutorEnquiries(props: TutorEnquiriesProps) {
+    const [filter, setFilter] = useState('ALL');
 
     const visible =
-        filter === "ALL"
-            ? enquiries
-            : enquiries.filter((e) => e.status === filter);
+        filter === 'ALL'
+            ? props.enquiries
+            : props.enquiries.filter((e) => e.status === filter);
 
     return (
         <div className="min-h-screen bg-base-100 text-base-content">
@@ -34,7 +35,7 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
             </div>
 
             <div className="relative z-10">
-                <Navbar auth={auth} />
+                <Navbar auth={props.auth} />
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
@@ -50,18 +51,18 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
-                                    {getInitials(profile.name)}
+                                    {getInitials(props.profile.name)}
                                 </span>
-                                <span className="text-sm font-medium text-base-content/80">{profile.name}</span>
+                                <span className="text-sm font-medium text-base-content/80">{props.profile.name}</span>
                             </div>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
                             {FILTERS.map((f) => {
                                 const count =
-                                    f.key === "ALL"
-                                        ? enquiries.length
-                                        : enquiries.filter((e) => e.status === f.key).length;
+                                    f.key === 'ALL'
+                                        ? props.enquiries.length
+                                        : props.enquiries.filter((e) => e.status === f.key).length;
                                 const active = filter === f.key;
                                 return (
                                     <button
@@ -69,14 +70,14 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                                         onClick={() => setFilter(f.key)}
                                         className={`btn btn-sm rounded-full ${
                                             active
-                                                ? "btn-primary"
-                                                : "border-base-content/10 bg-base-content/[0.04] text-base-content/60 hover:bg-base-content/5 hover:text-base-content"
+                                                ? 'btn-primary'
+                                                : 'border-base-content/10 bg-base-content/[0.04] text-base-content/60 hover:bg-base-content/5 hover:text-base-content'
                                         }`}
                                     >
                                         {f.label}
                                         <span
                                             className={`badge badge-sm ${
-                                                active ? "badge-neutral" : "badge-outline"
+                                                active ? 'badge-neutral' : 'badge-outline'
                                             }`}
                                         >
                                             {count}
@@ -109,15 +110,15 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                                                     >
                                                         <Inbox className="mx-auto size-8 text-base-content/40" />
                                                         <p className="mt-2 text-sm text-base-content/50">
-                                                            {filter === "ALL"
-                                                                ? "No enquiries yet."
+                                                            {filter === 'ALL'
+                                                                ? 'No enquiries yet.'
                                                                 : `No ${statusLabel(filter).toLowerCase()} enquiries.`}
                                                         </p>
                                                     </td>
                                                 </tr>
                                             )}
                                             {visible.map((e) => {
-                                                const amount = displayAmount(e.amount, e.currency, auth);
+                                                const amount = displayAmount(e.amount, e.currency, props.auth);
                                                 return (
                                                     <tr key={e.id} className="border-base-content/10 align-top">
                                                     <td>
@@ -132,7 +133,7 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                                                         )}
                                                     </td>
                                                     <td className="text-sm text-base-content/80">
-                                                        {e.subject ?? "Any"}
+                                                        {e.subject ?? 'Any'}
                                                     </td>
                                                     <td className="text-sm text-base-content/80">
                                                         <span className="flex items-center gap-1.5">
@@ -151,13 +152,13 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                                                                 )}
                                                             </>
                                                         ) : (
-                                                            "TBD"
+                                                            'TBD'
                                                         )}
                                                     </td>
                                                     <td>
                                                         <span
                                                             className={`badge badge-sm ${
-                                                                STATUS_BADGE[e.status] ?? "badge-neutral"
+                                                                STATUS_BADGE[e.status as keyof typeof STATUS_BADGE] ?? 'badge-neutral'
                                                             }`}
                                                         >
                                                             {statusLabel(e.status)}

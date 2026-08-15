@@ -1,32 +1,42 @@
-import { Link } from "@inertiajs/react";
-import { GraduationCap, AtSign, Globe, Share2, Rss } from "lucide-react";
+import { Link } from '@inertiajs/react';
+import { GraduationCap, AtSign, Globe, Share2, Rss } from 'lucide-react';
+
+interface FooterLink {
+    label: string;
+    href: string;
+}
+
+interface FooterColumn {
+    title: string;
+    links: FooterLink[];
+}
 
 export default function Footer() {
-    const columns = [
+    const columns: FooterColumn[] = [
         {
-            title: "Company",
+            title: 'Company',
             links: [
-                { label: "About", href: "/#about" },
-                { label: "Careers", href: "/#about" },
-                { label: "Contact", href: "/#about" },
-                { label: "Privacy Policy", href: "/#about" },
+                { label: 'About', href: '/#about' },
+                { label: 'Careers', href: '/#about' },
+                { label: 'Contact', href: '/#about' },
+                { label: 'Privacy Policy', href: '/#about' },
             ],
         },
         {
-            title: "Resources",
+            title: 'Resources',
             links: [
-                { label: "Find Tutors", href: "/#educators" },
-                { label: "Subjects", href: "/#specialties" },
-                { label: "Tutor Interview Prep", href: "/#interview" },
-                { label: "Become a Tutor", href: "/auth/register" },
+                { label: 'Find Tutors', href: '/#educators' },
+                { label: 'Subjects', href: '/#specialties' },
+                { label: 'Tutor Interview Prep', href: '/#interview' },
+                { label: 'Become a Tutor', href: '/auth/register' },
             ],
         },
         {
-            title: "Support",
+            title: 'Support',
             links: [
-                { label: "Help Center", href: "/#about" },
-                { label: "Terms of Service", href: "/#about" },
-                { label: "Trust & Safety", href: "/#about" },
+                { label: 'Help Center', href: '/#about' },
+                { label: 'Terms of Service', href: '/#about' },
+                { label: 'Trust & Safety', href: '/#about' },
             ],
         },
     ];
