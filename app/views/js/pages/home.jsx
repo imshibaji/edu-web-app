@@ -8,28 +8,25 @@ import {
     BadgeCheck,
     Users,
     Clock,
-    TrendingUp,
+    ShieldCheck,
     Globe,
     GraduationCap,
-    ShieldCheck,
     BookOpenCheck,
     MessageCircle,
     Sparkles,
     ArrowRight,
     ChevronRight,
+    TrendingUp
 } from "lucide-react";
+
+import { displayAmount, getCurrencyCookie, convertCents, RATES, SYMBOLS } from "@/utils/currency.jsx";
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
 import TutorCard from "@/components/larnr/tutor-card.jsx";
 import BookTrialModal from "@/components/larnr/book-trial-modal.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
-
-const FORMATS = [
-    { value: "", label: "All formats" },
-    { value: "ONLINE", label: "Online" },
-    { value: "IN_PERSON", label: "In-person" },
-    { value: "BOTH", label: "Online & In-person" },
-];
+import Hero from "@/components/larnr/hero";
+import SectionHeading from "@/components/larnr/section-heading";
 
 const LEVELS = [
     { value: "", label: "All levels" },
@@ -37,20 +34,6 @@ const LEVELS = [
     { value: "MID", label: "Mid" },
     { value: "SENIOR", label: "Senior" },
 ];
-
-function SectionHeading({ eyebrow, title, description }) {
-    return (
-        <div className="mx-auto max-w-2xl text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                {eyebrow}
-            </span>
-            <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
-                {title}
-            </h2>
-            {description && <p className="mt-4 text-base text-base-content/60">{description}</p>}
-        </div>
-    );
-}
 
 export default function Home(props) {
     const { tutors, total, cities, cityBreakdown, specialties, subjects, stats, filters, auth } =
@@ -156,7 +139,7 @@ export default function Home(props) {
         { label: "Total Educators", value: stats.totalTutors, icon: Users, accent: "text-primary" },
         { label: "Verified Tutors", value: stats.verifiedCount, icon: BadgeCheck, accent: "text-success" },
         { label: "Active Right Now", value: stats.activeNow, icon: Clock, accent: "text-secondary" },
-        { label: "Avg. Hourly Rate", value: `₹${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: "text-warning" },
+        { label: "Avg. Hourly Rate", value: `${getCurrencyCookie() === 'INR' ? '₹' : '$'}${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: "text-warning" },
         { label: "Cities Covered", value: stats.citiesCount, icon: Globe, accent: "text-info" },
     ];
 
@@ -177,123 +160,7 @@ export default function Home(props) {
                 <Navbar auth={auth} />
 
                 {/* ============ HERO ============ */}
-                <section className="relative overflow-hidden">
-                    <div className="mx-auto max-w-7xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24 lg:px-8">
-                        <div className="mx-auto max-w-5xl text-center">
-                            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary">
-                                <Sparkles className="size-3.5" />
-                                Connecting students with premium educators worldwide
-                            </span>
-
-                            <h1 className="font-display mt-6 text-4xl font-extrabold leading-tight tracking-tight text-base-content sm:text-6xl">
-                                Find Premium{" "}
-                                <span className="bg-gradient-to-r from-primary via-secondary to-secondary bg-clip-text text-transparent">
-                                    Tutors & Mentors
-                                </span>
-                            </h1>
-
-                            <p className="mx-auto mt-5 max-w-xl text-base text-base-content/60 sm:text-lg">
-                                Handpicked, interview-prepared educators for school subjects,
-                                exam prep, and beyond. Book a free trial lesson today.
-                            </p>
-
-                            {/* Search bar */}
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    router.get("/", {
-                                        keyword: query,
-                                        city,
-                                        format,
-                                        experience: level,
-                                        perPage,
-                                    });
-                                }}
-                                className="mt-8 flex flex-col gap-3 rounded-2xl border border-base-content/10 bg-base-content/5 p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full"
-                            >
-                                <div className="flex flex-1 items-center gap-2 px-3">
-                                    <Search className="size-5 shrink-0 text-primary" />
-                                    <input
-                                        type="text"
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        placeholder="Search by subject, tutor, or keyword..."
-                                        className="w-full bg-transparent py-2.5 text-sm text-base-content placeholder:text-base-content/50 focus:outline-none"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2 border-base-content/10 px-3 sm:border-l">
-                                    <MapPin className="size-5 shrink-0 text-primary" />
-                                    <select
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        className="w-full cursor-pointer bg-transparent py-2.5 text-sm text-base-content/80 focus:outline-none sm:w-40"
-                                    >
-                                        <option value="" className="bg-base-200">
-                                            All cities
-                                        </option>
-                                        {cities.map((c) => (
-                                            <option key={c} value={c} className="bg-base-200">
-                                                {c}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="flex items-center gap-2 border-base-content/10 px-3 sm:border-l">
-                                    {format === "ONLINE" ? (
-                                        <Video className="size-5 shrink-0 text-primary" />
-                                    ) : (
-                                        <Building2 className="size-5 shrink-0 text-primary" />
-                                    )}
-                                    <select
-                                        value={format}
-                                        onChange={(e) => setFormat(e.target.value)}
-                                        className="w-full cursor-pointer bg-transparent py-2.5 text-sm text-base-content/80 focus:outline-none sm:w-44"
-                                    >
-                                        {FORMATS.map((f) => (
-                                            <option key={f.value} value={f.value} className="bg-base-200">
-                                                {f.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <button type="submit" className="btn btn-primary rounded-full px-6">
-                                    Search
-                                </button>
-                            </form>
-
-                            {/* quick stat chips */}
-                            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-base-content/50">
-                                <span className="flex items-center gap-1.5">
-                                    <Users className="size-4 text-primary" />
-                                    <strong className="text-base-content/80">{stats.totalTutors}</strong>{" "}
-                                    educators
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <BadgeCheck className="size-4 text-success" />
-                                    <strong className="text-base-content/80">
-                                        {stats.verifiedCount}
-                                    </strong>{" "}
-                                    verified
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <Globe className="size-4 text-info" />
-                                    <strong className="text-base-content/80">
-                                        {stats.citiesCount}
-                                    </strong>{" "}
-                                    cities
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <TrendingUp className="size-4 text-amber-400" />
-                                    from{" "}
-                                    <strong className="text-base-content/80">
-                                        ₹{Math.round(stats.avgRate / 100)}
-                                    </strong>
-                                    /hr avg
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <Hero {...props} />
 
                 {/* ============ EDUCATORS ============ */}
                 <section id="educators" className="scroll-mt-24 py-14">

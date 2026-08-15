@@ -30,20 +30,20 @@ class SeedCommand extends Command
     ];
 
     protected $tutors = [
-        ['Ananya Chatterjee', 'tutor1@larnr.app', 'IIT Graduate | Math & Physics Mentor', 'Kolkata', 'BOTH', 'SENIOR', 2500, 4.9, ['Mathematics', 'Physics'], 'INR'],
-        ['Rahul Mehta', 'tutor2@larnr.app', 'Ex-Banker teaching Economics & Finance', 'Delhi', 'ONLINE', 'MID', 2000, 4.7, ['Economics', 'Accounting'], 'INR'],
-        ['Priya Sharma', 'tutor3@larnr.app', 'English & Creative Writing Coach', 'Mumbai', 'IN_PERSON', 'SENIOR', 2200, 4.8, ['English', 'IELTS Prep'], 'INR'],
-        ['Arjun Nair', 'tutor4@larnr.app', 'Full-Stack Developer | CS & Coding', 'Bangalore', 'ONLINE', 'SENIOR', 3000, 4.9, ['Computer Science', 'Coding & Programming'], 'INR'],
-        ['Sneha Iyer', 'tutor5@larnr.app', 'Chemistry PhD | JEE & NEET Specialist', 'Chennai', 'BOTH', 'SENIOR', 2800, 5.0, ['Chemistry', 'Biology'], 'INR'],
-        ['Vikram Singh', 'tutor6@larnr.app', 'Mechanical Engineer | Physics & Maths', 'Pune', 'ONLINE', 'MID', 1800, 4.5, ['Mathematics', 'Physics'], 'INR'],
-        ['Fatima Khan', 'tutor7@larnr.app', 'Biology & Medical Entrance Coach', 'Hyderabad', 'BOTH', 'MID', 1900, 4.6, ['Biology', 'Chemistry'], 'INR'],
-        ['Rohan Das', 'tutor8@larnr.app', 'History & Political Science Educator', 'Kolkata', 'IN_PERSON', 'ENTRY', 1200, 4.4, ['History', 'Geography'], 'INR'],
-        ['Neha Gupta', 'tutor9@larnr.app', 'Hindi Literature & Language Teacher', 'Delhi', 'IN_PERSON', 'ENTRY', 1000, 4.3, ['Hindi', 'English'], 'INR'],
+        ['Ananya Chatterjee', 'tutor1@larnr.app', 'IIT Graduate | Math & Physics Mentor', 'Kolkata', 'BOTH', 'SENIOR', 25000, 4.9, ['Mathematics', 'Physics'], 'INR'],
+        ['Rahul Mehta', 'tutor2@larnr.app', 'Ex-Banker teaching Economics & Finance', 'Delhi', 'ONLINE', 'MID', 20000, 4.7, ['Economics', 'Accounting'], 'INR'],
+        ['Priya Sharma', 'tutor3@larnr.app', 'English & Creative Writing Coach', 'Mumbai', 'IN_PERSON', 'SENIOR', 22000, 4.8, ['English', 'IELTS Prep'], 'INR'],
+        ['Arjun Nair', 'tutor4@larnr.app', 'Full-Stack Developer | CS & Coding', 'Bangalore', 'ONLINE', 'SENIOR', 30000, 4.9, ['Computer Science', 'Coding & Programming'], 'INR'],
+        ['Sneha Iyer', 'tutor5@larnr.app', 'Chemistry PhD | JEE & NEET Specialist', 'Chennai', 'BOTH', 'SENIOR', 28000, 5.0, ['Chemistry', 'Biology'], 'INR'],
+        ['Vikram Singh', 'tutor6@larnr.app', 'Mechanical Engineer | Physics & Maths', 'Pune', 'ONLINE', 'MID', 18000, 4.5, ['Mathematics', 'Physics'], 'INR'],
+        ['Fatima Khan', 'tutor7@larnr.app', 'Biology & Medical Entrance Coach', 'Hyderabad', 'BOTH', 'MID', 19000, 4.6, ['Biology', 'Chemistry'], 'INR'],
+        ['Rohan Das', 'tutor8@larnr.app', 'History & Political Science Educator', 'Kolkata', 'IN_PERSON', 'ENTRY', 12000, 4.4, ['History', 'Geography'], 'INR'],
+        ['Neha Gupta', 'tutor9@larnr.app', 'Hindi Literature & Language Teacher', 'Delhi', 'IN_PERSON', 'ENTRY', 10000, 4.3, ['Hindi', 'English'], 'INR'],
         ['Aditya Menon', 'tutor10@larnr.app', 'Music & Piano Instructor', 'Bangalore', 'IN_PERSON', 'ENTRY', 1500, 4.7, ['Music'], 'EUR'],
-        ['Kavya Reddy', 'tutor11@larnr.app', 'SAT & GRE Verbal Expert', 'Hyderabad', 'ONLINE', 'MID', 2100, 4.8, ['SAT Prep', 'English'], 'INR'],
-        ['Manish Patel', 'tutor12@larnr.app', 'Accounting & Business Studies Tutor', 'Ahmedabad', 'BOTH', 'MID', 1700, 4.5, ['Accounting', 'Economics'], 'INR'],
+        ['Kavya Reddy', 'tutor11@larnr.app', 'SAT & GRE Verbal Expert', 'Hyderabad', 'ONLINE', 'MID', 21000, 4.8, ['SAT Prep', 'English'], 'INR'],
+        ['Manish Patel', 'tutor12@larnr.app', 'Accounting & Business Studies Tutor', 'Ahmedabad', 'BOTH', 'MID', 17000, 4.5, ['Accounting', 'Economics'], 'INR'],
         ['Ishita Bose', 'tutor13@larnr.app', 'Computer Science Grad | Math Olympiad Coach', 'Mumbai', 'ONLINE', 'SENIOR', 2400, 4.8, ['Mathematics', 'Coding & Programming'], 'GBP'],
-        ['Farhan Ali', 'tutor14@larnr.app', 'Geography & Environmental Science', 'Pune', 'ONLINE', 'ENTRY', 1100, 4.2, ['Geography', 'Biology'], 'INR'],
+        ['Farhan Ali', 'tutor14@larnr.app', 'Geography & Environmental Science', 'Pune', 'ONLINE', 'ENTRY', 11000, 4.2, ['Geography', 'Biology'], 'INR'],
     ];
 
     protected function handle()

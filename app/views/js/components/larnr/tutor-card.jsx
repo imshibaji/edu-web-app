@@ -1,7 +1,7 @@
 import { BadgeCheck, MapPin, Clock, Video, Building2, Star } from "lucide-react";
 
 import Avatar from "@/components/larnr/avatar.jsx";
-import { displayAmount } from "@/utils/currency.jsx";
+import { displayAmount, getCurrencyCookie } from "@/utils/currency.jsx";
 
 const FORMAT_LABELS = {
     ONLINE: "Online",
@@ -16,10 +16,10 @@ const LEVEL_LABELS = {
 };
 
 export default function TutorCard({ tutor, onBook, auth }) {
-    const rate = displayAmount(tutor.rate, tutor.currency, auth);
+    const rate = displayAmount(tutor.rate, getCurrencyCookie() || tutor.currency, auth, tutor);
 
     return (
-        <div className="card card-border border-base-content/10 bg-base-content/[0.04] transition-colors hover:border-primary/40 hover:bg-base-content/[0.06]">
+        <div className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
             <div className="card-body gap-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -48,12 +48,12 @@ export default function TutorCard({ tutor, onBook, auth }) {
                         </p>
                         {rate.note && (
                             <p className="text-xs text-base-content/50">
-                                ≈ {rate.note} · {tutor.currency}
+                                ≈ {rate.note} · { getCurrencyCookie() || tutor.currency}
                             </p>
                         )}
                         {!rate.note && (
                             <p className="text-xs text-base-content/50">
-                                {tutor.currency === "USD" ? "USD" : tutor.currency}
+                                {getCurrencyCookie() === 'USD' ? 'USD' : getCurrencyCookie() || tutor.currency}
                             </p>
                         )}
                     </div>
@@ -104,7 +104,7 @@ export default function TutorCard({ tutor, onBook, auth }) {
 
                 <div className="flex flex-wrap items-center gap-2">
                     {tutor.subjects.map((s) => {
-                        const subj = displayAmount(s.rate_cents, tutor.currency, auth);
+                        const subj = displayAmount(s.rate_cents, getCurrencyCookie() || tutor.currency, auth);
                         return (
                             <span
                                 key={s.name}

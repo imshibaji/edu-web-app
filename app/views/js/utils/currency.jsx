@@ -9,6 +9,15 @@ export const CURRENCIES = [
     { code: "SGD", label: "SGD · Singapore Dollar" },
 ];
 
+export const SYMBOLS = {
+    INR: "₹",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    AED: "د.إ",
+    SGD: "$",
+}
+
 export const RATES = {
     INR: 1.0,
     USD: 95.45,
@@ -22,19 +31,24 @@ export const rateOf = (code) => RATES[code] ?? 1;
 
 export function convertCents(cents, from, to) {
     if (!from || !to || from === to) return Number(cents) || 0;
-    return Math.round(((Number(cents) || 0) * rateOf(to)) / rateOf(from));
+    return Math.round((Number(cents) || 0) * rateOf(to) / rateOf(from));
 }
 
-export function displayAmount(cents, currency, auth) {
+export function reverseConvertCents(cents, from, to) {
+    if (!from || !to || from === to) return Number(cents) || 0;
+    return Math.round((Number(cents) || 0) * rateOf(from) / rateOf(to));
+}
+
+export function displayAmount(cents, currency, auth, tutor = false) {
     const user = auth?.user;
-    const base = user?.base_currency;
+    const base = user?.base_currency || "INR";
     const native = money(cents, currency);
 
     if (!base || base === currency) {
         return { text: native, note: null, native };
     }
 
-    const converted = money(convertCents(cents, currency, base), base);
+    const converted = money(convertCents(cents, currency, base), currency);
 
     if (user?.role === "ADMIN") {
         return { text: converted, note: native, native };
@@ -49,5 +63,5 @@ export const setCurrencyCookie = (code) => {
 
 export const getCurrencyCookie = () => {
     const match = document.cookie.match `(?:^|; )lnr_currency=([^;]+)`;
-    return match ? match[1] : null;
+    return match ? match[1] : 'INR';
 };
