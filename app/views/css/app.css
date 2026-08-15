@@ -1,0 +1,107 @@
+@import 'tailwindcss';
+@plugin 'daisyui' {
+  themes: false;
+}
+
+/*
+  LARNR — custom dark theme
+  Brand: indigo #6366f1 -> #4f46e5, pink #ec4899, cyan #06b6d4
+  Base:   #07080d, fonts Outfit (display) + Inter (body)
+*/
+@plugin 'daisyui/theme' {
+  name: 'larnr';
+  default: true;
+  color-scheme: dark;
+
+  --color-base-100: oklch(13.5% 0.014 265);
+  --color-base-200: oklch(17% 0.016 265);
+  --color-base-300: oklch(22% 0.02 265);
+  --color-base-content: oklch(95% 0.008 260);
+  --color-primary: oklch(57% 0.26 277);
+  --color-primary-content: oklch(99% 0.005 277);
+  --color-secondary: oklch(66% 0.26 338);
+  --color-secondary-content: oklch(99% 0.005 338);
+  --color-accent: oklch(72% 0.15 225);
+  --color-accent-content: oklch(22% 0.05 230);
+  --color-neutral: oklch(30% 0.02 265);
+  --color-neutral-content: oklch(74% 0.04 260);
+  --color-info: oklch(72% 0.15 225);
+  --color-info-content: oklch(22% 0.05 230);
+  --color-success: oklch(67% 0.17 165);
+  --color-success-content: oklch(99% 0.005 165);
+  --color-warning: oklch(78% 0.16 75);
+  --color-warning-content: oklch(22% 0.05 75);
+  --color-error: oklch(63% 0.24 5);
+  --color-error-content: oklch(99% 0.005 5);
+
+  --radius-selector: 2rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'larnr-day';
+  color-scheme: light;
+
+  --color-base-100: oklch(97% 0.006 260);
+  --color-base-200: oklch(94% 0.008 260);
+  --color-base-300: oklch(89% 0.012 260);
+  --color-base-content: oklch(20% 0.012 260);
+  --color-primary: oklch(51% 0.26 277);
+  --color-primary-content: oklch(99% 0.005 277);
+  --color-secondary: oklch(58% 0.24 338);
+  --color-secondary-content: oklch(99% 0.005 338);
+  --color-accent: oklch(55% 0.15 225);
+  --color-accent-content: oklch(99% 0.005 225);
+  --color-neutral: oklch(45% 0.02 260);
+  --color-neutral-content: oklch(98% 0.005 260);
+  --color-info: oklch(62% 0.17 230);
+  --color-info-content: oklch(99% 0.005 230);
+  --color-success: oklch(56% 0.19 165);
+  --color-success-content: oklch(99% 0.005 165);
+  --color-warning: oklch(72% 0.17 75);
+  --color-warning-content: oklch(99% 0.005 75);
+  --color-error: oklch(60% 0.23 20);
+  --color-error-content: oklch(99% 0.005 20);
+
+  --radius-selector: 2rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@source '../';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+}
