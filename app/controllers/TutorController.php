@@ -174,7 +174,7 @@ class TutorController extends Controller
             'format' => 'in<[ONLINE,IN_PERSON,BOTH]>',
             'experience' => 'in<[ENTRY,MID,SENIOR]>',
             'rate' => 'numeric',
-            'currency' => 'in<[USD,INR,EUR,GBP,AED,SGD]>',
+            'currency' => 'in<[INR,USD,EUR,GBP,AED,SGD]>',
         ]);
 
         if (!$data) {

@@ -31,7 +31,7 @@ class SeedCommand extends Command
 
     protected $tutors = [
         ['Ananya Chatterjee', 'tutor1@larnr.app', 'IIT Graduate | Math & Physics Mentor', 'Kolkata', 'BOTH', 'SENIOR', 2500, 4.9, ['Mathematics', 'Physics'], 'INR'],
-        ['Rahul Mehta', 'tutor2@larnr.app', 'Ex-Banker teaching Economics & Finance', 'Delhi', 'ONLINE', 'MID', 2000, 4.7, ['Economics', 'Accounting'], 'USD'],
+        ['Rahul Mehta', 'tutor2@larnr.app', 'Ex-Banker teaching Economics & Finance', 'Delhi', 'ONLINE', 'MID', 2000, 4.7, ['Economics', 'Accounting'], 'INR'],
         ['Priya Sharma', 'tutor3@larnr.app', 'English & Creative Writing Coach', 'Mumbai', 'IN_PERSON', 'SENIOR', 2200, 4.8, ['English', 'IELTS Prep'], 'INR'],
         ['Arjun Nair', 'tutor4@larnr.app', 'Full-Stack Developer | CS & Coding', 'Bangalore', 'ONLINE', 'SENIOR', 3000, 4.9, ['Computer Science', 'Coding & Programming'], 'INR'],
         ['Sneha Iyer', 'tutor5@larnr.app', 'Chemistry PhD | JEE & NEET Specialist', 'Chennai', 'BOTH', 'SENIOR', 2800, 5.0, ['Chemistry', 'Biology'], 'INR'],
@@ -40,7 +40,7 @@ class SeedCommand extends Command
         ['Rohan Das', 'tutor8@larnr.app', 'History & Political Science Educator', 'Kolkata', 'IN_PERSON', 'ENTRY', 1200, 4.4, ['History', 'Geography'], 'INR'],
         ['Neha Gupta', 'tutor9@larnr.app', 'Hindi Literature & Language Teacher', 'Delhi', 'IN_PERSON', 'ENTRY', 1000, 4.3, ['Hindi', 'English'], 'INR'],
         ['Aditya Menon', 'tutor10@larnr.app', 'Music & Piano Instructor', 'Bangalore', 'IN_PERSON', 'ENTRY', 1500, 4.7, ['Music'], 'EUR'],
-        ['Kavya Reddy', 'tutor11@larnr.app', 'SAT & GRE Verbal Expert', 'Hyderabad', 'ONLINE', 'MID', 2100, 4.8, ['SAT Prep', 'English'], 'USD'],
+        ['Kavya Reddy', 'tutor11@larnr.app', 'SAT & GRE Verbal Expert', 'Hyderabad', 'ONLINE', 'MID', 2100, 4.8, ['SAT Prep', 'English'], 'INR'],
         ['Manish Patel', 'tutor12@larnr.app', 'Accounting & Business Studies Tutor', 'Ahmedabad', 'BOTH', 'MID', 1700, 4.5, ['Accounting', 'Economics'], 'INR'],
         ['Ishita Bose', 'tutor13@larnr.app', 'Computer Science Grad | Math Olympiad Coach', 'Mumbai', 'ONLINE', 'SENIOR', 2400, 4.8, ['Mathematics', 'Coding & Programming'], 'GBP'],
         ['Farhan Ali', 'tutor14@larnr.app', 'Geography & Environmental Science', 'Pune', 'ONLINE', 'ENTRY', 1100, 4.2, ['Geography', 'Biology'], 'INR'],
@@ -80,11 +80,11 @@ class SeedCommand extends Command
             $password = Password::hash('password');
 
             $adminId = (string) Str::orderedUuid();
-            $insertUser->execute([$adminId, 'admin@larnr.app', $password, 'ADMIN', 1, 'USD', $now, $now]);
+            $insertUser->execute([$adminId, 'admin@larnr.app', $password, 'ADMIN', 1, 'INR', $now, $now]);
             $this->writeln('  <info>+</info> admin@larnr.app (ADMIN, password: password)');
 
             $studentId = (string) Str::orderedUuid();
-            $insertUser->execute([$studentId, 'demo@larnr.app', $password, 'STUDENT', 1, 'USD', $now, $now]);
+            $insertUser->execute([$studentId, 'demo@larnr.app', $password, 'STUDENT', 1, 'INR', $now, $now]);
             $insertStudent->execute([$studentId, 'Demo Student', '+91 90000 00000', $now, $now]);
             $this->writeln('  <info>+</info> demo@larnr.app (STUDENT, password: password)');
 

@@ -2,7 +2,9 @@ import { Link, router, usePage } from "@inertiajs/react";
 import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User } from "lucide-react";
 
 import { getInitials } from "@/utils/index.jsx";
+import { CURRENCIES, setCurrencyCookie, getCurrencyCookie } from "@/utils/currency.jsx";
 import ThemeToggle from "@/components/larnr/theme-toggle.jsx";
+import ChangeCurrency from "./change-currency";
 
 export default function Navbar({ auth }) {
     const { url } = usePage();
@@ -17,7 +19,7 @@ export default function Navbar({ auth }) {
 
     const navLinks = isTutor
         ? [
-              { label: "Overview", href: "/tutor" },
+              { label: "Dashboard", href: "/tutor" },
               { label: "Availability", href: "/tutor/availability" },
               { label: "Subjects", href: "/tutor/subjects" },
               { label: "Enquiries", href: "/tutor/enquiries" },
@@ -117,6 +119,7 @@ export default function Navbar({ auth }) {
                 </div>
 
                 <div className="navbar-end gap-1">
+                    <ChangeCurrency />
                     <ThemeToggle />
                     {user ? (
                         <div className="dropdown dropdown-end">
@@ -145,7 +148,7 @@ export default function Navbar({ auth }) {
                                 </li>
                                 <li>
                                     <span className="block px-4 py-2 text-xs text-base-content/70">
-                                        Base currency: {user?.base_currency ?? "USD"}
+                                        Base currency: {user?.base_currency ?? "INR"}
                                     </span>
                                 </li>
                                 <li>

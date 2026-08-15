@@ -4,7 +4,6 @@ import { Save, Clock, ImagePlus } from "lucide-react";
 
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
-import TutorNav from "@/components/larnr/tutor-nav.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
 import Avatar from "@/components/larnr/avatar.jsx";
 import { FORMAT_LABELS, LEVEL_LABELS } from "@/utils/tutor.jsx";
@@ -57,8 +56,6 @@ export default function TutorProfile({ profile, pending, errors }) {
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
-                    <TutorNav />
-
                     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
                         {pending && (
                             <div className="card card-border border-warning/30 bg-warning/10">
@@ -187,7 +184,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                             <legend className="fieldset-legend">Teaching format</legend>
                                             <select
                                                 name="format"
-                                                className="select w-full rounded-xl border-base-content/10 bg-base-content/5"
+                                                className="select w-full rounded-xl appearance-none border-base-content/10 bg-base-content/5"
                                                 value={data.format}
                                                 onChange={(e) => setData("format", e.target.value)}
                                             >
@@ -206,7 +203,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                             <legend className="fieldset-legend">Experience level</legend>
                                             <select
                                                 name="experience"
-                                                className="select w-full rounded-xl border-base-content/10 bg-base-content/5"
+                                                className="select w-full rounded-xl appearance-none border-base-content/10 bg-base-content/5"
                                                 value={data.experience}
                                                 onChange={(e) => setData("experience", e.target.value)}
                                             >
@@ -237,7 +234,7 @@ export default function TutorProfile({ profile, pending, errors }) {
                                                 </label>
                                                 <select
                                                     name="currency"
-                                                    className="select w-28 shrink-0 rounded-xl border-base-content/10 bg-base-content/5"
+                                                    className="select appearance-none w-28 shrink-0 rounded-xl border-base-content/10 bg-base-content/5"
                                                     value={data.currency}
                                                     onChange={(e) => setData("currency", e.target.value)}
                                                 >

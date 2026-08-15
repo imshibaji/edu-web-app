@@ -1,8 +1,8 @@
 import { money } from "@/utils/tutor.jsx";
 
 export const CURRENCIES = [
-    { code: "USD", label: "USD · US Dollar" },
     { code: "INR", label: "INR · Indian Rupee" },
+    { code: "USD", label: "USD · US Dollar" },
     { code: "EUR", label: "EUR · Euro" },
     { code: "GBP", label: "GBP · British Pound" },
     { code: "AED", label: "AED · UAE Dirham" },
@@ -10,12 +10,12 @@ export const CURRENCIES = [
 ];
 
 export const RATES = {
-    USD: 1,
-    INR: 83.5,
-    EUR: 0.92,
-    GBP: 0.79,
-    AED: 3.67,
-    SGD: 1.35,
+    INR: 1.0,
+    USD: 95.45,
+    EUR: 110.38,
+    GBP: 129.41,
+    AED: 25.99,
+    SGD: 74.62,
 };
 
 export const rateOf = (code) => RATES[code] ?? 1;
@@ -42,3 +42,12 @@ export function displayAmount(cents, currency, auth) {
 
     return { text: converted, note: null, native };
 }
+
+export const setCurrencyCookie = (code) => {
+    document.cookie = `lnr_currency=${code}; max-age=30*24*60*60; path=/; SameSite=Lax`;
+};
+
+export const getCurrencyCookie = () => {
+    const match = document.cookie.match `(?:^|; )lnr_currency=([^;]+)`;
+    return match ? match[1] : null;
+};

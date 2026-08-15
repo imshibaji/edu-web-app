@@ -84,11 +84,11 @@ class AdminController extends Controller
 
         $review->update([
             'status' => TutorProfileReview::STATUS_APPROVED,
-            'reviewed_by' => $user->id(),
+            'reviewed_by' => $user->id,
             'reviewed_at' => date('Y-m-d H:i:s'),
         ]);
 
-        UserActivity::log($user->id(), UserActivity::TYPE_PROFILE_APPROVED, "Approved profile changes for {$profile->full_name}");
+        UserActivity::log($user->id, UserActivity::TYPE_PROFILE_APPROVED, "Approved profile changes for {$profile->full_name}");
 
         return response()
             ->withFlash('success', "Changes for {$profile->full_name} published.")
@@ -113,13 +113,13 @@ class AdminController extends Controller
 
         $review->update([
             'status' => TutorProfileReview::STATUS_REJECTED,
-            'reviewed_by' => $user->id(),
+            'reviewed_by' => $user->id,
             'reviewed_at' => date('Y-m-d H:i:s'),
         ]);
 
         $tutorName = $review->tutor?->tutorProfile?->full_name ?? 'a tutor';
 
-        UserActivity::log($user->id(), UserActivity::TYPE_PROFILE_REJECTED, "Rejected profile changes for {$tutorName}");
+        UserActivity::log($user->id, UserActivity::TYPE_PROFILE_REJECTED, "Rejected profile changes for {$tutorName}");
 
         return response()
             ->withFlash('success', 'Review rejected. The public profile is unchanged.')

@@ -32,7 +32,7 @@ export function formatDateTime(value) {
     });
 }
 
-export function money(cents, currency = "USD") {
+export function money(cents, currency = "INR") {
     const n = Number(cents) || 0;
     return new Intl.NumberFormat(undefined, {
         style: "currency",

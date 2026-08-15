@@ -5,12 +5,12 @@ namespace App\Models;
 class Currency
 {
     public const RATES = [
-        'USD' => 1.0,
-        'INR' => 83.5,
-        'EUR' => 0.92,
-        'GBP' => 0.79,
-        'AED' => 3.67,
-        'SGD' => 1.35,
+        'INR' => 1.0,
+        'USD' => 95.45,
+        'EUR' => 110.38,
+        'GBP' => 129.41,
+        'AED' => 25.99,
+        'SGD' => 74.62,
     ];
 
     public const SYMBOLS = [
@@ -22,7 +22,7 @@ class Currency
         'SGD' => 'S$',
     ];
 
-    public const DEFAULT = 'USD';
+    public const DEFAULT = 'INR';
 
     public static function supported(): array
     {

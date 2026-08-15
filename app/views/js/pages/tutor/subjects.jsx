@@ -4,7 +4,6 @@ import { Plus, Trash2, Pencil, X, Check, BookOpen } from "lucide-react";
 
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
-import TutorNav from "@/components/larnr/tutor-nav.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
 import { getInitials } from "@/utils/index.jsx";
 import { displayAmount } from "@/utils/currency.jsx";
@@ -43,7 +42,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                         <legend className="fieldset-legend">Subject</legend>
                         <select
                             name="subjectId"
-                            className="select w-full rounded-xl border-base-content/10 bg-base-content/5"
+                            className="select appearance-none w-full rounded-xl border-base-content/10 bg-base-content/5"
                             value={data.subjectId}
                             onChange={(e) => setData("subjectId", e.target.value)}
                         >
@@ -63,7 +62,7 @@ function AddSubjectForm({ catalog, currency, errors }) {
                         <legend className="fieldset-legend">Charge per hour</legend>
                         <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
                             <span className="text-base-content/50">
-                                {currency === "USD" ? "$" : `${currency} `}
+                                {currency === "INR" ? "₹" : `${currency} `}
                             </span>
                             <input
                                 type="number"
@@ -123,7 +122,7 @@ function SubjectRow({ subject, currency, auth, onRemove }) {
                             <form onSubmit={save} className="mt-1 flex items-center gap-2">
                                 <label className="input input-sm w-32 rounded-xl border-base-content/10 bg-base-content/5">
                                     <span className="text-base-content/50">
-                                        {currency === "USD" ? "$" : `${currency} `}
+                                        {currency === "INR" ? "₹" : `${currency} `}
                                     </span>
                                     <input
                                         type="number"
@@ -212,8 +211,6 @@ export default function TutorSubjects({ profile, subjects, catalog, errors, auth
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
-                    <TutorNav />
-
                     <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>

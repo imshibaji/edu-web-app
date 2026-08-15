@@ -16,7 +16,6 @@ import {
 
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
-import TutorNav from "@/components/larnr/tutor-nav.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
 import Avatar from "@/components/larnr/avatar.jsx";
 import { FORMAT_LABELS, LEVEL_LABELS, STATUS_BADGE, statusLabel, formatDateTime } from "@/utils/tutor.jsx";
@@ -174,8 +173,6 @@ export default function TutorIndex({ profile, subjects, stats, recentEnquiries, 
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
-                    <TutorNav />
-
                     <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                         {pendingReview && (
                             <div className="card card-border border-warning/30 bg-warning/10">

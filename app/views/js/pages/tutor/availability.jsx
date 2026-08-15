@@ -3,7 +3,6 @@ import { CalendarPlus, Trash2, CalendarClock, Clock } from "lucide-react";
 
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
-import TutorNav from "@/components/larnr/tutor-nav.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
 import { getInitials } from "@/utils/index.jsx";
 import { formatDateTime } from "@/utils/tutor.jsx";
@@ -163,8 +162,6 @@ export default function TutorAvailability({ profile, slots, auth }) {
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
-                    <TutorNav />
-
                     <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>

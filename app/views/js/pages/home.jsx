@@ -156,7 +156,7 @@ export default function Home(props) {
         { label: "Total Educators", value: stats.totalTutors, icon: Users, accent: "text-primary" },
         { label: "Verified Tutors", value: stats.verifiedCount, icon: BadgeCheck, accent: "text-success" },
         { label: "Active Right Now", value: stats.activeNow, icon: Clock, accent: "text-secondary" },
-        { label: "Avg. Hourly Rate", value: `$${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: "text-warning" },
+        { label: "Avg. Hourly Rate", value: `₹${Math.round(stats.avgRate / 100)}`, icon: TrendingUp, accent: "text-warning" },
         { label: "Cities Covered", value: stats.citiesCount, icon: Globe, accent: "text-info" },
     ];
 
@@ -179,7 +179,7 @@ export default function Home(props) {
                 {/* ============ HERO ============ */}
                 <section className="relative overflow-hidden">
                     <div className="mx-auto max-w-7xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24 lg:px-8">
-                        <div className="mx-auto max-w-3xl text-center">
+                        <div className="mx-auto max-w-5xl text-center">
                             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary">
                                 <Sparkles className="size-3.5" />
                                 Connecting students with premium educators worldwide
@@ -209,7 +209,7 @@ export default function Home(props) {
                                         perPage,
                                     });
                                 }}
-                                className="mt-8 flex flex-col gap-3 rounded-2xl border border-base-content/10 bg-base-content/[0.05] p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full"
+                                className="mt-8 flex flex-col gap-3 rounded-2xl border border-base-content/10 bg-base-content/5 p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full"
                             >
                                 <div className="flex flex-1 items-center gap-2 px-3">
                                     <Search className="size-5 shrink-0 text-primary" />
@@ -286,7 +286,7 @@ export default function Home(props) {
                                     <TrendingUp className="size-4 text-amber-400" />
                                     from{" "}
                                     <strong className="text-base-content/80">
-                                        ${Math.round(stats.avgRate / 100)}
+                                        ₹{Math.round(stats.avgRate / 100)}
                                     </strong>
                                     /hr avg
                                 </span>

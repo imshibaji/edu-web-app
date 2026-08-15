@@ -56,7 +56,7 @@ export default function BookTrialModal({ tutor, subjects, onClose }) {
                     <div className="fieldset">
                         <legend className="fieldset-legend">Subject (optional)</legend>
                         <select
-                            className="select w-full bg-base-content/5"
+                            className="select appearance-none w-full bg-base-content/5"
                             value={data.subject_id}
                             onChange={(e) => setData("subject_id", e.target.value)}
                         >

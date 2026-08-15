@@ -100,7 +100,7 @@ class HomeController extends Controller
             TutorProfile::query()
                 ->get()
                 ->avg(
-                    fn ($t) => Currency::convert((int) $t->hourly_rate, $t->currency, 'USD')
+                    fn ($t) => Currency::convert((int) $t->hourly_rate, $t->currency, Currency::DEFAULT)
                 ) ?? 0
         );
 

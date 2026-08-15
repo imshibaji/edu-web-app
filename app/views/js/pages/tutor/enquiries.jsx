@@ -4,7 +4,6 @@ import { Inbox, CalendarCheck, FileText } from "lucide-react";
 
 import Navbar from "@/components/larnr/navbar.jsx";
 import Footer from "@/components/larnr/footer.jsx";
-import TutorNav from "@/components/larnr/tutor-nav.jsx";
 import FlashToast from "@/components/larnr/flash-toast.jsx";
 import { getInitials } from "@/utils/index.jsx";
 import { STATUS_BADGE, statusLabel, formatDateTime } from "@/utils/tutor.jsx";
@@ -39,8 +38,6 @@ export default function TutorEnquiries({ profile, enquiries, auth }) {
                 <FlashToast />
 
                 <div className="space-y-6 py-6">
-                    <TutorNav />
-
                     <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>

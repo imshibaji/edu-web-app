@@ -2,7 +2,7 @@ import { Link, usePage } from "@inertiajs/react";
 import { LayoutDashboard, CalendarClock, Inbox, BookOpen } from "lucide-react";
 
 const LINKS = [
-    { href: "/tutor", label: "Overview", icon: LayoutDashboard },
+    { href: "/tutor", label: "Dashboard", icon: LayoutDashboard },
     { href: "/tutor/availability", label: "Availability", icon: CalendarClock },
     { href: "/tutor/subjects", label: "Subjects", icon: BookOpen },
     { href: "/tutor/enquiries", label: "Enquiries", icon: Inbox },
