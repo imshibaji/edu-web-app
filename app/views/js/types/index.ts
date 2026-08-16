@@ -96,6 +96,14 @@ export interface HomeProps {
     auth: AuthProps;
 }
 
+export interface SubjectsProps {
+    specialties: SpecialtyItem[];
+    subjects: SubjectItem[];
+    totalTutors: number;
+    citiesCount: number;
+    auth: AuthProps;
+}
+
 export interface Booking {
     id: string;
     tutor: string;

@@ -16,27 +16,27 @@ export default function Footer() {
         {
             title: 'Company',
             links: [
-                { label: 'About', href: '/#about' },
-                { label: 'Careers', href: '/#about' },
-                { label: 'Contact', href: '/#about' },
-                { label: 'Privacy Policy', href: '/#about' },
+                { label: 'About', href: '/about' },
+                { label: 'Careers', href: '/careers' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Privacy Policy', href: '/privacy' },
             ],
         },
         {
             title: 'Resources',
             links: [
-                { label: 'Find Tutors', href: '/#educators' },
-                { label: 'Subjects', href: '/#specialties' },
-                { label: 'Tutor Interview Prep', href: '/#interview' },
+                { label: 'Find Tutors', href: '/tutors' },
+                { label: 'Subjects', href: '/subjects' },
+                { label: 'Tutor Interview Prep', href: '/interview-prep' },
                 { label: 'Become a Tutor', href: '/auth/register' },
             ],
         },
         {
             title: 'Support',
             links: [
-                { label: 'Help Center', href: '/#about' },
-                { label: 'Terms of Service', href: '/#about' },
-                { label: 'Trust & Safety', href: '/#about' },
+                { label: 'Help Center', href: '/help' },
+                { label: 'Terms of Service', href: '/terms' },
+                { label: 'Trust & Safety', href: '/trust-safety' },
             ],
         },
     ];

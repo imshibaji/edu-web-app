@@ -37,10 +37,10 @@ export default function Navbar({ auth }: Props) {
             { label: 'Activity', href: '/admin/activities' },
         ]
         : [
-            { label: 'Find Tutors', href: '/#educators' },
-            { label: 'Subjects', href: '/#specialties' },
-            { label: 'Interview Prep', href: '/#interview' },
-            { label: 'About', href: '/#about' },
+            { label: 'Find Tutors', href: '/tutors' },
+            { label: 'Subjects', href: '/subjects' },
+            { label: 'Interview Prep', href: '/interview-prep' },
+            { label: 'About', href: '/about' },
         ];
 
     const isActive = (href: string): boolean => {
@@ -77,7 +77,7 @@ export default function Navbar({ auth }: Props) {
                             <li className="mt-1 border-t border-base-content/10 pt-1">
                                 {user ? (
                                     isTutor ? (
-                                        <Link href="/#educators" className="text-sm text-base-content">
+                                        <Link href="/tutors" className="text-sm text-base-content">
                                             Browse Tutors
                                         </Link>
                                     ) : (
