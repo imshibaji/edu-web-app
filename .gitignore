@@ -14,6 +14,7 @@ dist
 compiled
 
 # System/Editor
+.playwright-mcp
 .DS_Store
 *.sqlite
 .fleet

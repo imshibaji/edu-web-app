@@ -1,11 +1,10 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
-import { Check, X, Clock, Inbox, UserRound } from 'lucide-react';
+import { Check, X, Inbox, UserRound } from 'lucide-react';
 
-import Navbar from '@/components/larnr/navbar';
-import Footer from '@/components/larnr/footer';
-import FlashToast from '@/components/larnr/flash-toast';
+import AdminLayout from '@/components/larnr/admin-layout';
 import Avatar from '@/components/larnr/avatar';
+import { useAuth } from '@/utils/index';
 import { FORMAT_LABELS, LEVEL_LABELS, formatDateTime } from '@/utils/tutor';
 import { displayAmount } from '@/utils/currency';
 import type { AdminReviewsProps, Review, AuthProps } from '@/types';
@@ -186,7 +185,7 @@ function ReviewCard({ review, auth }: { review: Review; auth: AuthProps }) {
 }
 
 export default function AdminReviews(props: AdminReviewsProps) {
-    const { auth } = usePage().props as { auth: AuthProps };
+    const auth = useAuth();
     const [filter, setFilter] = useState('PENDING');
 
     const counts = {
@@ -200,65 +199,46 @@ export default function AdminReviews(props: AdminReviewsProps) {
     const tabs = ['PENDING', 'APPROVED', 'REJECTED', 'ALL'];
 
     return (
-        <div className="min-h-screen bg-base-100 text-base-content">
-            <Head title="Profile reviews" />
-
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-primary/15 blur-[140px]" />
+        <AdminLayout
+            auth={auth}
+            section="reviews"
+            title="Profile reviews"
+            heading="Tutor profile reviews"
+            description="Review and approve tutor profile changes before they go public."
+        >
+            <div className="flex flex-wrap gap-2">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setFilter(tab)}
+                        className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                            filter === tab
+                                ? 'bg-primary/15 text-primary'
+                                : 'bg-base-content/5 text-base-content/60 hover:bg-base-content/10 hover:text-base-content'
+                        }`}
+                    >
+                        {tab === 'ALL'
+                            ? `All (${counts.ALL})`
+                            : `${tab.charAt(0) + tab.slice(1).toLowerCase()} (${counts[tab as keyof typeof counts]})`}
+                    </button>
+                ))}
             </div>
 
-            <div className="relative z-10">
-                <Navbar auth={auth} />
-                <FlashToast />
-
-                <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                        Admin
-                    </span>
-                    <h1 className="font-display mt-2 text-2xl font-bold text-base-content">
-                        Tutor profile reviews
-                    </h1>
-                    <p className="text-sm text-base-content/60">
-                        Review and approve tutor profile changes before they go public.
-                    </p>
-
-                    <div className="mt-6 flex flex-wrap gap-2">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setFilter(tab)}
-                                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                                    filter === tab
-                                        ? 'bg-primary/15 text-primary'
-                                        : 'bg-base-content/5 text-base-content/60 hover:bg-base-content/10 hover:text-base-content'
-                                }`}
-                            >
-                                {tab === 'ALL'
-                                    ? `All (${counts.ALL})`
-                                    : `${tab.charAt(0) + tab.slice(1).toLowerCase()} (${counts[tab as keyof typeof counts]})`}
-                            </button>
-                        ))}
+            <div className="mt-5 space-y-4">
+                {visible.length === 0 && (
+                    <div className="rounded-2xl border border-dashed border-base-content/10 p-12 text-center">
+                        <Inbox className="mx-auto size-8 text-base-content/40" />
+                        <p className="mt-3 text-sm text-base-content/50">
+                            {filter === 'PENDING'
+                                ? 'No pending reviews. You\'re all caught up.'
+                                : 'No reviews in this category yet.'}
+                        </p>
                     </div>
-
-                    <div className="mt-6 space-y-4">
-                        {visible.length === 0 && (
-                            <div className="rounded-2xl border border-dashed border-base-content/10 p-12 text-center">
-                                <Inbox className="mx-auto size-8 text-base-content/40" />
-                                <p className="mt-3 text-sm text-base-content/50">
-                                    {filter === 'PENDING'
-                                        ? 'No pending reviews. You\'re all caught up.'
-                                        : 'No reviews in this category yet.'}
-                                </p>
-                            </div>
-                        )}
-                        {visible.map((review) => (
-                            <ReviewCard key={review.id} review={review} auth={auth} />
-                        ))}
-                    </div>
-                </div>
-
-                <Footer />
+                )}
+                {visible.map((review) => (
+                    <ReviewCard key={review.id} review={review} auth={auth} />
+                ))}
             </div>
-        </div>
+        </AdminLayout>
     );
 }

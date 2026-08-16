@@ -73,7 +73,7 @@ class DashboardController extends Controller
         $recentActivities = UserActivity::query()
             ->with(['user.tutorProfile', 'user.studentProfile'])
             ->orderByDesc('created_at')
-            ->limit(10)
+            ->limit(3)
             ->get()
             ->map(fn ($activity) => UserActivity::present($activity))
             ->values()

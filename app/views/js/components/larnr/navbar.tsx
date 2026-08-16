@@ -2,7 +2,6 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User } from 'lucide-react';
 
 import { getInitials } from '@/utils/index';
-import { CURRENCIES, setCurrencyCookie, getCurrencyCookie } from '@/utils/currency';
 import ThemeToggle from '@/components/larnr/theme-toggle';
 import ChangeCurrency from './change-currency';
 import type { AuthProps, NavLink } from '@/types';
@@ -34,6 +33,11 @@ export default function Navbar({ auth }: Props) {
         ? [
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Reviews', href: '/admin/reviews' },
+            { label: 'Users', href: '/admin/users' },
+            { label: 'Tutors', href: '/admin/tutors' },
+            { label: 'Students', href: '/admin/students' },
+            { label: 'Subjects', href: '/admin/subjects' },
+            { label: 'Payments', href: '/admin/payments' },
             { label: 'Activity', href: '/admin/activities' },
         ]
         : [
@@ -110,7 +114,7 @@ export default function Navbar({ auth }: Props) {
                             <li key={l.href}>
                                 <Link
                                     href={l.href}
-                                    className={`rounded-full px-4 py-2 text-sm transition-colors ${
+                                    className={`rounded-full px-3 py-2 text-sm transition-colors ${
                                         isActive(l.href)
                                             ? 'bg-primary/10 font-medium text-primary'
                                             : 'text-base-content/80 hover:bg-base-content/5 hover:text-base-content'

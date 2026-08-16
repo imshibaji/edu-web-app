@@ -259,10 +259,117 @@ export interface Activity {
     };
 }
 
+export interface PaginationMeta {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+}
+
 export interface AdminActivitiesProps {
     activities: Activity[];
     role: string;
+    search: string;
     counts: Record<string, number>;
+    pagination: PaginationMeta;
+}
+
+export interface AdminUser {
+    id: string;
+    email: string;
+    role: 'STUDENT' | 'TUTOR' | 'ADMIN';
+    name: string | null;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface AdminUsersProps {
+    users: AdminUser[];
+    role: string;
+    search: string;
+    counts: Record<string, number>;
+    pagination: PaginationMeta;
+}
+
+export interface AdminSubject {
+    id: string;
+    name: string;
+    tutor_count: number;
+}
+
+export interface AdminSubjectsProps {
+    subjects: AdminSubject[];
+    errors: Record<string, string>;
+}
+
+export interface AdminTutor {
+    id: string;
+    name: string;
+    email: string | null;
+    headline: string | null;
+    city: string | null;
+    rate: number;
+    currency: string;
+    rating: number;
+    verified: boolean;
+    active: boolean;
+    subjects: string[];
+    slots: number;
+    created_at: string;
+}
+
+export interface AdminTutorsProps {
+    tutors: AdminTutor[];
+    search: string;
+    verified: string;
+    counts: Record<string, number>;
+    pagination: PaginationMeta;
+}
+
+export interface AdminStudent {
+    id: string;
+    name: string | null;
+    email: string;
+    phone: string | null;
+    bookings: number;
+    active: boolean;
+    created_at: string;
+}
+
+export interface AdminStudentsProps {
+    students: AdminStudent[];
+    search: string;
+    counts: Record<string, number>;
+    pagination: PaginationMeta;
+}
+
+export interface AdminTransaction {
+    id: string;
+    type: string;
+    status: string;
+    amount: number;
+    currency: string;
+    platform_fee: number;
+    student: string;
+    tutor: string;
+    subject: string | null;
+    created_at: string;
+}
+
+export interface AdminPaymentsProps {
+    transactions: AdminTransaction[];
+    status: string;
+    type: string;
+    pagination: PaginationMeta;
+    summary: {
+        total_amount: number;
+        platform_fees: number;
+        base_currency: string;
+        success_count: number;
+        pending_count: number;
+    };
 }
 
 export type CurrencyCodeType = CurrencyCode;

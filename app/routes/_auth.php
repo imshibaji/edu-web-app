@@ -54,6 +54,16 @@ app()->group('/admin', [
         app()->post('/reviews/approve', 'Auth\AdminController@approve');
         app()->post('/reviews/reject', 'Auth\AdminController@reject');
         app()->get('/activities', 'Auth\AdminController@activities');
+        app()->get('/users', 'Auth\AdminController@users');
+        app()->post('/users/toggle', 'Auth\AdminController@toggleUser');
+        app()->get('/tutors', 'Auth\AdminController@tutors');
+        app()->post('/tutors/verify', 'Auth\AdminController@toggleVerify');
+        app()->get('/students', 'Auth\AdminController@students');
+        app()->get('/subjects', 'Auth\AdminController@subjects');
+        app()->post('/subjects/create', 'Auth\AdminController@createSubject');
+        app()->post('/subjects/update', 'Auth\AdminController@updateSubject');
+        app()->post('/subjects/delete', 'Auth\AdminController@deleteSubject');
+        app()->get('/payments', 'Auth\AdminController@payments');
     },
 ]);
 

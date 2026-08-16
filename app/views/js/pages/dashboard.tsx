@@ -1,7 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import {
     CalendarCheck,
-    CalendarPlus,
     GraduationCap,
     ArrowRight,
     Users,
@@ -26,7 +25,7 @@ function StatCard({ icon: Icon, label, value, accent, href }: {
     href?: string;
 }) {
     const inner = (
-        <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
+        <div className="card card-border border-base-content/10 bg-base-content/4">
             <div className="card-body flex-row items-center gap-4 py-5">
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-base-content/5 text-base-content/80">
                     <Icon className="size-5" />
@@ -79,7 +78,7 @@ function StudentView({ profile, bookings, auth }: { profile: Profile; bookings: 
 
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                     {bookings?.length === 0 && (
-                        <div className="card card-border col-span-full border-base-content/10 bg-base-content/[0.04]">
+                        <div className="card card-border col-span-full border-base-content/10 bg-base-content/4">
                             <div className="card-body items-center py-14 text-center">
                                 <GraduationCap className="size-10 text-base-content/40" />
                                 <h3 className="font-display mt-3 font-semibold text-base-content">
@@ -100,7 +99,7 @@ function StudentView({ profile, bookings, auth }: { profile: Profile; bookings: 
                     {bookings?.map((b) => {
                         const amount = displayAmount(b.amount, b.currency, auth);
                         return (
-                            <div key={b.id} className="card card-border border-base-content/10 bg-base-content/[0.04]">
+                            <div key={b.id} className="card card-border border-base-content/10 bg-base-content/4">
                                 <div className="card-body">
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
@@ -189,7 +188,7 @@ function AdminView({ stats, activities }: { stats: Stats; activities: ActivityIt
             </div>
 
             <div className="grid gap-6 lg:grid-cols-5">
-                <div className="card card-border border-base-content/10 bg-base-content/[0.04] lg:col-span-3">
+                <div className="card card-border border-base-content/10 bg-base-content/4 lg:col-span-3">
                     <div className="card-body gap-4">
                         <div className="flex items-center justify-between">
                             <div>
@@ -197,7 +196,7 @@ function AdminView({ stats, activities }: { stats: Stats; activities: ActivityIt
                                     Recent activity
                                 </h2>
                                 <p className="text-xs text-base-content/50">
-                                    Latest actions by tutors and students.
+                                    The last 5 actions by tutors and students.
                                 </p>
                             </div>
                             <Link
@@ -239,7 +238,7 @@ function AdminView({ stats, activities }: { stats: Stats; activities: ActivityIt
                     </div>
                 </div>
 
-                <div className="card card-border border-base-content/10 bg-base-content/[0.04] lg:col-span-2">
+                <div className="card card-border border-base-content/10 bg-base-content/4 lg:col-span-2">
                     <div className="card-body items-center justify-center gap-3 py-14 text-center">
                         <Users className="size-10 text-base-content/40" />
                         <h3 className="font-display text-lg font-semibold text-base-content">
