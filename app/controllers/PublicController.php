@@ -7,6 +7,10 @@ use App\Models\TutorProfile;
 
 class PublicController extends Controller
 {
+    public function index()
+    {
+        response()->inertia('public/home', $this->tutorListingData(request()));
+    }
     public function tutors()
     {
         response()->inertia('public/tutors', $this->tutorListingData(request()));

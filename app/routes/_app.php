@@ -6,7 +6,7 @@
 |--------------------------------------------------------------------------
 */
 
-app()->get('/', 'HomeController@index');
+app()->get('/', 'PublicController@index');
 
 app()->get('/tutors', 'PublicController@tutors');
 app()->get('/subjects', 'PublicController@subjects');
