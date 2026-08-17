@@ -30,16 +30,7 @@ export default function Navbar({ auth }: Props) {
             { label: 'Profile', href: '/tutor/profile' },
         ]
         : user?.role === 'ADMIN'
-        ? [
-            { label: 'Dashboard', href: '/dashboard' },
-            { label: 'Reviews', href: '/admin/reviews' },
-            { label: 'Users', href: '/admin/users' },
-            { label: 'Tutors', href: '/admin/tutors' },
-            { label: 'Students', href: '/admin/students' },
-            { label: 'Subjects', href: '/admin/subjects' },
-            { label: 'Payments', href: '/admin/payments' },
-            { label: 'Activity', href: '/admin/activities' },
-        ]
+        ? []
         : [
             { label: 'Find Tutors', href: '/tutors' },
             { label: 'Subjects', href: '/subjects' },
@@ -54,7 +45,7 @@ export default function Navbar({ auth }: Props) {
 
     return (
         <header className="sticky top-0 z-40 border-b border-base-content/10 bg-base-100/70 backdrop-blur-xl">
-            <div className="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="navbar px-4 sm:px-6 lg:px-8">
                 <div className="navbar-start">
                     <div className="dropdown lg:hidden">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -78,6 +69,13 @@ export default function Navbar({ auth }: Props) {
                                     </Link>
                                 </li>
                             ))}
+                            {user?.role === 'ADMIN' && (
+                                <li>
+                                    <Link href="/dashboard" className="text-sm text-base-content">
+                                        <LayoutDashboard className="size-4" /> Dashboard
+                                    </Link>
+                                </li>
+                            )}
                             <li className="mt-1 border-t border-base-content/10 pt-1">
                                 {user ? (
                                     isTutor ? (

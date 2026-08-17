@@ -7,6 +7,7 @@ import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import Avatar from '@/components/larnr/avatar';
 import { FORMAT_LABELS, LEVEL_LABELS } from '@/utils/tutor';
+import { SYMBOLS, type CurrencyCode } from '@/utils/currency';
 import type { TutorProfileProps, AuthProps } from '@/types';
 
 function toDollars(cents: number): number {
@@ -223,7 +224,7 @@ export default function TutorProfile(props: TutorProfileProps) {
                                             <legend className="fieldset-legend">Hourly rate</legend>
                                             <div className="flex gap-2">
                                                 <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
-                                                    <span className="text-base-content/50">$</span>
+                                                    <span className="text-base-content/50">{SYMBOLS[data.currency as CurrencyCode] ?? '$'}</span>
                                                     <input
                                                         type="number"
                                                         name="rate"

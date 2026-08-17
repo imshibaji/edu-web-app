@@ -57,6 +57,18 @@ class SeedCommand extends Command
 
         $pdo = new \PDO('sqlite:' . $dbPath);
         $pdo->exec('PRAGMA foreign_keys = ON');
+
+        // ── Migration: ensure is_base column exists on currency_settings ──
+        try {
+            $cols = $pdo->query("PRAGMA table_info(currency_settings)")->fetchAll(\PDO::FETCH_COLUMN, 1);
+            if (!in_array('is_base', $cols)) {
+                $pdo->exec("ALTER TABLE currency_settings ADD COLUMN is_base INTEGER NOT NULL DEFAULT 0 CHECK (is_base IN (0, 1))");
+                $this->writeln('  <info>+</info> currency_settings: added is_base column');
+            }
+        } catch (\Exception $e) {
+            // table may not exist yet — will be created by schema
+        }
+
         $pdo->beginTransaction();
 
         try {
@@ -76,12 +88,26 @@ class SeedCommand extends Command
             $insertTutorSubject = $pdo->prepare('INSERT INTO tutor_subjects (tutor_id, subject_id, rate_cents) VALUES (?, ?, ?)');
             $insertSlot = $pdo->prepare('INSERT INTO availability_slots (id, tutor_id, start_time, end_time, is_booked, created_at, updated_at) VALUES (?, ?, ?, ?, 0, ?, ?)');
             $insertActivity = $pdo->prepare('INSERT INTO user_activities (id, user_id, type, description, ip_address, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $insertCurrency = $pdo->prepare('INSERT OR IGNORE INTO currency_settings (code, rate, symbol, is_active, is_base, created_at, updated_at) VALUES (?, ?, ?, 1, ?, ?, ?)');
 
             $password = Password::hash('password');
 
             $adminId = (string) Str::orderedUuid();
             $insertUser->execute([$adminId, 'admin@larnr.app', $password, 'ADMIN', 1, 'INR', $now, $now]);
             $this->writeln('  <info>+</info> admin@larnr.app (ADMIN, password: password)');
+
+            $currencies = [
+                ['INR', 1.0, '₹', 1],
+                ['USD', 95.45, '$', 0],
+                ['EUR', 110.38, '€', 0],
+                ['GBP', 129.41, '£', 0],
+                ['AED', 25.99, 'AED ', 0],
+                ['SGD', 74.62, 'S$', 0],
+            ];
+            foreach ($currencies as [$code, $rate, $symbol, $isBase]) {
+                $insertCurrency->execute([$code, $rate, $symbol, $isBase, $now, $now]);
+            }
+            $this->writeln('  <info>+</info> currency_settings seeded');
 
             $studentId = (string) Str::orderedUuid();
             $insertUser->execute([$studentId, 'demo@larnr.app', $password, 'STUDENT', 1, 'INR', $now, $now]);

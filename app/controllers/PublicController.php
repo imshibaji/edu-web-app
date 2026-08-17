@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Currency;
 use App\Models\Subject;
 use App\Models\TutorProfile;
 
@@ -104,5 +105,22 @@ class PublicController extends Controller
     public function trustSafety()
     {
         response()->inertia('public/trust-safety');
+    }
+
+    /**
+     * JSON API endpoint returning current exchange rates for the frontend.
+     */
+    public function currencyRates()
+    {
+        $settings = Currency::allSettings();
+        $baseCurrency = Currency::getBaseCurrency();
+
+        header('Content-Type: application/json');
+        header('Cache-Control: public, max-age=300');
+        echo json_encode([
+            'base' => $baseCurrency,
+            'rates' => $settings,
+        ]);
+        exit;
     }
 }

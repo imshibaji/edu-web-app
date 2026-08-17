@@ -50,20 +50,25 @@ app()->group('/tutor', [
 app()->group('/admin', [
     'middleware' => 'auth.required',
     function () {
-        app()->get('/reviews', 'Auth\AdminController@reviews');
-        app()->post('/reviews/approve', 'Auth\AdminController@approve');
-        app()->post('/reviews/reject', 'Auth\AdminController@reject');
-        app()->get('/activities', 'Auth\AdminController@activities');
-        app()->get('/users', 'Auth\AdminController@users');
-        app()->post('/users/toggle', 'Auth\AdminController@toggleUser');
-        app()->get('/tutors', 'Auth\AdminController@tutors');
-        app()->post('/tutors/verify', 'Auth\AdminController@toggleVerify');
-        app()->get('/students', 'Auth\AdminController@students');
-        app()->get('/subjects', 'Auth\AdminController@subjects');
-        app()->post('/subjects/create', 'Auth\AdminController@createSubject');
-        app()->post('/subjects/update', 'Auth\AdminController@updateSubject');
-        app()->post('/subjects/delete', 'Auth\AdminController@deleteSubject');
-        app()->get('/payments', 'Auth\AdminController@payments');
+        app()->get('/reviews', 'Auth\admin\ReviewsController@reviews');
+        app()->post('/reviews/approve', 'Auth\admin\ReviewsController@approve');
+        app()->post('/reviews/reject', 'Auth\admin\ReviewsController@reject');
+        app()->get('/activities', 'Auth\admin\ActivitiesController@index');
+        app()->get('/users', 'Auth\admin\UsersController@index');
+        app()->post('/users/toggle', 'Auth\admin\UsersController@toggle');
+        app()->get('/tutors', 'Auth\admin\TutorsController@index');
+        app()->post('/tutors/verify', 'Auth\admin\TutorsController@verify');
+        app()->get('/students', 'Auth\admin\StudentsController@index');
+        app()->get('/subjects', 'Auth\admin\SubjectsController@index');
+        app()->post('/subjects/create', 'Auth\admin\SubjectsController@create');
+        app()->post('/subjects/update', 'Auth\admin\SubjectsController@update');
+        app()->post('/subjects/delete', 'Auth\admin\SubjectsController@delete');
+        app()->get('/payments', 'Auth\admin\PaymentsController@index');
+        app()->get('/currencies', 'Auth\admin\CurrenciesController@index');
+        app()->post('/currencies', 'Auth\admin\CurrenciesController@update');
+        app()->post('/currencies/add', 'Auth\admin\CurrenciesController@add');
+        app()->post('/currencies/remove', 'Auth\admin\CurrenciesController@remove');
+        app()->post('/currencies/base', 'Auth\admin\CurrenciesController@setBase');
     },
 ]);
 

@@ -79,7 +79,7 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        response()->inertia('dashboard', [
+        response()->inertia('admin/dashboard', [
             'role' => User::ROLE_ADMIN,
             'stats' => [
                 'tutors' => (int) User::query()->where('role', User::ROLE_TUTOR)->count(),

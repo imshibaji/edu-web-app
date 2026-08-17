@@ -21,3 +21,5 @@ app()->get('/terms', 'PublicController@terms');
 app()->get('/trust-safety', 'PublicController@trustSafety');
 
 app()->post('/enquiry', 'EnquiryController@store');
+
+app()->get('/api/currency-rates', 'PublicController@currencyRates');

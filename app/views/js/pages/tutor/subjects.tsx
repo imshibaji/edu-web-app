@@ -6,7 +6,7 @@ import Navbar from '@/components/larnr/navbar';
 import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import { getInitials } from '@/utils/index';
-import { displayAmount } from '@/utils/currency';
+import { displayAmount, SYMBOLS, type CurrencyCode } from '@/utils/currency';
 import type { TutorSubjectsProps, TutorSubject, CatalogSubject, AuthProps } from '@/types';
 
 function AddSubjectForm({ catalog, currency, errors }: { catalog: CatalogSubject[]; currency: string; errors: Record<string, string> }) {
@@ -63,7 +63,7 @@ function AddSubjectForm({ catalog, currency, errors }: { catalog: CatalogSubject
                         <legend className="fieldset-legend">Charge per hour</legend>
                         <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
                             <span className="text-base-content/50">
-                                {currency === 'INR' ? '₹' : `${currency} `}
+                                {SYMBOLS[currency as CurrencyCode] ?? currency + ' '}
                             </span>
                             <input
                                 type="number"
@@ -123,7 +123,7 @@ function SubjectRow({ subject, currency, auth, onRemove }: { subject: TutorSubje
                             <form onSubmit={save} className="mt-1 flex items-center gap-2">
                                 <label className="input input-sm w-32 rounded-xl border-base-content/10 bg-base-content/5">
                                     <span className="text-base-content/50">
-                                        {currency === 'INR' ? '₹' : `${currency} `}
+                                        {SYMBOLS[currency as CurrencyCode] ?? currency + ' '}
                                     </span>
                                     <input
                                         type="number"

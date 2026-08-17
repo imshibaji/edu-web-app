@@ -120,3 +120,17 @@ $$ language 'plpgsql';
 CREATE TRIGGER update_users_modtime BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_tutors_modtime BEFORE UPDATE ON tutor_profiles FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_bookings_modtime BEFORE UPDATE ON bookings FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+-- -------------------------------------------------------------
+-- 5. CURRENCY SETTINGS (Admin-configurable exchange rates)
+-- -------------------------------------------------------------
+CREATE TABLE currency_settings (
+    code VARCHAR(3) PRIMARY KEY,
+    rate NUMERIC(12, 6) NOT NULL DEFAULT 1.0,
+    symbol VARCHAR(10) NOT NULL DEFAULT '',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_base BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER update_currency_settings_modtime BEFORE UPDATE ON currency_settings FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();

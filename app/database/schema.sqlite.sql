@@ -180,3 +180,19 @@ CREATE INDEX IF NOT EXISTS idx_user_activities_user_time
 
 CREATE INDEX IF NOT EXISTS idx_user_activities_created
     ON user_activities (created_at);
+
+-- =====================================================================
+-- Currency Settings (Admin-configurable exchange rates)
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS currency_settings (
+    code       VARCHAR(3)   PRIMARY KEY,
+    rate       REAL         NOT NULL DEFAULT 1.0
+        CHECK (rate > 0),
+    symbol     VARCHAR(10)  NOT NULL DEFAULT '',
+    is_active  INTEGER      NOT NULL DEFAULT 1
+        CHECK (is_active IN (0, 1)),
+    is_base    INTEGER      NOT NULL DEFAULT 0
+        CHECK (is_base IN (0, 1)),
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

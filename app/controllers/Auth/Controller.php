@@ -9,6 +9,17 @@ use App\Models\UserActivity;
 
 class Controller extends \App\Controllers\Controller
 {
+    protected function requireAdmin()
+    {
+        $user = $this->authUser();
+
+        if (!$user || !$user->isAdmin()) {
+            response()->redirect('/dashboard', 303);
+        }
+
+        return $user;
+    }
+
     protected function paginate($query, int $defaultPerPage = 5): array
     {
         $page = max(1, (int) (request()->get('page') ?? 1));

@@ -34,9 +34,17 @@ export function formatDateTime(value: string | number | Date | null | undefined)
 
 export function money(cents: number | string, currency = 'INR'): string {
     const n = Number(cents) || 0;
-    return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency,
-        maximumFractionDigits: n % 100 === 0 ? 0 : 2,
-    }).format(n / 100);
+    const amount = n / 100;
+    const formatted = amount % 1 === 0 ? amount.toLocaleString() : amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    try {
+        return new Intl.NumberFormat(undefined, {
+            style: 'currency',
+            currency,
+            maximumFractionDigits: n % 100 === 0 ? 0 : 2,
+        }).format(amount);
+    } catch {
+        // Non-ISO currency code — fall back to symbol + formatted number
+        return `${currency} ${formatted}`;
+    }
 }

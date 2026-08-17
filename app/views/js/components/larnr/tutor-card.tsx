@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function TutorCard({ tutor, onBook, auth }: Props) {
-    const rate = displayAmount(tutor.rate, getCurrencyCookie() || tutor.currency, auth, tutor);
+    const rate = displayAmount(tutor.rate, tutor.currency, auth);
 
     return (
         <div className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
@@ -60,7 +60,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
                         )}
                         {!rate.note && (
                             <p className="text-xs text-base-content/50">
-                                {getCurrencyCookie() === 'USD' ? 'USD' : getCurrencyCookie() || tutor.currency}
+                                {tutor.currency}
                             </p>
                         )}
                     </div>
@@ -111,7 +111,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
 
                 <div className="flex flex-wrap items-center gap-2">
                     {tutor.subjects.map((s) => {
-                        const subj = displayAmount(s.rate_cents, getCurrencyCookie() || tutor.currency, auth);
+                        const subj = displayAmount(s.rate_cents, tutor.currency, auth);
                         return (
                             <span
                                 key={s.name}

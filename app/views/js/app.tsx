@@ -5,8 +5,10 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from '@leafphp/vite-plugin/inertia-helpers';
 
 import { initTheme } from '@/utils/theme';
+import { loadRatesFromAPI } from '@/utils/currency';
 
 initTheme();
+loadRatesFromAPI();
 
 const appName = import.meta.env.VITE_APP_NAME || 'Larnr';
 
