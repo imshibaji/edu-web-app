@@ -1,0 +1,48 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  booking_id:
+    type: uuid
+    index: true
+  tutor_id:
+    type: uuid
+    index: true
+  stripe_transfer_id:
+    type: string
+    length: 255
+    nullable: true
+  gross_amount:
+    type: integer
+  platform_fee:
+    type: integer
+    default: 0
+  processing_fee:
+    type: integer
+    default: 0
+  net_amount:
+    type: integer
+  currency:
+    type: string
+    length: 3
+    default: USD
+  status:
+    type: string
+    length: 20
+    default: pending
+  scheduled_at:
+    type: datetime
+    nullable: true
+  paid_at:
+    type: datetime
+    nullable: true
+  failure_reason:
+    type: text
+    nullable: true
+
+timestamps: true
+
+seeds:
+  count: 0

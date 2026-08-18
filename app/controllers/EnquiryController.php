@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AvailabilitySlot;
 use App\Models\Booking;
+use App\Models\Notification;
 use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\User;
@@ -89,8 +90,18 @@ class EnquiryController extends Controller
 
         UserActivity::log($user->id, UserActivity::TYPE_TRIAL_BOOKED, "Booked a trial lesson with {$profile->full_name}");
 
+        // Notify tutor about new booking request
+        $studentName = $user->studentProfile?->full_name ?? $user->email;
+        $this->notify(
+            $tutorId,
+            Notification::TYPE_BOOKING_REQUEST,
+            'New lesson request',
+            "{$studentName} requested a trial lesson with you.",
+            ['booking_id' => $booking->id, 'student_id' => $user->id]
+        );
+
         return response()
             ->withFlash('success', 'Trial lesson request sent to ' . $profile->full_name . '.')
-            ->redirect('/', 303);
+            ->redirect('/payment/checkout/' . $booking->id, 303);
     }
 }

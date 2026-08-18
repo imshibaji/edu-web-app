@@ -4,6 +4,7 @@ namespace App\Controllers\Auth\admin;
 
 use App\Controllers\Auth\Controller;
 use App\Models\Subject;
+use App\Models\TutorSubject;
 use App\Models\UserActivity;
 
 class SubjectsController extends Controller
@@ -107,6 +108,8 @@ class SubjectsController extends Controller
         }
 
         $name = $subject->name;
+
+        TutorSubject::query()->where('subject_id', $subject->id)->delete();
         $subject->delete();
 
         UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_REMOVED, "Deleted subject {$name}");

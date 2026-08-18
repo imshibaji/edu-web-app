@@ -1,0 +1,231 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  tutor_id:
+    type: uuid
+    index: true
+  start_time:
+    type: datetime
+  end_time:
+    type: datetime
+  is_booked:
+    type: boolean
+    default: false
+
+timestamps: true
+
+seeds:
+  data:
+    - id: 00000000-0000-4000-8000-000000000201
+      tutor_id: 00000000-0000-4000-8000-000000000011
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000202
+      tutor_id: 00000000-0000-4000-8000-000000000011
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000203
+      tutor_id: 00000000-0000-4000-8000-000000000011
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000204
+      tutor_id: 00000000-0000-4000-8000-000000000012
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000205
+      tutor_id: 00000000-0000-4000-8000-000000000012
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000206
+      tutor_id: 00000000-0000-4000-8000-000000000012
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000207
+      tutor_id: 00000000-0000-4000-8000-000000000013
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000208
+      tutor_id: 00000000-0000-4000-8000-000000000013
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000209
+      tutor_id: 00000000-0000-4000-8000-000000000013
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020a
+      tutor_id: 00000000-0000-4000-8000-000000000014
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020b
+      tutor_id: 00000000-0000-4000-8000-000000000014
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020c
+      tutor_id: 00000000-0000-4000-8000-000000000014
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020d
+      tutor_id: 00000000-0000-4000-8000-000000000015
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020e
+      tutor_id: 00000000-0000-4000-8000-000000000015
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000020f
+      tutor_id: 00000000-0000-4000-8000-000000000015
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000210
+      tutor_id: 00000000-0000-4000-8000-000000000016
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000211
+      tutor_id: 00000000-0000-4000-8000-000000000016
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000212
+      tutor_id: 00000000-0000-4000-8000-000000000016
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000213
+      tutor_id: 00000000-0000-4000-8000-000000000017
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000214
+      tutor_id: 00000000-0000-4000-8000-000000000017
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000215
+      tutor_id: 00000000-0000-4000-8000-000000000017
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000216
+      tutor_id: 00000000-0000-4000-8000-000000000018
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000217
+      tutor_id: 00000000-0000-4000-8000-000000000018
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000218
+      tutor_id: 00000000-0000-4000-8000-000000000018
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000219
+      tutor_id: 00000000-0000-4000-8000-000000000019
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021a
+      tutor_id: 00000000-0000-4000-8000-000000000019
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021b
+      tutor_id: 00000000-0000-4000-8000-000000000019
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021c
+      tutor_id: 00000000-0000-4000-8000-00000000001a
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021d
+      tutor_id: 00000000-0000-4000-8000-00000000001a
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021e
+      tutor_id: 00000000-0000-4000-8000-00000000001a
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000021f
+      tutor_id: 00000000-0000-4000-8000-00000000001b
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000220
+      tutor_id: 00000000-0000-4000-8000-00000000001b
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000221
+      tutor_id: 00000000-0000-4000-8000-00000000001b
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000222
+      tutor_id: 00000000-0000-4000-8000-00000000001c
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000223
+      tutor_id: 00000000-0000-4000-8000-00000000001c
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000224
+      tutor_id: 00000000-0000-4000-8000-00000000001c
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000225
+      tutor_id: 00000000-0000-4000-8000-00000000001d
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000226
+      tutor_id: 00000000-0000-4000-8000-00000000001d
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000227
+      tutor_id: 00000000-0000-4000-8000-00000000001d
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000228
+      tutor_id: 00000000-0000-4000-8000-00000000001e
+      start_time: '@tick.add(1, "day").set("hour", 13).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(1, "day").set("hour", 14).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-000000000229
+      tutor_id: 00000000-0000-4000-8000-00000000001e
+      start_time: '@tick.add(2, "day").set("hour", 16).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(2, "day").set("hour", 17).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false
+    - id: 00000000-0000-4000-8000-00000000022a
+      tutor_id: 00000000-0000-4000-8000-00000000001e
+      start_time: '@tick.add(3, "day").set("hour", 19).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      end_time: '@tick.add(3, "day").set("hour", 20).set("minute", 0).set("second", 0).format("YYYY-MM-DD HH:mm:ss")'
+      is_booked: false

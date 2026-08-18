@@ -55,7 +55,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
                         </p>
                         {rate.note && (
                             <p className="text-xs text-base-content/50">
-                                ≈ {rate.note} · {getCurrencyCookie() || tutor.currency}
+                                ≈ {rate.note} · {tutor.currency} to {getCurrencyCookie() || 'INR'}
                             </p>
                         )}
                         {!rate.note && (
@@ -123,7 +123,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
                                         {subj.text}/hr
                                         {subj.note && (
                                             <span className="ml-1 font-normal text-base-content/40">
-                                                ({subj.note})
+                                                ({subj.note} · {tutor.currency} to {getCurrencyCookie() || 'INR'})
                                             </span>
                                         )}
                                     </span>

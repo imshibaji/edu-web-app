@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AvailabilitySlot;
 use App\Models\Currency;
+use App\Models\Notification;
 use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\User;
@@ -126,7 +127,7 @@ class Controller extends \Leaf\Controller
             TutorProfile::query()
                 ->get()
                 ->avg(
-                    fn ($t) => Currency::convert((int) $t->hourly_rate, $t->currency, Currency::DEFAULT)
+                    fn ($t) => Currency::convert((int) $t->hourly_rate, $t->currency, Currency::getBaseCurrency())
                 ) ?? 0
         );
 
@@ -181,5 +182,18 @@ class Controller extends \Leaf\Controller
                 'citiesCount' => count($allCities),
             ],
         ];
+    }
+
+    /**
+     * Create a notification for a user.
+     */
+    protected function notify(
+        string $userId,
+        string $type,
+        string $title,
+        string $message,
+        ?array $data = null
+    ): void {
+        Notification::createForUser($userId, $type, $title, $message, $data);
     }
 }

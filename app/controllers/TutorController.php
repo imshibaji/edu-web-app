@@ -175,6 +175,9 @@ class TutorController extends Controller
             'experience' => 'in<[ENTRY,MID,SENIOR]>',
             'rate' => 'numeric',
             'currency' => 'in<[INR,USD,EUR,GBP,AED,SGD]>',
+            'stripeAccountId' => 'optional|max:255',
+            'payoutMethod' => 'optional|max:50',
+            'payoutDetails' => 'optional',
         ]);
 
         if (!$data) {
@@ -191,6 +194,7 @@ class TutorController extends Controller
                 ->redirect('/tutor/profile', 303);
         }
 
+        // Profile fields that require admin review
         $proposed = [
             'full_name' => $data['fullName'],
             'headline' => $this->normalize($data['headline'] ?? null),
@@ -201,6 +205,18 @@ class TutorController extends Controller
             'hourly_rate' => (int) round($rateDollars * 100),
             'currency' => $data['currency'],
         ];
+
+        // Payment fields that can be updated directly (no admin review needed)
+        $paymentFields = [];
+        if (!empty($data['stripeAccountId'])) {
+            $paymentFields['stripe_account_id'] = $data['stripeAccountId'];
+        }
+        if (!empty($data['payoutMethod'])) {
+            $paymentFields['payout_method'] = $data['payoutMethod'];
+        }
+        if (isset($data['payoutDetails'])) {
+            $paymentFields['payout_details'] = is_array($data['payoutDetails']) ? $data['payoutDetails'] : [];
+        }
 
         $avatarPath = $this->handleAvatarUpload();
 
@@ -220,7 +236,7 @@ class TutorController extends Controller
             }
         }
 
-        if (!$hasDiff && !$avatarPath) {
+        if (!$hasDiff && !$avatarPath && empty($paymentFields)) {
             return response()
                 ->withFlash('success', 'No changes to save.')
                 ->redirect('/tutor/profile', 303);
@@ -230,6 +246,12 @@ class TutorController extends Controller
 
         if ($avatarPath) {
             $snapshot['avatar_url'] = $avatarPath;
+        }
+
+        // Update payment fields immediately
+        if (!empty($paymentFields)) {
+            $profile->update($paymentFields);
+            UserActivity::log($user->id, UserActivity::TYPE_PROFILE_SUBMITTED, 'Updated payment information');
         }
 
         $pending = TutorProfileReview::query()

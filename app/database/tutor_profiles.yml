@@ -1,0 +1,215 @@
+increments: false
+
+columns:
+  user_id:
+    type: uuid
+    primary: true
+  full_name:
+    type: string
+    length: 255
+  headline:
+    type: string
+    length: 255
+    nullable: true
+  bio:
+    type: text
+    nullable: true
+  hourly_rate:
+    type: integer
+    default: 0
+  currency:
+    type: string
+    length: 3
+    default: USD
+  is_verified:
+    type: boolean
+    default: false
+  city:
+    type: string
+    length: 100
+    nullable: true
+  format:
+    type: string
+    length: 20
+    default: ONLINE
+  experience_level:
+    type: string
+    length: 10
+    default: ENTRY
+  rating:
+    type: float
+    default: 0
+  avatar_url:
+    type: string
+    length: 500
+    nullable: true
+  stripe_account_id:
+    type: string
+    length: 255
+    nullable: true
+  payout_method:
+    type: string
+    length: 50
+    nullable: true
+  payout_details:
+    type: json
+    nullable: true
+
+timestamps: true
+
+seeds:
+  data:
+    - user_id: 00000000-0000-4000-8000-000000000011
+      full_name: Ananya Chatterjee
+      headline: IIT Graduate | Math & Physics Mentor
+      bio: Passionate SENIOR educator from Kolkata. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 25000
+      currency: INR
+      is_verified: true
+      city: Kolkata
+      format: BOTH
+      experience_level: SENIOR
+      rating: 4.9
+    - user_id: 00000000-0000-4000-8000-000000000012
+      full_name: Rahul Mehta
+      headline: Ex-Banker teaching Economics & Finance
+      bio: Passionate MID educator from Delhi. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 20000
+      currency: INR
+      is_verified: true
+      city: Delhi
+      format: ONLINE
+      experience_level: MID
+      rating: 4.7
+    - user_id: 00000000-0000-4000-8000-000000000013
+      full_name: Priya Sharma
+      headline: English & Creative Writing Coach
+      bio: Passionate SENIOR educator from Mumbai. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 22000
+      currency: INR
+      is_verified: true
+      city: Mumbai
+      format: IN_PERSON
+      experience_level: SENIOR
+      rating: 4.8
+    - user_id: 00000000-0000-4000-8000-000000000014
+      full_name: Arjun Nair
+      headline: Full-Stack Developer | CS & Coding
+      bio: Passionate SENIOR educator from Bangalore. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 30000
+      currency: INR
+      is_verified: true
+      city: Bangalore
+      format: ONLINE
+      experience_level: SENIOR
+      rating: 4.9
+    - user_id: 00000000-0000-4000-8000-000000000015
+      full_name: Sneha Iyer
+      headline: Chemistry PhD | JEE & NEET Specialist
+      bio: Passionate SENIOR educator from Chennai. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 28000
+      currency: INR
+      is_verified: true
+      city: Chennai
+      format: BOTH
+      experience_level: SENIOR
+      rating: 5.0
+    - user_id: 00000000-0000-4000-8000-000000000016
+      full_name: Vikram Singh
+      headline: Mechanical Engineer | Physics & Maths
+      bio: Passionate MID educator from Pune. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 18000
+      currency: INR
+      is_verified: false
+      city: Pune
+      format: ONLINE
+      experience_level: MID
+      rating: 4.5
+    - user_id: 00000000-0000-4000-8000-000000000017
+      full_name: Fatima Khan
+      headline: Biology & Medical Entrance Coach
+      bio: Passionate MID educator from Hyderabad. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 19000
+      currency: INR
+      is_verified: true
+      city: Hyderabad
+      format: BOTH
+      experience_level: MID
+      rating: 4.6
+    - user_id: 00000000-0000-4000-8000-000000000018
+      full_name: Rohan Das
+      headline: History & Political Science Educator
+      bio: Passionate ENTRY educator from Kolkata. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 12000
+      currency: INR
+      is_verified: false
+      city: Kolkata
+      format: IN_PERSON
+      experience_level: ENTRY
+      rating: 4.4
+    - user_id: 00000000-0000-4000-8000-000000000019
+      full_name: Neha Gupta
+      headline: Hindi Literature & Language Teacher
+      bio: Passionate ENTRY educator from Delhi. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 10000
+      currency: INR
+      is_verified: false
+      city: Delhi
+      format: IN_PERSON
+      experience_level: ENTRY
+      rating: 4.3
+    - user_id: 00000000-0000-4000-8000-00000000001a
+      full_name: Aditya Menon
+      headline: Music & Piano Instructor
+      bio: Passionate ENTRY educator from Bangalore. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 1500
+      currency: EUR
+      is_verified: true
+      city: Bangalore
+      format: IN_PERSON
+      experience_level: ENTRY
+      rating: 4.7
+    - user_id: 00000000-0000-4000-8000-00000000001b
+      full_name: Kavya Reddy
+      headline: SAT & GRE Verbal Expert
+      bio: Passionate MID educator from Hyderabad. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 21000
+      currency: INR
+      is_verified: true
+      city: Hyderabad
+      format: ONLINE
+      experience_level: MID
+      rating: 4.8
+    - user_id: 00000000-0000-4000-8000-00000000001c
+      full_name: Manish Patel
+      headline: Accounting & Business Studies Tutor
+      bio: Passionate MID educator from Ahmedabad. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 17000
+      currency: INR
+      is_verified: false
+      city: Ahmedabad
+      format: BOTH
+      experience_level: MID
+      rating: 4.5
+    - user_id: 00000000-0000-4000-8000-00000000001d
+      full_name: Ishita Bose
+      headline: Computer Science Grad | Math Olympiad Coach
+      bio: Passionate SENIOR educator from Mumbai. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 2400
+      currency: GBP
+      is_verified: true
+      city: Mumbai
+      format: ONLINE
+      experience_level: SENIOR
+      rating: 4.8
+    - user_id: 00000000-0000-4000-8000-00000000001e
+      full_name: Farhan Ali
+      headline: Geography & Environmental Science
+      bio: Passionate ENTRY educator from Pune. Focused on making complex topics simple, with structured lesson plans and regular progress reviews.
+      hourly_rate: 11000
+      currency: INR
+      is_verified: false
+      city: Pune
+      format: ONLINE
+      experience_level: ENTRY
+      rating: 4.2

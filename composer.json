@@ -21,10 +21,12 @@
         "leafs/auth": "^5.1",
         "ramsey/uuid": "^4.9",
         "psy/psysh": "^0.12.24",
-        "leafs/devtools": "^0.1.0"
+        "leafs/devtools": "^0.1.0",
+        "stripe/stripe-php": "^21.2"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.24"
+        "fakerphp/faker": "^1.24",
+        "pestphp/pest": "^5.1"
     },
     "autoload": {
         "psr-4": {

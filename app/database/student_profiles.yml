@@ -1,0 +1,21 @@
+increments: false
+
+columns:
+  user_id:
+    type: uuid
+    primary: true
+  full_name:
+    type: string
+    length: 255
+  phone_number:
+    type: string
+    length: 30
+    nullable: true
+
+timestamps: true
+
+seeds:
+  data:
+    - user_id: 00000000-0000-4000-8000-000000000002
+      full_name: Demo Student
+      phone_number: '+91 90000 00000'

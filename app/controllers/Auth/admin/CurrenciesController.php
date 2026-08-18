@@ -26,26 +26,38 @@ class CurrenciesController extends Controller
     {
         if (!($user = $this->requireAdmin())) return;
 
-        $data = request()->validate([
-            'rates' => 'array',
-            'rates.*.code' => 'string|min:2|max:10',
-            'rates.*.rate' => 'numeric|min:0.000001',
-            'rates.*.is_active' => 'boolean',
-        ]);
+        $rates = request()->get('rates');
+        $rates = is_array($rates) ? $rates : [];
 
-        if (!$data) {
+        if (empty($rates)) {
             return response()
-                ->withFlash('errors', request()->errors())
+                ->withFlash('error', 'No currency rates were provided.')
                 ->redirect('/admin/currencies', 303);
         }
 
         $updates = [];
-        foreach ($data['rates'] as $item) {
-            $code = strtoupper($item['code']);
+        foreach ($rates as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $code = strtoupper(trim((string) ($item['code'] ?? '')));
+            $rate = (float) ($item['rate'] ?? 0);
+
+            if ($code === '' || $rate <= 0) {
+                continue;
+            }
+
             $updates[$code] = [
-                'rate' => (float) $item['rate'],
+                'rate' => $rate,
                 'is_active' => (bool) ($item['is_active'] ?? true),
             ];
+        }
+
+        if (empty($updates)) {
+            return response()
+                ->withFlash('error', 'No valid currency rates were provided.')
+                ->redirect('/admin/currencies', 303);
         }
 
         Currency::updateRates($updates);
@@ -61,22 +73,17 @@ class CurrenciesController extends Controller
     {
         if (!($user = $this->requireAdmin())) return;
 
-        $data = request()->validate([
-            'code' => 'string|min:2|max:10',
-            'rate' => 'numeric|min:0.000001',
-            'symbol' => 'optional|string',
-        ]);
+        $code = strtoupper(trim((string) request()->params('code', '')));
+        $rate = (float) request()->params('rate', 0);
+        $symbol = trim((string) request()->params('symbol', ''));
 
-        if (!$data) {
+        if ($code === '' || $rate <= 0) {
             return response()
-                ->withFlash('errors', request()->errors())
+                ->withFlash('error', 'A currency code and a rate greater than 0 are required.')
                 ->redirect('/admin/currencies', 303);
         }
 
-        $code = strtoupper(trim($data['code']));
-        $symbol = $data['symbol'] ?? ($code . ' ');
-
-        Currency::addCurrency($code, (float) $data['rate'], $symbol, true);
+        Currency::addCurrency($code, $rate, $symbol !== '' ? $symbol : ($code . ' '), true);
 
         UserActivity::log($user->id, UserActivity::TYPE_ACCOUNT_UPDATED, "Added currency {$code}");
 
@@ -89,19 +96,17 @@ class CurrenciesController extends Controller
     {
         if (!($user = $this->requireAdmin())) return;
 
-        $data = request()->validate([
-            'code' => 'string|min:2|max:10',
-        ]);
+        $code = strtoupper(trim((string) request()->params('code', '')));
 
-        if (!$data) {
+        if ($code === '') {
             return response()
-                ->withFlash('errors', request()->errors())
+                ->withFlash('error', 'A currency code is required.')
                 ->redirect('/admin/currencies', 303);
         }
 
-        $result = Currency::removeCurrency(strtoupper(trim($data['code'])));
+        $result = Currency::removeCurrency($code);
 
-        UserActivity::log($user->id, UserActivity::TYPE_ACCOUNT_UPDATED, "Removed currency {$data['code']}");
+        UserActivity::log($user->id, UserActivity::TYPE_ACCOUNT_UPDATED, "Removed currency {$code}");
 
         if ($result['success']) {
             return response()
@@ -118,17 +123,14 @@ class CurrenciesController extends Controller
     {
         if (!($user = $this->requireAdmin())) return;
 
-        $data = request()->validate([
-            'code' => 'string|min:2|max:10',
-        ]);
+        $code = strtoupper(trim((string) request()->params('code', '')));
 
-        if (!$data) {
+        if ($code === '') {
             return response()
-                ->withFlash('errors', request()->errors())
+                ->withFlash('error', 'A currency code is required.')
                 ->redirect('/admin/currencies', 303);
         }
 
-        $code = strtoupper(trim($data['code']));
         Currency::setBaseCurrency($code);
 
         UserActivity::log($user->id, UserActivity::TYPE_ACCOUNT_UPDATED, "Set base currency to {$code}");

@@ -1,20 +1,129 @@
-remember_token: true
+increments: false
 
 columns:
-  name: string
+  id:
+    type: uuid
+    primary: true
   email:
     type: string
+    length: 255
     unique: true
-  email_verified_at:
-    type: timestamp
+  password_hash:
+    type: string
+    length: 255
+  role:
+    type: string
+    length: 10
+    default: STUDENT
+  is_active:
+    type: boolean
+    default: true
+  base_currency:
+    type: string
+    length: 3
+    default: USD
+  remember_token:
+    type: string
+    length: 100
     nullable: true
-  password: string
+
+timestamps: true
 
 seeds:
-  count: 5
-  truncate: true
   data:
-    name: '@faker.name'
-    email: '@faker.unique.safeEmail'
-    password: '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' # password
-    email_verified_at: '@tick.format:YYYY-MM-DD HH:mm:ss'
+    - id: 00000000-0000-4000-8000-000000000001
+      email: admin@larnr.app
+      password_hash: '@hash("password")'
+      role: ADMIN
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000002
+      email: demo@larnr.app
+      password_hash: '@hash("password")'
+      role: STUDENT
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000011
+      email: tutor1@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000012
+      email: tutor2@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000013
+      email: tutor3@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000014
+      email: tutor4@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000015
+      email: tutor5@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000016
+      email: tutor6@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000017
+      email: tutor7@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000018
+      email: tutor8@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-000000000019
+      email: tutor9@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-00000000001a
+      email: tutor10@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: EUR
+    - id: 00000000-0000-4000-8000-00000000001b
+      email: tutor11@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-00000000001c
+      email: tutor12@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR
+    - id: 00000000-0000-4000-8000-00000000001d
+      email: tutor13@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: GBP
+    - id: 00000000-0000-4000-8000-00000000001e
+      email: tutor14@larnr.app
+      password_hash: '@hash("password")'
+      role: TUTOR
+      is_active: true
+      base_currency: INR

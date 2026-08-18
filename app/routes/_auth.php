@@ -44,6 +44,7 @@ app()->group('/tutor', [
         app()->post('/slots/delete', 'TutorController@deleteSlot');
         app()->get('/profile', 'TutorController@editProfile');
         app()->post('/profile', 'TutorController@updateProfile');
+        app()->get('/connect', 'PaymentController@connect');
     },
 ]);
 
@@ -64,6 +65,12 @@ app()->group('/admin', [
         app()->post('/subjects/update', 'Auth\admin\SubjectsController@update');
         app()->post('/subjects/delete', 'Auth\admin\SubjectsController@delete');
         app()->get('/payments', 'Auth\admin\PaymentsController@index');
+        app()->get('/payment-settings', 'Auth\admin\AdminPaymentSettingsController@index');
+        app()->post('/payment-settings', 'Auth\admin\AdminPaymentSettingsController@update');
+        app()->get('/payouts', 'Auth\admin\AdminPayoutController@index');
+        app()->post('/payouts/release', 'Auth\admin\AdminPayoutController@release');
+        app()->post('/payouts/schedule', 'Auth\admin\AdminPayoutController@schedule');
+        app()->get('/payouts/history', 'Auth\admin\AdminPayoutController@payoutHistory');
         app()->get('/currencies', 'Auth\admin\CurrenciesController@index');
         app()->post('/currencies', 'Auth\admin\CurrenciesController@update');
         app()->post('/currencies/add', 'Auth\admin\CurrenciesController@add');

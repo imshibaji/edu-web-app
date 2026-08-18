@@ -1,6 +1,6 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import { Save, Clock, ImagePlus } from 'lucide-react';
+import { Save, Clock, ImagePlus, CreditCard, Banknote, Shield } from 'lucide-react';
 
 import Navbar from '@/components/larnr/navbar';
 import Footer from '@/components/larnr/footer';
@@ -29,6 +29,9 @@ export default function TutorProfile(props: TutorProfileProps) {
         experience: source.experience_level ?? 'ENTRY',
         rate: toDollars(source.hourly_rate),
         currency: source.currency ?? 'USD',
+        stripeAccountId: source.stripe_account_id ?? '',
+        payoutMethod: source.payout_method ?? '',
+        payoutDetails: source.payout_details ?? '',
         avatar: null as File | null,
     });
 
@@ -81,7 +84,7 @@ export default function TutorProfile(props: TutorProfileProps) {
                             </h1>
                             <p className="text-sm text-base-content/60">
                                 Changes you save are submitted for admin review before they go
-                                public.
+                                public. Payment information is updated immediately.
                             </p>
                         </div>
 
@@ -250,6 +253,76 @@ export default function TutorProfile(props: TutorProfileProps) {
                                             {props.errors?.rate && (
                                                 <span className="text-xs text-error">{props.errors.rate}</span>
                                             )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
+                                <div className="card-body gap-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                            <CreditCard className="size-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-display text-lg font-semibold text-base-content">
+                                                Payout information
+                                            </h3>
+                                            <p className="text-sm text-base-content/60">
+                                                Connect your Stripe account to receive payments.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="divider divider-neutral my-0" />
+
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <div className="fieldset sm:col-span-2">
+                                            <legend className="fieldset-legend">Stripe Connect Account ID</legend>
+                                            <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
+                                                <input
+                                                    type="text"
+                                                    name="stripeAccountId"
+                                                    placeholder="acct_..."
+                                                    value={data.stripeAccountId}
+                                                    onChange={(e) => setData('stripeAccountId', e.target.value)}
+                                                />
+                                            </label>
+                                            <p className="text-xs text-base-content/50">
+                                                Enter your Stripe Connect account ID (starts with <code>acct_</code>).
+                                            </p>
+                                        </div>
+
+                                        <div className="fieldset">
+                                            <legend className="fieldset-legend">Payout method</legend>
+                                            <select
+                                                name="payoutMethod"
+                                                className="select w-full rounded-xl appearance-none border-base-content/10 bg-base-content/5"
+                                                value={data.payoutMethod}
+                                                onChange={(e) => setData('payoutMethod', e.target.value)}
+                                            >
+                                                <option value="">Select method</option>
+                                                <option value="stripe">Stripe Connect</option>
+                                                <option value="bank_transfer">Bank transfer</option>
+                                                <option value="paypal">PayPal</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="fieldset sm:col-span-2">
+                                            <legend className="fieldset-legend">Payout details (JSON)</legend>
+                                            <label className="textarea w-full rounded-xl border-base-content/10 bg-base-content/5">
+                                                <textarea
+                                                    name="payoutDetails"
+                                                    rows={3}
+                                                    className="resize-none w-full bg-transparent text-base-content/80 placeholder:text-base-content/50 focus:outline-none font-mono text-xs"
+                                                    placeholder='{"bank_name": "Chase", "last4": "1234", "routing": "021000021"}'
+                                                    value={data.payoutDetails}
+                                                    onChange={(e) => setData('payoutDetails', e.target.value)}
+                                                />
+                                            </label>
+                                            <p className="text-xs text-base-content/50">
+                                                Optional JSON with additional payout info (bank name, last 4 digits, etc.)
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

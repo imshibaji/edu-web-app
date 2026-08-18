@@ -1,0 +1,43 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  student_id:
+    type: uuid
+    index: true
+  tutor_id:
+    type: uuid
+    index: true
+  subject_id:
+    type: uuid
+    nullable: true
+  slot_id:
+    type: uuid
+    nullable: true
+  scheduled_at:
+    type: datetime
+    nullable: true
+  duration_minutes:
+    type: integer
+    default: 60
+  amount:
+    type: integer
+    default: 0
+  currency:
+    type: string
+    length: 3
+    default: USD
+  status:
+    type: string
+    length: 30
+    default: PENDING_PAYMENT
+  notes:
+    type: text
+    nullable: true
+
+timestamps: true
+
+seeds:
+  count: 0

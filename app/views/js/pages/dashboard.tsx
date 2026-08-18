@@ -1,5 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
-import { CalendarCheck, GraduationCap, ArrowRight } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { CalendarCheck, GraduationCap, ArrowRight, CreditCard } from 'lucide-react';
 
 import Navbar from '@/components/larnr/navbar';
 import Footer from '@/components/larnr/footer';
@@ -130,6 +130,18 @@ export default function Dashboard(props: DashboardProps) {
                                                 <p className="mt-2 rounded-lg bg-base-content/5 p-3 text-xs text-base-content/60">
                                                     &ldquo;{b.notes}&rdquo;
                                                 </p>
+                                            )}
+
+                                            {b.status === 'PENDING_PAYMENT' && (
+                                                <div className="mt-4">
+                                                    <button
+                                                        onClick={() => router.visit(`/payment/checkout/${b.id}`)}
+                                                        className="btn btn-primary w-full rounded-full px-4 py-2 gap-2"
+                                                    >
+                                                        <CreditCard className="size-4" />
+                                                        Pay Now ({amount.text})
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     </div>

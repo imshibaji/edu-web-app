@@ -1,5 +1,7 @@
 Here is a production-ready **PostgreSQL database architecture** tailored for your 7-day **LeafPHP** build.
 
+> **Note:** The live schema is now `app/database/*.yml` (Leaf Schema, applied by `php leaf app:init`), with `app/database/schema.sqlite.sql`/root `schema.sql` removed. This section remains as the original design reference.
+
 To keep you on track for the 1-week timeline while ensuring structural integrity for money handling, this schema implements a clean relational structure: **Identity & Profiles**, **Availability & Bookings**, and **Payments & Escrow Audit Logs**.
 
 ---

@@ -1,0 +1,55 @@
+increments: false
+
+columns:
+  code:
+    type: string
+    length: 3
+    primary: true
+  rate:
+    type: float
+    default: 1.0
+  symbol:
+    type: string
+    length: 10
+    default: ''
+  is_active:
+    type: boolean
+    default: true
+  is_base:
+    type: boolean
+    default: false
+
+timestamps: true
+
+seeds:
+  data:
+    - code: INR
+      rate: 1.0
+      symbol: ₹
+      is_active: true
+      is_base: true
+    - code: USD
+      rate: 0.010
+      symbol: $
+      is_active: true
+      is_base: false
+    - code: EUR
+      rate: 0.0090
+      symbol: €
+      is_active: true
+      is_base: false
+    - code: GBP
+      rate: 0.0077
+      symbol: £
+      is_active: true
+      is_base: false
+    - code: AED
+      rate: 0.038
+      symbol: 'د.ا'
+      is_active: true
+      is_base: false
+    - code: SGD
+      rate: 0.013
+      symbol: S$
+      is_active: true
+      is_base: false

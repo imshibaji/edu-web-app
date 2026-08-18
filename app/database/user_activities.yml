@@ -1,0 +1,109 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  user_id:
+    type: uuid
+    index: true
+  type:
+    type: string
+    length: 40
+  description:
+    type: string
+    length: 255
+  ip_address:
+    type: string
+    length: 45
+    nullable: true
+
+timestamps: true
+
+seeds:
+  data:
+    - id: 00000000-0000-4000-8000-000000000301
+      user_id: 00000000-0000-4000-8000-000000000001
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000302
+      user_id: 00000000-0000-4000-8000-000000000002
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000303
+      user_id: 00000000-0000-4000-8000-000000000002
+      type: TRIAL_BOOKED
+      description: 'Booked a trial lesson with Ananya Chatterjee'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000304
+      user_id: 00000000-0000-4000-8000-000000000011
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000305
+      user_id: 00000000-0000-4000-8000-000000000012
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000306
+      user_id: 00000000-0000-4000-8000-000000000013
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000307
+      user_id: 00000000-0000-4000-8000-000000000014
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000308
+      user_id: 00000000-0000-4000-8000-000000000015
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000309
+      user_id: 00000000-0000-4000-8000-000000000016
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030a
+      user_id: 00000000-0000-4000-8000-000000000017
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030b
+      user_id: 00000000-0000-4000-8000-000000000018
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030c
+      user_id: 00000000-0000-4000-8000-000000000019
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030d
+      user_id: 00000000-0000-4000-8000-00000000001a
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030e
+      user_id: 00000000-0000-4000-8000-00000000001b
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-00000000030f
+      user_id: 00000000-0000-4000-8000-00000000001c
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000310
+      user_id: 00000000-0000-4000-8000-00000000001d
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1
+    - id: 00000000-0000-4000-8000-000000000311
+      user_id: 00000000-0000-4000-8000-00000000001e
+      type: LOGIN
+      description: 'Signed in'
+      ip_address: 127.0.0.1

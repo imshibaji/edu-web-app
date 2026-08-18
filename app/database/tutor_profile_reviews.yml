@@ -1,0 +1,58 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  tutor_id:
+    type: uuid
+    index: true
+  full_name:
+    type: string
+    length: 255
+    nullable: true
+  headline:
+    type: string
+    length: 255
+    nullable: true
+  bio:
+    type: text
+    nullable: true
+  hourly_rate:
+    type: integer
+    nullable: true
+  currency:
+    type: string
+    length: 3
+    nullable: true
+  city:
+    type: string
+    length: 100
+    nullable: true
+  format:
+    type: string
+    length: 20
+    nullable: true
+  experience_level:
+    type: string
+    length: 10
+    nullable: true
+  avatar_url:
+    type: string
+    length: 500
+    nullable: true
+  status:
+    type: string
+    length: 20
+    default: PENDING
+  reviewed_by:
+    type: uuid
+    nullable: true
+  reviewed_at:
+    type: datetime
+    nullable: true
+
+timestamps: true
+
+seeds:
+  count: 0

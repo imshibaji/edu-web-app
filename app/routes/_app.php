@@ -22,4 +22,12 @@ app()->get('/trust-safety', 'PublicController@trustSafety');
 
 app()->post('/enquiry', 'EnquiryController@store');
 
+app()->get('/payment/checkout/{id}', 'PaymentController@showCheckout');
+
 app()->get('/api/currency-rates', 'PublicController@currencyRates');
+
+app()->post('/payment/checkout', 'PaymentController@createCheckout');
+app()->get('/payment/success', 'PaymentController@success');
+app()->get('/payment/cancel', 'PaymentController@cancel');
+app()->get('/payment/connect', 'PaymentController@connect');
+app()->post('/stripe/webhook', 'PaymentController@webhook');

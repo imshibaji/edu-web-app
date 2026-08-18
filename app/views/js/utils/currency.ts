@@ -152,13 +152,10 @@ export function displayAmount(cents: number | string, currency: string, auth: Au
         return { text: native, note: null, native };
     }
 
-    const converted = money(convertCents(cents, currencyCode, base), currencyCode as any);
+    const converted = money(convertCents(cents, currencyCode, base), base as any);
 
-    if (user?.role === 'ADMIN') {
-        return { text: converted, note: native, native };
-    }
-
-    return { text: converted, note: null, native };
+    // Always include the original amount in note so UI can display both
+    return { text: converted, note: native, native };
 }
 
 // ── Backwards-compatible re-exports ──────────────────────────────────

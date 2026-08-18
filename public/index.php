@@ -19,12 +19,22 @@ chdir($appPath);
 |--------------------------------------------------------------------------
 |
 | Composer provides a convenient, automatically generated class loader
-| for our application. We just need to utilize it! We'll require it
-| into the script here so that we do not have to worry about the
-| loading of any our classes "manually". Feels great to relax.
+| for our application. We just need to utilize it! We just need to
+| utilize it! We'll require it into the script here so that we do not
+| have to worry about the loading of any our classes "manually". Feels
+| great to relax.
 |
 */
 require dirname(__DIR__) . '/vendor/autoload.php';
+
+// Load environment variables FIRST before any Leaf config
+$dotenv = \Dotenv\Dotenv::createUnsafeImmutable($appPath);
+$dotenv->load();
+
+// Force putenv for all env vars so they're available to _env()
+foreach ($_ENV as $key => $value) {
+    putenv("$key=$value");
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -53,16 +63,6 @@ if (php_sapi_name() === 'cli-server') {
 
     unset($path);
 }
-
-/*
-|--------------------------------------------------------------------------
-| Bring in (env)
-|--------------------------------------------------------------------------
-|
-| Load our environment variables into our application context
-|
-*/
-\Leaf\Core::loadApplicationEnv($appPath);
 
 /*
 |--------------------------------------------------------------------------

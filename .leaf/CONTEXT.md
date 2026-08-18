@@ -1,0 +1,25 @@
+<!-- leaf.context v1 -->
+# Larnr — Leaf 5 shared agent memory
+
+## Project
+Larnr: tutor-booking marketplace. Leaf 5 MVC backend, Inertia + React + TS frontend (app/views/js), Tailwind v4 + daisyUI 5 (`larnr` dark theme), SQLite (storage/database/database.sqlite). Money = integer cents with a per-row `currency` column; base currency is dynamic (INR default, rate 1.0).
+
+## Current Goal
+DB schema + seeds fully managed by Leaf Schema YAML files (`app/database/*.yml`) — raw SQL schema files removed, `app:init`/`app:seed` now drive Leaf's native migrate/seed engine. Currency module already stable.
+
+## Recent Changes
+* 2026-08-18 — Converted DB management to Leaf Schema YAML. Wrote 11 schema files (`users`, `student_profiles`, `tutor_profiles`, `subjects`, `tutor_subjects`, `availability_slots`, `bookings`, `transactions`, `tutor_profile_reviews`, `user_activities`, `currency_settings`) with deterministic seed UUIDs + `@hash("password")` / `@tick` tokens. Deleted `schema.sqlite.sql`, root `schema.sql`, and stale `password_resets.yml`. `InitCommand`/`SeedCommand` reworked to call `\Leaf\Schema::migrate()/seed()` per yml. `SubjectsController::delete()` now deletes `tutor_subjects` rows explicitly (Leaf Schema can't express FK CASCADE).
+* 2026-08-18 — Reworked admin CurrenciesController: dropped `request()->validate()` (nested wildcard `rates.*.*` rules always fail in Leaf Form; `min:0.000001` is a string-length rule). Read body directly via `request()->get()/params()` and guard in PHP. Created `.opencode/skills/leaf` skill with framework + project conventions and verified footguns.
+* 2026-08-18 — Added `Currency::setBaseCurrency()` → uses `updateOrInsert` (was bare `insert()`, hit UNIQUE constraint on existing codes). Guarded all CurrenciesController methods against `false` from `request()->validate()`.
+* 2026-08-18 — Admin layout reworked to left sidebar (AdminLayout, `lg:`+); dashboard split into `pages/dashboard.tsx` (student) and `pages/admin/dashboard.tsx` (admin, sidebar layout). Controller renders `admin/dashboard` for admins. Navbar full-width; admin nav links removed from top bar.
+* 2026-08-17 — Admin controllers split from monolithic AdminController into `app/controllers/Auth/admin/*` (Reviews, Activities, Users, Subjects, Tutors, Students, Payments, Currencies). Routes updated. `requireAdmin()` guard added to Auth base controller.
+* 2026-08-17 — Currency setup module: `currency_settings` table (code PK, rate, symbol, is_active, is_base), dynamic `Currency` model + frontend `currency.ts` meta, admin CRUD page, `/api/currency-rates`. Fixed conversion bug: `displayAmount()` uses the row's stored currency as source, never the display cookie.
+
+## Known Decisions
+- **Schema source of truth is `app/database/*.yml` (Leaf Schema).** Fresh setup: `php leaf app:init` (or `db:migrate`) then `php leaf app:seed` (or `db:seed`). On an existing DB, `db:migrate` "adopts" existing tables as baseline without altering them (no data loss) and `db:seed` inserts seed rows only if they don't conflict.
+- **Leaf Schema limitations (verified in this vendored version):** FK constraints (`foreign`/`foreignTable`/`foreignColumn`/`onDelete` column attrs are parsed but never applied), composite primary keys (tutor_subjects), composite indexes, and CHECK constraints are NOT expressible. App must compensate at the model/controller layer (e.g. `SubjectsController::delete()` cleans `tutor_subjects` explicitly). UUID PKs via `increments: false` + `id: {type: uuid, primary: true}` produce `varchar` PKs. `db:seed` seeds EVERY yml file — files without seed data must declare `seeds: count: 0` (otherwise Leaf falls back to a `Model::__seeder()` call and fatals).
+- Models are Eloquent-backed (base `App\Models\Model`). `Currency` uses `Illuminate\Database\Capsule\Manager` + `ensureTable()` for self-healing.
+- Leaf Form `request()->validate()` is unreliable here: no `required` rule, `min`/`max` are string-length, nested wildcards (`rates.*.rate`) always fail. Prefer reading input with `request()->get()/params()` and validating in PHP/model.
+- `auth()->user()` returns a Leaf wrapper; role checks must use `$this->authUser()` (real Eloquent User) — otherwise `__call()` never throws and checks silently pass.
+- Redirects after POST use 303 for Inertia correctness.
+- Always run `npm run build` + `php -l` to verify; no automated test suite exists.

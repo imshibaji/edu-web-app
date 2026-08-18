@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Payout;
 
 class Booking extends Model
 {
@@ -65,5 +67,10 @@ class Booking extends Model
     public function amountDisplay(): string
     {
         return '$' . number_format($this->amount / 100, 2);
+    }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class, 'booking_id');
     }
 }

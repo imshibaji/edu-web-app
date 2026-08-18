@@ -28,6 +28,9 @@ class TutorProfile extends Model
         'experience_level',
         'rating',
         'avatar_url',
+        'stripe_account_id',
+        'payout_method',
+        'payout_details',
     ];
 
     public $timestamps = true;
@@ -36,6 +39,7 @@ class TutorProfile extends Model
         'hourly_rate' => 'integer',
         'is_verified' => 'boolean',
         'rating' => 'float',
+        'payout_details' => 'array',
     ];
 
     public const FORMAT_ONLINE = 'ONLINE';
@@ -60,5 +64,15 @@ class TutorProfile extends Model
     public function rateDisplay(): string
     {
         return '$' . number_format($this->hourly_rate / 100, 2);
+    }
+
+    public function hasStripeAccount(): bool
+    {
+        return !empty($this->stripe_account_id);
+    }
+
+    public function isPayoutReady(): bool
+    {
+        return $this->hasStripeAccount() && !empty($this->payout_method);
     }
 }
