@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Notification;
 use App\Models\Payout;
 use Exception;
+use Illuminate\Support\Str;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Checkout\Session as StripeSession;
@@ -26,10 +27,27 @@ class StripeService
     private const DEFAULT_PROCESSING_FEE_PERCENT = 2.9;
     private const DEFAULT_PROCESSING_FEE_FIXED = 30; // cents
 
+    private bool $isDevelopmentMode = false;
+
     public function __construct()
     {
         $secret = \Leaf\Config::get('stripe.secret_key') ?? \env('STRIPE_SECRET_KEY');
-        Stripe::setApiKey($secret);
+        
+        // Check if we're in development mode with dummy credentials
+        $this->isDevelopmentMode = $secret === 'sk_test_dummy_key_for_testing' || 
+                                   \env('STRIPE_SECRET_KEY') === 'sk_test_dummy_key_for_testing';
+        
+        if (!$this->isDevelopmentMode) {
+            Stripe::setApiKey($secret);
+        }
+    }
+    
+    /**
+     * Check if running in development mode with dummy credentials.
+     */
+    public function isDevelopmentMode(): bool
+    {
+        return $this->isDevelopmentMode;
     }
 
     /**
@@ -90,7 +108,7 @@ class StripeService
         Booking $booking,
         string $successUrl,
         string $cancelUrl
-    ): StripeSession {
+    ): object {
         $tutor = $booking->tutor;
         $student = $booking->student;
         $tutorProfile = $tutor->tutorProfile;
@@ -101,6 +119,10 @@ class StripeService
         $amount = (int) $booking->amount;
         $currency = strtolower($booking->currency);
         $fees = $this->calculateFees($amount, $currency);
+
+        if ($this->isDevelopmentMode) {
+            return $this->createMockCheckoutSession($booking, $successUrl, $cancelUrl, $fees);
+        }
 
         return StripeSession::create([
             'payment_method_types' => ['card'],
@@ -140,6 +162,53 @@ class StripeService
     }
 
     /**
+     * Create a mock checkout session for development mode.
+     */
+    private function createMockCheckoutSession(
+        Booking $booking,
+        string $successUrl,
+        string $cancelUrl,
+        array $fees
+    ): object {
+        $mockSessionId = 'cs_test_' . Str::random(24);
+
+        $mockPaymentIntentId = 'pi_test_' . Str::random(24);
+        // Store the mock session data in the booking for later use
+        $booking->update([
+            'notes' => ($booking->notes ? $booking->notes . "\n" : '') . 
+                "Mock Stripe session: {$mockSessionId} | Payment Intent: {$mockPaymentIntentId} | Amount: {$booking->amount} {$booking->currency} | Platform Fee: {$fees['platform_fee']} | Processing Fee: {$fees['processing_fee']} | Net: {$fees['net_amount']}",
+        ]);
+
+        // Create a mock session object that mimics Stripe's Session
+        return (object) [
+            'id' => $mockSessionId,
+            'url' => $successUrl . '?session_id=' . $mockSessionId . '&mock=true',
+            'payment_intent' => (object) [
+                'id' => $mockPaymentIntentId,
+                'amount' => $fees['net_amount'],
+                'currency' => strtolower($booking->currency),
+                'metadata' => [
+                    'booking_id' => $booking->id,
+                    'student_id' => $booking->student_id,
+                    'tutor_id' => $booking->tutor_id,
+                    'platform_fee' => $fees['platform_fee'],
+                    'processing_fee' => $fees['processing_fee'],
+                    'net_amount' => $fees['net_amount'],
+                ],
+            ],
+            'amount_total' => (int) $booking->amount,
+            'currency' => strtolower($booking->currency),
+            'metadata' => [
+                'booking_id' => $booking->id,
+                'student_id' => $booking->student_id,
+                'tutor_id' => $booking->tutor_id,
+            ],
+            'payment_status' => 'paid',
+            'status' => 'complete',
+        ];
+    }
+
+    /**
      * Create a Stripe Connect account link for tutor onboarding.
      * Tutors need Connect accounts for receiving payouts.
      */
@@ -147,12 +216,16 @@ class StripeService
         string $tutorId,
         string $refreshUrl,
         string $returnUrl
-    ): AccountLink {
+    ): object {
         $tutor = User::query()->find($tutorId);
         $tutorProfile = $tutor?->tutorProfile;
 
         if (!$tutorProfile) {
             throw new Exception('Tutor profile not found.');
+        }
+
+        if ($this->isDevelopmentMode) {
+            return $this->createMockAccountLink($tutorId, $refreshUrl, $returnUrl);
         }
 
         if (!$tutorProfile->stripe_account_id) {
@@ -181,10 +254,44 @@ class StripeService
     }
 
     /**
+     * Create a mock account link for development mode.
+     */
+    private function createMockAccountLink(
+        string $tutorId,
+        string $refreshUrl,
+        string $returnUrl
+    ): object {
+$mockAccountId = 'acct_test_' . Str::random(16);
+
+        $mockLinkId = 'acclink_test_' . Str::random(24);
+        // Update tutor profile with mock account ID
+        $tutor = User::query()->find($tutorId);
+        $tutorProfile = $tutor?->tutorProfile;
+        
+        if ($tutorProfile && !$tutorProfile->stripe_account_id) {
+            $tutorProfile->update(['stripe_account_id' => $mockAccountId]);
+        }
+
+        // Create a mock account link object
+        return (object) [
+            'id' => $mockLinkId,
+            'url' => $returnUrl . '?mock_account_id=' . $mockAccountId . '&mock=true',
+            'account' => $mockAccountId,
+            'refresh_url' => $refreshUrl,
+            'return_url' => $returnUrl,
+            'type' => 'account_onboarding',
+        ];
+    }
+
+    /**
      * Get Stripe Connect account status.
      */
     public function getAccountStatus(string $stripeAccountId): array
     {
+        if ($this->isDevelopmentMode) {
+            return $this->getMockAccountStatus($stripeAccountId);
+        }
+
         $account = StripeAccount::retrieve($stripeAccountId);
         return [
             'charges_enabled' => $account->charges_enabled ?? false,
@@ -195,10 +302,34 @@ class StripeService
     }
 
     /**
+     * Get mock account status for development mode.
+     */
+    private function getMockAccountStatus(string $stripeAccountId): array
+    {
+        // For mock accounts, simulate a fully onboarded account
+        if (str_starts_with($stripeAccountId, 'acct_test_')) {
+            return [
+                'charges_enabled' => true,
+                'payouts_enabled' => true,
+                'details_submitted' => true,
+                'requirements' => [],
+            ];
+        }
+
+        // For real accounts in dev mode, return default
+        return [
+            'charges_enabled' => false,
+            'payouts_enabled' => false,
+            'details_submitted' => false,
+            'requirements' => ['details'],
+        ];
+    }
+
+    /**
      * Release payout to tutor for a specific booking.
      * Creates a Transfer from platform to tutor's Connect account.
      */
-    public function releaseBookingPayout(Booking $booking, ?int $customFee = null): Transfer
+    public function releaseBookingPayout(Booking $booking, ?int $customFee = null): object
     {
         $tutorProfile = $booking->tutor->tutorProfile;
 
@@ -216,6 +347,10 @@ class StripeService
 
         if ($tutorAmount <= 0) {
             throw new Exception('Calculated tutor amount is zero or negative after fees.');
+        }
+
+        if ($this->isDevelopmentMode) {
+            return $this->createMockTransfer($booking, $tutorAmount, $currency, $fees, $platformFee);
         }
 
         $transfer = Transfer::create([
@@ -246,6 +381,50 @@ class StripeService
         ]);
 
         return $transfer;
+    }
+
+    /**
+     * Create a mock transfer for development mode.
+     */
+    private function createMockTransfer(
+        Booking $booking,
+        int $tutorAmount,
+        string $currency,
+        array $fees,
+        int $platformFee
+    ): object {
+        $mockTransferId = 'tr_test_' . Str::random(24);
+        
+        // Record payout in our database
+        $payout = Payout::create([
+            'booking_id' => $booking->id,
+            'tutor_id' => $booking->tutor_id,
+            'stripe_transfer_id' => $mockTransferId,
+            'gross_amount' => (int) $booking->amount,
+            'platform_fee' => $platformFee,
+            'processing_fee' => $fees['processing_fee'],
+            'net_amount' => $tutorAmount,
+            'currency' => strtoupper($currency),
+            'status' => 'paid', // immediately paid in mock mode
+            'paid_at' => now(),
+        ]);
+
+        // Create a mock transfer object
+        return (object) [
+            'id' => $mockTransferId,
+            'amount' => $tutorAmount,
+            'currency' => $currency,
+            'destination' => $booking->tutor->tutorProfile->stripe_account_id,
+            'metadata' => [
+                'booking_id' => $booking->id,
+                'type' => 'booking_payout',
+                'gross_amount' => (int) $booking->amount,
+                'platform_fee' => $platformFee,
+                'processing_fee' => $fees['processing_fee'],
+                'net_amount' => $tutorAmount,
+            ],
+            'status' => 'paid',
+        ];
     }
 
     /**
@@ -346,6 +525,11 @@ class StripeService
      */
     public function handlePaymentSuccess(string $sessionId): void
     {
+        if ($this->isDevelopmentMode) {
+            $this->handleMockPaymentSuccess($sessionId);
+            return;
+        }
+
         $session = StripeSession::retrieve($sessionId, [
             'expand' => ['payment_intent'],
         ]);
@@ -412,21 +596,92 @@ class StripeService
     }
 
     /**
+     * Handle successful payment in development mode (mock).
+     */
+    private function handleMockPaymentSuccess(string $sessionId): void
+    {
+        // Extract booking ID from mock session ID (format: cs_test_...)
+        // In mock mode, the sessionId will be the mock session ID we created
+        // We need to find the booking from the notes or metadata
+        
+        // For mock, we'll find the booking by searching for the session ID in notes
+        $booking = Booking::query()
+            ->where('notes', 'LIKE', "%{$sessionId}%")
+            ->where('status', Booking::STATUS_PENDING_PAYMENT)
+            ->first();
+        
+        if (!$booking) {
+            // Try to find by payment intent ID if session ID format is different
+            $booking = Booking::query()
+                ->where('notes', 'LIKE', "%{$sessionId}%")
+                ->where('status', Booking::STATUS_PENDING_PAYMENT)
+                ->first();
+        }
+
+        if (!$booking) {
+            return;
+        }
+
+        $amount = (int) $booking->amount;
+        $currency = strtoupper($booking->currency);
+        $fees = $this->calculateFees($amount, $currency);
+
+        // Create transaction record
+        Transaction::create([
+            'booking_id' => $booking->id,
+            'type' => Transaction::TYPE_LESSON_PAYMENT,
+            'amount' => $amount,
+            'currency' => $currency,
+            'status' => Transaction::STATUS_SUCCESS,
+            'platform_fee' => $fees['platform_fee'],
+            'processing_fee' => $fees['processing_fee'],
+            'net_amount' => $fees['net_amount'],
+            'stripe_payment_intent_id' => 'pi_test_mock_' . Str::random(24),
+        ]);
+
+        // Update booking status to confirmed (awaiting lesson)
+        $booking->update([
+            'status' => Booking::STATUS_CONFIRMED,
+        ]);
+
+        // Mark slot as booked
+        if ($booking->slot_id) {
+            AvailabilitySlot::query()
+                ->where('id', $booking->slot_id)
+                ->update(['is_booked' => true]);
+        }
+
+        // Notify tutor
+        $studentName = $booking->student->studentProfile?->full_name ?? $booking->student->email;
+        $this->notify(
+            $booking->tutor_id,
+            Notification::TYPE_BOOKING_CONFIRMED,
+            'Lesson confirmed',
+            "Your lesson with {$studentName} has been confirmed and payment received by platform.",
+            ['booking_id' => $booking->id]
+        );
+
+        // Notify student
+        $this->notify(
+            $booking->student_id,
+            Notification::TYPE_BOOKING_CONFIRMED,
+            'Lesson confirmed',
+            "Your trial lesson with {$booking->tutor->tutorProfile?->full_name} has been confirmed.",
+            ['booking_id' => $booking->id]
+        );
+    }
+
+    /**
      * Handle failed payment webhook.
      */
     public function handlePaymentFailed(string $sessionId): void
     {
+        if ($this->isDevelopmentMode) {
+            $this->handleMockPaymentFailed($sessionId);
+            return;
+        }
+
         $session = StripeSession::retrieve($sessionId);
-
-        $bookingId = $session->metadata->booking_id ?? null;
-        if (!$bookingId) {
-            return;
-        }
-
-        $booking = Booking::query()->find($bookingId);
-        if (!$booking) {
-            return;
-        }
 
         $amount = (int) ($session->amount_total ?? 0);
         $currency = strtoupper($session->currency ?? 'usd');
@@ -434,6 +689,61 @@ class StripeService
         // Create failed transaction record
         Transaction::create([
             'booking_id' => $bookingId,
+            'type' => Transaction::TYPE_LESSON_PAYMENT,
+            'amount' => $amount,
+            'currency' => $currency,
+            'status' => Transaction::STATUS_FAILED,
+            'platform_fee' => 0,
+            'processing_fee' => 0,
+            'net_amount' => 0,
+        ]);
+
+        // Update booking status
+        $booking->update([
+            'status' => Booking::STATUS_CANCELLED,
+        ]);
+
+        // Notify student
+        $this->notify(
+            $booking->student_id,
+            Notification::TYPE_PAYMENT_FAILED,
+            'Payment failed',
+            'Your payment for the trial lesson could not be processed. Please try again.',
+            ['booking_id' => $booking->id]
+        );
+
+        // Notify tutor
+        $studentName = $booking->student->studentProfile?->full_name ?? $booking->student->email;
+        $this->notify(
+            $booking->tutor_id,
+            Notification::TYPE_BOOKING_CANCELLED,
+            'Lesson cancelled',
+            "The trial lesson with {$studentName} was cancelled due to payment failure.",
+            ['booking_id' => $booking->id]
+        );
+    }
+
+    /**
+     * Handle failed payment in development mode (mock).
+     */
+    private function handleMockPaymentFailed(string $sessionId): void
+    {
+        // Find the booking by searching for the session ID in notes
+        $booking = Booking::query()
+            ->where('notes', 'LIKE', "%{$sessionId}%")
+            ->where('status', Booking::STATUS_PENDING_PAYMENT)
+            ->first();
+        
+        if (!$booking) {
+            return;
+        }
+
+        $amount = (int) $booking->amount;
+        $currency = strtoupper($booking->currency);
+
+        // Create failed transaction record
+        Transaction::create([
+            'booking_id' => $booking->id,
             'type' => Transaction::TYPE_LESSON_PAYMENT,
             'amount' => $amount,
             'currency' => $currency,

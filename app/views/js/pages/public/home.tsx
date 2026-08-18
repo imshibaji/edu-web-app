@@ -11,7 +11,7 @@ import { useHomePage } from '@/hooks/use-home-page';
 import type { HomeProps } from '@/types';
 
 export default function Home(props: HomeProps) {
-    const { tutors, total, cityBreakdown, specialties, subjects, stats, filters, auth } = props;
+    const { tutors, total, cityBreakdown, specialties, stats, filters, auth } = props;
 
     const {
         level,
@@ -57,7 +57,7 @@ export default function Home(props: HomeProps) {
 
             <BookTrialModal
                 tutor={selectedTutor}
-                subjects={subjects}
+                auth={auth}
                 onClose={closeBook}
             />
         </PublicLayout>

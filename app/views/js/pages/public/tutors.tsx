@@ -17,7 +17,7 @@ const FORMATS = [
 ];
 
 export default function Tutors(props: HomeProps) {
-    const { tutors, total, cities, subjects, filters, auth } = props;
+    const { tutors, total, cities, filters, auth } = props;
 
     const {
         query,
@@ -128,7 +128,7 @@ export default function Tutors(props: HomeProps) {
 
             <BookTrialModal
                 tutor={selectedTutor}
-                subjects={subjects}
+                auth={auth}
                 onClose={() => setSelectedTutor(null)}
             />
         </PublicLayout>

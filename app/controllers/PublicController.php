@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Models\AvailabilitySlot;
 use App\Models\Currency;
 use App\Models\Subject;
 use App\Models\TutorProfile;
+use App\Models\User;
 
 class PublicController extends Controller
 {
@@ -121,6 +123,42 @@ class PublicController extends Controller
             'base' => $baseCurrency,
             'rates' => $settings,
         ]);
+        exit;
+    }
+
+    /**
+     * JSON API endpoint returning available (unbooked, future) slots for a tutor.
+     */
+    public function availableSlots($id)
+    {
+        $tutor = User::query()
+            ->where('id', $id)
+            ->where('role', User::ROLE_TUTOR)
+            ->first();
+
+        if (!$tutor) {
+            header('Content-Type: application/json');
+            http_response_code(404);
+            echo json_encode(['error' => 'Tutor not found.']);
+            exit;
+        }
+
+        $slots = AvailabilitySlot::query()
+            ->where('tutor_id', $id)
+            ->where('is_booked', false)
+            ->where('start_time', '>', date('Y-m-d H:i:s'))
+            ->orderBy('start_time')
+            ->get()
+            ->map(fn ($slot) => [
+                'id' => $slot->id,
+                'start' => $slot->start_time,
+                'end' => $slot->end_time,
+            ])
+            ->values()
+            ->all();
+
+        header('Content-Type: application/json');
+        echo json_encode(['slots' => $slots]);
         exit;
     }
 }

@@ -39,7 +39,7 @@ export default function PaymentCheckout(props: Props) {
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setRedirecting(true);
-        post('/payment/checkout', {
+        post(`/payment/checkout/${props.booking.id}`, {
             onSuccess: (page) => {
                 if (page.props.url) {
                     window.location.href = page.props.url;

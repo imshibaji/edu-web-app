@@ -25,8 +25,9 @@ app()->post('/enquiry', 'EnquiryController@store');
 app()->get('/payment/checkout/{id}', 'PaymentController@showCheckout');
 
 app()->get('/api/currency-rates', 'PublicController@currencyRates');
+app()->get('/api/tutor/{id}/available-slots', 'PublicController@availableSlots');
 
-app()->post('/payment/checkout', 'PaymentController@createCheckout');
+app()->post('/payment/checkout/{id}', 'PaymentController@createCheckout');
 app()->get('/payment/success', 'PaymentController@success');
 app()->get('/payment/cancel', 'PaymentController@cancel');
 app()->get('/payment/connect', 'PaymentController@connect');

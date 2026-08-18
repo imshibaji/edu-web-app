@@ -36,6 +36,12 @@ export interface TutorSubject {
     rate_cents: number;
 }
 
+export interface AvailableSlot {
+    id: string;
+    start: string;
+    end: string;
+}
+
 export interface Tutor {
     id: string;
     name: string;

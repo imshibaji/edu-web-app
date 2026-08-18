@@ -10,7 +10,7 @@ use App\Services\StripeService;
 
 class PaymentController extends Controller
 {
-    public function createCheckout()
+    public function createCheckout(?string $id = null)
     {
         $user = $this->authUser();
 
@@ -18,8 +18,8 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $data = request()->get();
-        $bookingId = $data['booking_id'] ?? null;
+        // Get booking ID from route parameter or request data
+        $bookingId = $id ?? request()->param('id') ?? (request()->params['id'] ?? null);
 
         if (!$bookingId) {
             return response()->json(['error' => 'Booking ID required'], 400);
@@ -73,7 +73,9 @@ class PaymentController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            error_log('StripeService error: ' . $e->getMessage());
+            error_log('Trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => 'Payment service error: ' . $e->getMessage()], 500);
         }
     }
 
