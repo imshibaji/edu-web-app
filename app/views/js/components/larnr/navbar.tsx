@@ -1,5 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, User, MessageSquare, Bell } from 'lucide-react';
 
 import { getInitials } from '@/utils/index';
 import ThemeToggle from '@/components/larnr/theme-toggle';
@@ -16,6 +17,16 @@ export default function Navbar({ auth }: Props) {
     const isTutor = user?.role === 'TUTOR';
     const dashboardHref = isTutor ? '/tutor' : '/dashboard';
 
+    const [unread, setUnread] = useState(0);
+
+    useEffect(() => {
+        if (!user) return;
+        fetch('/notifications/unread-count')
+            .then((r) => r.json())
+            .then((data) => setUnread(Number(data.unread) || 0))
+            .catch(() => {});
+    }, [user?.id]);
+
     const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         router.post('/auth/logout');
@@ -24,6 +35,8 @@ export default function Navbar({ auth }: Props) {
     const navLinks: NavLink[] = isTutor
         ? [
             { label: 'Dashboard', href: '/tutor' },
+            { label: 'Lessons', href: '/lessons' },
+            { label: 'Messages', href: '/messages' },
             { label: 'Availability', href: '/tutor/availability' },
             { label: 'Subjects', href: '/tutor/subjects' },
             { label: 'Enquiries', href: '/tutor/enquiries' },
@@ -31,6 +44,12 @@ export default function Navbar({ auth }: Props) {
         ]
         : user?.role === 'ADMIN'
         ? []
+        : user?.role === 'STUDENT'
+        ? [
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Lessons', href: '/lessons' },
+            { label: 'Messages', href: '/messages' },
+        ]
         : [
             { label: 'Find Tutors', href: '/tutors' },
             { label: 'Subjects', href: '/subjects' },
@@ -128,6 +147,31 @@ export default function Navbar({ auth }: Props) {
                 <div className="navbar-end gap-1">
                     <ChangeCurrency />
                     <ThemeToggle />
+                    {user && (
+                        <>
+                            <Link
+                                href="/messages"
+                                className="btn btn-ghost btn-circle"
+                                aria-label="Messages"
+                                title="Messages"
+                            >
+                                <MessageSquare className="size-5" />
+                            </Link>
+                            <Link
+                                href="/notifications"
+                                className="btn btn-ghost btn-circle relative"
+                                aria-label="Notifications"
+                                title="Notifications"
+                            >
+                                <Bell className="size-5" />
+                                {unread > 0 && (
+                                    <span className="badge badge-error badge-xs absolute -top-0.5 right-0.5 min-w-4 rounded-full px-1">
+                                        {unread > 9 ? '9+' : unread}
+                                    </span>
+                                )}
+                            </Link>
+                        </>
+                    )}
                     {user ? (
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost gap-2 px-1.5">

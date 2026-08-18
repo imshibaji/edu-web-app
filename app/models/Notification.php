@@ -45,6 +45,7 @@ class Notification extends Model
     public const TYPE_PROFILE_APPROVED = 'profile_approved';
     public const TYPE_PROFILE_REJECTED = 'profile_rejected';
     public const TYPE_REVIEW_RECEIVED = 'review_received';
+    public const TYPE_MESSAGE = 'message';
     public const TYPE_SYSTEM = 'system';
 
     public function user(): BelongsTo

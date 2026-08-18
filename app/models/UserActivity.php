@@ -42,6 +42,10 @@ class UserActivity extends Model
     public const TYPE_SUBJECT_REMOVED = 'SUBJECT_REMOVED';
     public const TYPE_TRIAL_BOOKED = 'TRIAL_BOOKED';
     public const TYPE_ACCOUNT_UPDATED = 'ACCOUNT_UPDATED';
+    public const TYPE_LESSON_COMPLETED = 'LESSON_COMPLETED';
+    public const TYPE_LESSON_CANCELLED = 'LESSON_CANCELLED';
+    public const TYPE_MESSAGE_SENT = 'MESSAGE_SENT';
+    public const TYPE_REVIEW_SUBMITTED = 'REVIEW_SUBMITTED';
 
     public function user(): BelongsTo
     {

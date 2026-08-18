@@ -28,6 +28,12 @@ class Booking extends Model
         'currency',
         'status',
         'notes',
+        'cancelled_at',
+        'cancel_reason',
+        'cancelled_by',
+        'completed_at',
+        'completed_by_student',
+        'completed_by_tutor',
     ];
 
     public $timestamps = true;
@@ -36,6 +42,10 @@ class Booking extends Model
         'duration_minutes' => 'integer',
         'amount' => 'integer',
         'scheduled_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'completed_by_student' => 'boolean',
+        'completed_by_tutor' => 'boolean',
     ];
 
     public const STATUS_PENDING_PAYMENT = 'PENDING_PAYMENT';
@@ -72,5 +82,52 @@ class Booking extends Model
     public function payouts(): HasMany
     {
         return $this->hasMany(Payout::class, 'booking_id');
+    }
+
+    /**
+     * Mark this booking as completed by the given actor (STUDENT or TUTOR).
+     * Once both sides have marked it complete, the booking is COMPLETED.
+     */
+    public function markCompletedBy(string $actor): bool
+    {
+        if ($this->status !== self::STATUS_CONFIRMED) {
+            return false;
+        }
+
+        if ($actor === User::ROLE_STUDENT) {
+            $this->completed_by_student = true;
+        } elseif ($actor === User::ROLE_TUTOR) {
+            $this->completed_by_tutor = true;
+        } else {
+            return false;
+        }
+
+        if ($this->completed_by_student && $this->completed_by_tutor) {
+            $this->status = self::STATUS_COMPLETED;
+            $this->completed_at = date('Y-m-d H:i:s');
+        }
+
+        $this->save();
+
+        return $this->status === self::STATUS_COMPLETED;
+    }
+
+    /**
+     * Cancel the booking with a reason, recorded by the given actor.
+     */
+    public function cancelWithReason(string $reason, string $actor): bool
+    {
+        if (!in_array($this->status, [self::STATUS_PENDING_PAYMENT, self::STATUS_CONFIRMED], true)) {
+            return false;
+        }
+
+        $this->status = self::STATUS_CANCELLED;
+        $this->cancelled_at = date('Y-m-d H:i:s');
+        $this->cancel_reason = $reason;
+        $this->cancelled_by = $actor;
+
+        $this->save();
+
+        return true;
     }
 }

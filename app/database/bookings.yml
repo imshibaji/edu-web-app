@@ -36,6 +36,26 @@ columns:
   notes:
     type: text
     nullable: true
+  cancelled_at:
+    type: datetime
+    nullable: true
+  cancel_reason:
+    type: string
+    length: 500
+    nullable: true
+  cancelled_by:
+    type: string
+    length: 30
+    nullable: true
+  completed_at:
+    type: datetime
+    nullable: true
+  completed_by_student:
+    type: boolean
+    default: false
+  completed_by_tutor:
+    type: boolean
+    default: false
 
 timestamps: true
 

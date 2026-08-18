@@ -4,7 +4,7 @@ export interface AuthUser {
     id: string;
     name: string;
     email: string;
-    role: 'USER' | 'TUTOR' | 'ADMIN';
+    role: 'STUDENT' | 'TUTOR' | 'ADMIN';
     base_currency?: string;
 }
 
@@ -40,6 +40,7 @@ export interface AvailableSlot {
     id: string;
     start: string;
     end: string;
+    booked?: boolean;
 }
 
 export interface Tutor {
@@ -125,6 +126,88 @@ export interface Booking {
 export interface Profile {
     name: string;
     phone?: string;
+}
+
+export interface Lesson {
+    id: string;
+    student: {
+        id: string;
+        name: string;
+    };
+    tutor: {
+        id: string;
+        name: string;
+    };
+    subject?: string;
+    scheduled_at?: string;
+    duration_minutes: number;
+    amount: number;
+    currency: string;
+    status: string;
+    cancel_reason?: string | null;
+    cancelled_at?: string | null;
+    cancelled_by?: string | null;
+    completed_at?: string | null;
+    completedByStudent: boolean;
+    completedByTutor: boolean;
+    isMine: boolean;
+    amTutor: boolean;
+    canJoin: boolean;
+    canComplete: boolean;
+    canCancel: boolean;
+    canReview: boolean;
+    meeting_url?: string;
+}
+
+export interface Conversation {
+    id: string;
+    student: {
+        id: string;
+        name: string;
+    };
+    tutor: {
+        id: string;
+        name: string;
+    };
+    booking_id?: string | null;
+    subject?: string;
+    counterpart?: {
+        id?: string;
+        name?: string;
+    };
+    last_message_at?: string | null;
+    last_message_preview?: string | null;
+    unread_count: number;
+    isMine: boolean;
+}
+
+export interface Message {
+    id: string;
+    sender_id: string;
+    body: string;
+    is_read: boolean;
+    created_at?: string;
+}
+
+export interface LessonReview {
+    id: string;
+    rating: number;
+    comment?: string | null;
+    reviewer?: {
+        id?: string;
+        name?: string;
+    };
+    created_at?: string;
+}
+
+export interface AppNotification {
+    id: string;
+    type: string;
+    title: string;
+    message: string;
+    data?: Record<string, unknown> | null;
+    is_read: boolean;
+    created_at?: string;
 }
 
 export interface Stats {

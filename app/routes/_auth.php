@@ -1,11 +1,41 @@
 <?php
 
+use App\Models\User;
+
 auth()->middleware('auth.required', function () {
     response()->redirect('/auth/login');
 });
 
 auth()->middleware('auth.guest', function () {
     response()->redirect('/dashboard');
+});
+
+app()->registerMiddleware('role.student', function () {
+    $user = User::query()->find(auth()->id());
+    if (!$user || $user->role !== User::ROLE_STUDENT) {
+        response()->redirect('/dashboard');
+    }
+});
+
+app()->registerMiddleware('role.tutor', function () {
+    $user = User::query()->find(auth()->id());
+    if (!$user || $user->role !== User::ROLE_TUTOR) {
+        response()->redirect('/dashboard');
+    }
+});
+
+app()->registerMiddleware('role.admin', function () {
+    $user = User::query()->find(auth()->id());
+    if (!$user || $user->role !== User::ROLE_ADMIN) {
+        response()->redirect('/dashboard');
+    }
+});
+
+app()->registerMiddleware('role.both', function () {
+    $user = User::query()->find(auth()->id());
+    if (!$user || !in_array($user->role, [User::ROLE_STUDENT, User::ROLE_TUTOR])) {
+        response()->redirect('/dashboard');
+    }
 });
 
 app()->group('/auth', [
@@ -15,6 +45,12 @@ app()->group('/auth', [
         app()->post('/login', 'Auth\LoginController@store');
         app()->get('/register', 'Auth\RegisterController@show');
         app()->post('/register', 'Auth\RegisterController@store');
+        app()->get('/forgot-password', 'Auth\ForgotPasswordController@show');
+        app()->post('/forgot-password', 'Auth\ForgotPasswordController@store');
+        app()->get('/reset-password/{token}', 'Auth\ResetPasswordController@show');
+        app()->post('/reset-password', 'Auth\ResetPasswordController@store');
+        app()->get('/social/{provider}', 'Auth\SocialAuthController@redirect');
+        app()->get('/social/{provider}/callback', 'Auth\SocialAuthController@callback');
     },
 ]);
 
@@ -24,14 +60,21 @@ app()->post('/auth/logout', [
 ]);
 
 app()->group('/dashboard', [
-    'middleware' => 'auth.required',
+    'middleware' => ['auth.required', 'role.both'],
+    function () {
+        app()->get('/', 'Auth\DashboardController@index');
+    },
+]);
+
+app()->group('/student', [
+    'middleware' => ['auth.required', 'role.student'],
     function () {
         app()->get('/', 'Auth\DashboardController@index');
     },
 ]);
 
 app()->group('/tutor', [
-    'middleware' => 'auth.required',
+    'middleware' => ['auth.required', 'role.tutor'],
     function () {
         app()->get('/', 'TutorController@index');
         app()->get('/availability', 'TutorController@availability');
@@ -49,7 +92,7 @@ app()->group('/tutor', [
 ]);
 
 app()->group('/admin', [
-    'middleware' => 'auth.required',
+    'middleware' => ['auth.required', 'role.admin'],
     function () {
         app()->get('/reviews', 'Auth\admin\ReviewsController@reviews');
         app()->post('/reviews/approve', 'Auth\admin\ReviewsController@approve');
@@ -83,3 +126,43 @@ app()->group('/settings', function () {
     app()->get('/profile', 'Profile\AccountController@show_update');
     app()->patch('/profile', 'Profile\AccountController@update');
 });
+
+app()->group('/lessons', [
+    'middleware' => ['auth.required', 'role.both'],
+    function () {
+        app()->get('/', 'LessonController@index');
+        app()->get('/{id}', 'LessonController@show');
+        app()->post('/{id}/complete', 'LessonController@complete');
+        app()->post('/{id}/cancel', 'LessonController@cancel');
+    },
+]);
+
+app()->group('/messages', [
+    'middleware' => ['auth.required', 'role.both'],
+    function () {
+        app()->get('/', 'MessageController@index');
+        app()->post('/start', 'MessageController@start');
+        app()->get('/{id}', 'MessageController@show');
+        app()->post('/{id}', 'MessageController@store');
+    },
+]);
+
+app()->group('/notifications', [
+    'middleware' => ['auth.required', 'role.both'],
+    function () {
+        app()->get('/', 'NotificationController@index');
+        app()->post('/read-all', 'NotificationController@markAllRead');
+        app()->post('/{id}/read', 'NotificationController@markRead');
+        app()->get('/unread-count', 'NotificationController@unreadCount');
+    },
+]);
+
+app()->post('/lessons/{id}/review', [
+    'middleware' => ['auth.required', 'role.both'],
+    'ReviewController@store',
+]);
+app()->get('/reviews/tutor/{id}', 'ReviewController@forTutor');
+app()->get('/lessons/{id}/review-check', [
+    'middleware' => ['auth.required', 'role.both'],
+    'ReviewController@check',
+]);

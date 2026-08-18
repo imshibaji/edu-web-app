@@ -1,0 +1,31 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  booking_id:
+    type: uuid
+    index: true
+    nullable: true
+  reviewer_id:
+    type: uuid
+    index: true
+  reviewee_id:
+    type: uuid
+    index: true
+  rating:
+    type: integer
+    default: 5
+  comment:
+    type: text
+    nullable: true
+  status:
+    type: string
+    length: 20
+    default: PENDING
+
+timestamps: true
+
+seeds:
+  count: 0

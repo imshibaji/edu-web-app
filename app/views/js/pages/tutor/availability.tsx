@@ -1,61 +1,15 @@
-import { Head, router, useForm } from '@inertiajs/react';
-import { CalendarPlus, Trash2, CalendarClock, Clock } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { Trash2, CalendarClock, Clock } from 'lucide-react';
 
 import Navbar from '@/components/larnr/navbar';
 import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import { getInitials } from '@/utils/index';
 import { formatDateTime } from '@/utils/tutor';
-import type { TutorAvailabilityProps, AuthProps } from '@/types';
+import type { TutorAvailabilityProps } from '@/types';
+import Calendar from '@/components/larnr/calendar';
 
-function AddSlotForm({ form, onSubmit }: { form: ReturnType<typeof useForm<{ start: string; end: string }>>; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void }) {
-    return (
-        <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
-            <div className="card-body gap-4">
-                <div className="flex items-center gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
-                        <CalendarPlus className="size-5" />
-                    </span>
-                    <div>
-                        <h2 className="font-display font-semibold text-base-content">Add a slot</h2>
-                        <p className="text-xs text-base-content/50">
-                            Open time blocks students can book for trials.
-                        </p>
-                    </div>
-                </div>
-
-                <form onSubmit={onSubmit} className="space-y-3">
-                    <div className="fieldset">
-                        <legend className="fieldset-legend">Start</legend>
-                        <input
-                            type="datetime-local"
-                            className="input w-full rounded-xl border-base-content/10 bg-base-content/5 text-sm"
-                            value={form.data.start}
-                            onChange={(e) => form.setData('start', e.target.value)}
-                        />
-                    </div>
-                    <div className="fieldset">
-                        <legend className="fieldset-legend">End</legend>
-                        <input
-                            type="datetime-local"
-                            className="input w-full rounded-xl border-base-content/10 bg-base-content/5 text-sm"
-                            value={form.data.end}
-                            onChange={(e) => form.setData('end', e.target.value)}
-                        />
-                    </div>
-                    {form.errors.start && <p className="text-xs text-error">{form.errors.start}</p>}
-                    <button
-                        type="submit"
-                        className="btn btn-primary btn-sm w-full rounded-full"
-                        disabled={form.processing}
-                    >
-                        {form.processing ? 'Adding...' : 'Add slot'}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-}
+import { useState } from 'react';
 
 function SlotList({ slots, onDelete }: { slots: TutorAvailabilityProps['slots']; onDelete: (id: string) => void }) {
     const upcoming = slots.filter((s) => !s.booked && new Date(s.start) > new Date()).length;
@@ -136,12 +90,11 @@ function SlotList({ slots, onDelete }: { slots: TutorAvailabilityProps['slots'];
 }
 
 export default function TutorAvailability(props: TutorAvailabilityProps) {
-    const form = useForm({ start: '', end: '' });
+    const [viewDate, setViewDate] = useState(new Date());
 
-    const submitSlot = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        form.post('/tutor/slots', {
-            onSuccess: () => form.reset(),
+    const addSlot = (date: Date, start: string, end: string) => {
+        router.post('/tutor/slots', { start, end }, {
+            onSuccess: () => setViewDate(date),
             preserveScroll: true,
         });
     };
@@ -183,7 +136,14 @@ export default function TutorAvailability(props: TutorAvailabilityProps) {
 
                         <div className="grid gap-6 lg:grid-cols-5">
                             <div className="lg:col-span-2">
-                                <AddSlotForm form={form} onSubmit={submitSlot} />
+                                <Calendar
+                                    value={viewDate}
+                                    onChange={setViewDate}
+                                    slots={props.slots}
+                                    onAddSlot={addSlot}
+                                    mode="tutor"
+                                    minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                                />
                             </div>
                             <div className="lg:col-span-3">
                                 <SlotList slots={props.slots} onDelete={deleteSlot} />
