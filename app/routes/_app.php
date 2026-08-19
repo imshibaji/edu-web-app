@@ -9,7 +9,10 @@
 app()->get('/', 'PublicController@index');
 
 app()->get('/tutors', 'PublicController@tutors');
+app()->get('/t/{username}', 'PublicController@tutorProfileByUsername');
+app()->get('/username-available', 'PublicController@usernameAvailable');
 app()->get('/subjects', 'PublicController@subjects');
+app()->get('/subject/{slug}', 'PublicController@subject');
 app()->get('/interview-prep', 'PublicController@interviewPrep');
 app()->get('/about', 'PublicController@about');
 app()->get('/careers', 'PublicController@careers');

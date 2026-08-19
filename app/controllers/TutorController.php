@@ -222,7 +222,7 @@ class TutorController extends Controller
 
         if ($avatarPath === false) {
             return response()
-                ->withFlash('errors', ['avatar' => 'Avatar upload failed. Use a JPG, PNG, WebP or GIF under 5MB.'])
+                ->withFlash('error', 'Avatar upload failed. Use a JPG, PNG, WebP or GIF under 5MB.')
                 ->redirect('/tutor/profile', 303);
         }
 
@@ -354,18 +354,24 @@ class TutorController extends Controller
             ->map(fn ($subject) => [
                 'id' => $subject->id,
                 'name' => $subject->name,
+                'description' => $subject->description,
+                'slug' => $subject->slug,
+                'status' => $subject->status,
                 'rate_cents' => (int) $subject->pivot->rate_cents,
             ])
             ->values()
             ->all();
 
         $catalog = Subject::query()
+            ->active()
             ->whereNotIn('id', $linkedIds)
             ->orderBy('name')
             ->get()
             ->map(fn ($subject) => [
                 'id' => $subject->id,
                 'name' => $subject->name,
+                'description' => $subject->description,
+                'slug' => $subject->slug,
             ])
             ->values()
             ->all();
@@ -434,6 +440,84 @@ class TutorController extends Controller
 
         return response()
             ->withFlash('success', 'Subject added with its charge.')
+            ->redirect('/tutor/subjects', 303);
+    }
+
+    /**
+     * Let a tutor propose a brand-new subject that isn't in the catalog.
+     * The subject is created with PENDING status and linked to the tutor;
+     * it stays hidden from public listings until an admin approves it.
+     */
+    public function proposeSubject()
+    {
+        $user = $this->authUser();
+
+        if (!$user || !$user->isTutor()) {
+            return response()->redirect('/auth/login', 303);
+        }
+
+        $data = request()->validate([
+            'name' => 'string',
+            'description' => 'string',
+            'rate' => 'numeric',
+        ]);
+
+        $name = trim((string) ($data['name'] ?? ''));
+        $description = trim((string) ($data['description'] ?? ''));
+        $rateDollars = (float) ($data['rate'] ?? 0);
+
+        if ($name === '') {
+            return response()
+                ->withFlash('errors', ['name' => 'Subject name is required.'])
+                ->redirect('/tutor/subjects', 303);
+        }
+
+        if (mb_strlen($name) > 150) {
+            return response()
+                ->withFlash('errors', ['name' => 'Subject name must be under 150 characters.'])
+                ->redirect('/tutor/subjects', 303);
+        }
+
+        if ($rateDollars < 0 || $rateDollars > 100000) {
+            return response()
+                ->withFlash('errors', ['rate' => 'Rate must be between 0 and 100000.'])
+                ->redirect('/tutor/subjects', 303);
+        }
+
+        $duplicate = Subject::query()
+            ->whereRaw('LOWER(name) = ?', [strtolower($name)])
+            ->first();
+
+        if ($duplicate) {
+            return response()
+                ->withFlash('errors', ['name' => 'A subject with that name already exists.'])
+                ->redirect('/tutor/subjects', 303);
+        }
+
+        $subject = Subject::create([
+            'name' => $name,
+            'description' => $description !== '' ? $description : null,
+            'slug' => Subject::makeSlug($name),
+            'status' => Subject::STATUS_PENDING,
+            'proposed_by' => $user->id,
+        ]);
+
+        $rateCents = (int) round($rateDollars * 100);
+
+        TutorSubject::create([
+            'tutor_id' => $user->id,
+            'subject_id' => $subject->id,
+            'rate_cents' => $rateCents,
+        ]);
+
+        UserActivity::log(
+            $user->id,
+            UserActivity::TYPE_SUBJECT_ADDED,
+            "Proposed new subject {$subject->name} for admin review",
+        );
+
+        return response()
+            ->withFlash('success', "Subject \"{$subject->name}\" submitted for admin review.")
             ->redirect('/tutor/subjects', 303);
     }
 
@@ -535,6 +619,8 @@ class TutorController extends Controller
 
     protected function profileProps($profile)
     {
+        $user = $profile->user()->first();
+
         return [
             'name' => $profile->full_name,
             'headline' => $profile->headline,
@@ -547,6 +633,7 @@ class TutorController extends Controller
             'rate' => (int) $profile->hourly_rate,
             'currency' => $profile->currency,
             'avatar' => $profile->avatar_url,
+            'username' => $user?->username,
         ];
     }
 

@@ -4,6 +4,7 @@ import { X, Sparkles, CalendarClock } from 'lucide-react';
 
 import { displayAmount } from '@/utils/currency';
 import type { Tutor as TutorType, AvailableSlot, AuthProps } from '@/types';
+import Calendar from '@/components/larnr/calendar';
 
 interface FormData {
     tutor_id: string;
@@ -18,9 +19,18 @@ interface Props {
     onClose: () => void;
 }
 
+function parseSlotDate(value: string): Date {
+    if (!value) return new Date(NaN);
+    const trimmed = value.trim();
+    if (/[zZ]|[+-]\d{2}:?\d{2}$/.test(trimmed)) {
+        return new Date(trimmed);
+    }
+    return new Date(trimmed.replace(' ', 'T') + 'Z');
+}
+
 function formatSlotDisplay(slot: AvailableSlot): string {
-    const start = new Date(slot.start + 'Z');
-    const end = new Date(slot.end + 'Z');
+    const start = parseSlotDate(slot.start);
+    const end = parseSlotDate(slot.end);
     const opts: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         month: 'short',
@@ -38,6 +48,7 @@ export default function BookTrialModal({ tutor, auth, onClose }: Props) {
     const [slots, setSlots] = useState<AvailableSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [selectedRate, setSelectedRate] = useState<number | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         tutor_id: tutor?.id ?? '',
@@ -151,21 +162,46 @@ export default function BookTrialModal({ tutor, auth, onClose }: Props) {
                                 No available time slots. The tutor hasn't set their availability yet.
                             </p>
                         ) : (
-                            <label className="flex items-center gap-2 bg-base-content/5">
-                                <CalendarClock className="size-4 ml-2 text-base-content/50 shrink-0" />
-                                <select
-                                    className="select appearance-none w-full bg-transparent"
-                                    value={data.slot_id}
-                                    onChange={(e) => setData('slot_id', e.target.value)}
-                                >
-                                    <option value="">Select a time slot</option>
-                                    {slots.map((slot) => (
-                                        <option key={slot.id} value={slot.id}>
-                                            {formatSlotDisplay(slot)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
+                            <div className="space-y-3">
+                                <Calendar
+                                    value={selectedDate ?? new Date()}
+                                    onChange={setSelectedDate}
+                                    slots={slots}
+                                    mode="student"
+                                    minDate={new Date()}
+                                />
+                                {selectedDate && (
+                                    <div className="space-y-2">
+                                        {slots
+                                            .filter((slot) => {
+                                                const slotStart = parseSlotDate(slot.start);
+                                                return slotStart.toDateString() === selectedDate.toDateString();
+                                            })
+                                            .map((slot) => (
+                                                <button
+                                                    key={slot.id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setData('slot_id', slot.id);
+                                                        setSelectedDate(parseSlotDate(slot.start));
+                                                    }}
+                                                    className={`btn btn-sm rounded-xl w-full justify-start gap-3 ${
+                                                        data.slot_id === slot.id
+                                                            ? 'btn-primary'
+                                                            : 'btn-outline'
+                                                    }`}
+                                                >
+                                                    <CalendarClock className="size-4" />
+                                                    <div>
+                                                        <p className="font-medium text-sm">
+                                                            {formatSlotDisplay(slot)}
+                                                        </p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         )}
                         {errors.slot_id && (
                             <span className="text-xs text-error">{errors.slot_id}</span>

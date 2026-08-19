@@ -75,4 +75,14 @@ class TutorProfile extends Model
     {
         return $this->hasStripeAccount() && !empty($this->payout_method);
     }
+
+    public function upiId(): ?string
+    {
+        return $this->payout_details['upi_id'] ?? null;
+    }
+
+    public function netbankingDetails(): ?string
+    {
+        return $this->payout_details['netbanking'] ?? null;
+    }
 }

@@ -1,0 +1,25 @@
+increments: false
+
+columns:
+  id:
+    type: uuid
+    primary: true
+  conversation_id:
+    type: uuid
+    index: true
+  sender_id:
+    type: uuid
+    index: true
+  body:
+    type: text
+  is_read:
+    type: boolean
+    default: false
+  read_at:
+    type: datetime
+    nullable: true
+
+timestamps: true
+
+seeds:
+  count: 0

@@ -14,12 +14,20 @@ class SubjectsController extends Controller
         if (!($user = $this->requireAdmin())) return;
 
         $subjects = Subject::query()
+            ->with('proposer.tutorProfile')
             ->withCount('tutors')
+            ->orderByRaw("FIELD(status, 'PENDING', 'ACTIVE', 'REJECTED')")
             ->orderBy('name')
             ->get()
             ->map(fn ($subject) => [
                 'id' => $subject->id,
                 'name' => $subject->name,
+                'description' => $subject->description,
+                'slug' => $subject->slug,
+                'status' => $subject->status,
+                'proposed_by' => $subject->proposed_by,
+                'proposer_name' => $subject->proposer?->tutorProfile?->full_name
+                    ?? $subject->proposer?->email,
                 'tutor_count' => (int) $subject->tutors_count,
             ])
             ->values()
@@ -36,6 +44,8 @@ class SubjectsController extends Controller
         if (!($user = $this->requireAdmin())) return;
 
         $name = trim((string) request()->get('name', ''));
+        $description = trim((string) request()->get('description', ''));
+        $slug = trim((string) request()->get('slug', ''));
 
         if ($name === '') {
             return response()
@@ -49,7 +59,24 @@ class SubjectsController extends Controller
                 ->redirect('/admin/subjects', 303);
         }
 
-        $subject = Subject::create(['name' => $name]);
+        if ($slug === '' || preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug) !== 1) {
+            return response()
+                ->withFlash('errors', ['slug' => 'Slug must be lowercase letters, numbers and hyphens (e.g. coding-programming).'])
+                ->redirect('/admin/subjects', 303);
+        }
+
+        if (Subject::query()->where('slug', $slug)->exists()) {
+            return response()
+                ->withFlash('errors', ['slug' => 'A subject with that slug already exists.'])
+                ->redirect('/admin/subjects', 303);
+        }
+
+        $subject = Subject::create([
+            'name' => $name,
+            'description' => $description !== '' ? $description : null,
+            'slug' => $slug,
+            'status' => Subject::STATUS_ACTIVE,
+        ]);
 
         UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_ADDED, "Created subject {$subject->name}");
 
@@ -64,6 +91,8 @@ class SubjectsController extends Controller
 
         $subject = Subject::query()->find(request()->get('subject'));
         $name = trim((string) request()->get('name', ''));
+        $description = trim((string) request()->get('description', ''));
+        $slug = trim((string) request()->get('slug', ''));
 
         if (!$subject) {
             return response()
@@ -86,12 +115,97 @@ class SubjectsController extends Controller
                 ->redirect('/admin/subjects', 303);
         }
 
-        $subject->update(['name' => $name]);
+        if ($slug === '' || preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug) !== 1) {
+            return response()
+                ->withFlash('errors', ['slug' => 'Slug must be lowercase letters, numbers and hyphens (e.g. coding-programming).'])
+                ->redirect('/admin/subjects', 303);
+        }
 
-        UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_UPDATED, "Renamed subject to {$subject->name}");
+        if (Subject::query()
+            ->where('id', '!=', $subject->id)
+            ->where('slug', $slug)
+            ->exists()) {
+            return response()
+                ->withFlash('errors', ['slug' => 'A subject with that slug already exists.'])
+                ->redirect('/admin/subjects', 303);
+        }
+
+        $subject->update([
+            'name' => $name,
+            'description' => $description !== '' ? $description : null,
+            'slug' => $slug,
+        ]);
+
+        UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_UPDATED, "Updated subject {$subject->name}");
 
         return response()
-            ->withFlash('success', "Subject renamed to \"{$subject->name}\".")
+            ->withFlash('success', "Subject updated to \"{$subject->name}\".")
+            ->redirect('/admin/subjects', 303);
+    }
+
+    /**
+     * Approve a tutor-proposed subject so it becomes publicly visible.
+     */
+    public function approve()
+    {
+        if (!($user = $this->requireAdmin())) return;
+
+        $subject = Subject::query()->find(request()->get('subject'));
+
+        if (!$subject) {
+            return response()
+                ->withFlash('error', 'Subject not found.')
+                ->redirect('/admin/subjects', 303);
+        }
+
+        if ($subject->status !== Subject::STATUS_PENDING) {
+            return response()
+                ->withFlash('error', 'Only pending subjects can be approved.')
+                ->redirect('/admin/subjects', 303);
+        }
+
+        $subject->update([
+            'status' => Subject::STATUS_ACTIVE,
+            'proposed_by' => null,
+        ]);
+
+        UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_UPDATED, "Approved subject {$subject->name}");
+
+        return response()
+            ->withFlash('success', "Subject \"{$subject->name}\" approved and published.")
+            ->redirect('/admin/subjects', 303);
+    }
+
+    /**
+     * Reject a tutor-proposed subject and unlink it from tutors.
+     */
+    public function reject()
+    {
+        if (!($user = $this->requireAdmin())) return;
+
+        $subject = Subject::query()->find(request()->get('subject'));
+
+        if (!$subject) {
+            return response()
+                ->withFlash('error', 'Subject not found.')
+                ->redirect('/admin/subjects', 303);
+        }
+
+        if ($subject->status !== Subject::STATUS_PENDING) {
+            return response()
+                ->withFlash('error', 'Only pending subjects can be rejected.')
+                ->redirect('/admin/subjects', 303);
+        }
+
+        $name = $subject->name;
+
+        TutorSubject::query()->where('subject_id', $subject->id)->delete();
+        $subject->delete();
+
+        UserActivity::log($user->id, UserActivity::TYPE_SUBJECT_REMOVED, "Rejected subject {$name}");
+
+        return response()
+            ->withFlash('success', "Subject \"{$name}\" rejected and removed.")
             ->redirect('/admin/subjects', 303);
     }
 

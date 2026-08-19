@@ -48,30 +48,33 @@ export default function Subjects(props: SubjectsProps) {
                         Subjects with the most active educators.
                     </p>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {specialties.map((s) => (
-                            <Link
-                                key={s.name}
-                                href={`/tutors?keyword=${encodeURIComponent(s.name)}`}
-                                className="card card-border border-base-content/10 bg-base-content/[0.04] transition-colors hover:border-primary/40"
-                            >
-                                <div className="card-body flex-row items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary">
-                                            <GraduationCap className="size-5" />
-                                        </span>
-                                        <div>
-                                            <h3 className="font-display font-semibold text-base-content">
-                                                {s.name}
-                                            </h3>
-                                            <p className="text-xs text-base-content/50">
-                                                {s.count} tutor{s.count > 1 ? 's' : ''}
-                                            </p>
+                        {specialties.map((s) => {
+                            const slug = subjects.find((x) => x.name === s.name)?.slug;
+                            return (
+                                <Link
+                                    key={s.name}
+                                    href={slug ? `/subject/${slug}` : `/tutors?keyword=${encodeURIComponent(s.name)}`}
+                                    className="card card-border border-base-content/10 bg-base-content/[0.04] transition-colors hover:border-primary/40"
+                                >
+                                    <div className="card-body flex-row items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary">
+                                                <GraduationCap className="size-5" />
+                                            </span>
+                                            <div>
+                                                <h3 className="font-display font-semibold text-base-content">
+                                                    {s.name}
+                                                </h3>
+                                                <p className="text-xs text-base-content/50">
+                                                    {s.count} tutor{s.count > 1 ? 's' : ''}
+                                                </p>
+                                            </div>
                                         </div>
+                                        <ArrowRight className="size-4 text-base-content/40" />
                                     </div>
-                                    <ArrowRight className="size-4 text-base-content/40" />
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -100,7 +103,7 @@ export default function Subjects(props: SubjectsProps) {
                             {filtered.map((s) => (
                                 <Link
                                     key={s.id}
-                                    href={`/tutors?keyword=${encodeURIComponent(s.name)}`}
+                                    href={s.slug ? `/subject/${s.slug}` : `/tutors?keyword=${encodeURIComponent(s.name)}`}
                                     className="group flex items-center gap-2 rounded-full border border-base-content/10 bg-base-content/5 px-4 py-2 text-sm text-base-content/80 transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-base-content"
                                 >
                                     {s.name}

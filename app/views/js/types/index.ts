@@ -4,7 +4,7 @@ export interface AuthUser {
     id: string;
     name: string;
     email: string;
-    role: 'USER' | 'TUTOR' | 'ADMIN';
+    role: 'STUDENT' | 'TUTOR' | 'ADMIN';
     base_currency?: string;
 }
 
@@ -33,6 +33,9 @@ export interface TutorProfile {
 export interface TutorSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
+    status?: string;
     rate_cents: number;
 }
 
@@ -40,6 +43,7 @@ export interface AvailableSlot {
     id: string;
     start: string;
     end: string;
+    booked?: boolean;
 }
 
 export interface Tutor {
@@ -57,6 +61,41 @@ export interface Tutor {
     bio: string;
     subjects: TutorSubject[];
     level: string;
+    username?: string | null;
+}
+
+export interface PublicReview {
+    id: string;
+    rating: number;
+    comment: string | null;
+    reviewer: {
+        id: string;
+        name: string;
+    };
+    created_at: string;
+}
+
+export interface RelatedTutor {
+    id: string;
+    name: string;
+    headline: string | null;
+    avatar: string | null;
+    rate: number;
+    currency: string;
+    rating: number;
+    verified: boolean;
+    city: string | null;
+    username?: string | null;
+}
+
+export interface TutorProfilePageProps {
+    auth: AuthProps;
+    tutor: Tutor;
+    slots: AvailableSlot[];
+    reviews: PublicReview[];
+    reviewCount: number;
+    lessonCount: number;
+    related: RelatedTutor[];
 }
 
 export interface CityBreakdownItem {
@@ -72,6 +111,8 @@ export interface SpecialtyItem {
 export interface SubjectItem {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
 }
 
 export interface TutorStats {
@@ -127,6 +168,88 @@ export interface Profile {
     phone?: string;
 }
 
+export interface Lesson {
+    id: string;
+    student: {
+        id: string;
+        name: string;
+    };
+    tutor: {
+        id: string;
+        name: string;
+    };
+    subject?: string;
+    scheduled_at?: string;
+    duration_minutes: number;
+    amount: number;
+    currency: string;
+    status: string;
+    cancel_reason?: string | null;
+    cancelled_at?: string | null;
+    cancelled_by?: string | null;
+    completed_at?: string | null;
+    completedByStudent: boolean;
+    completedByTutor: boolean;
+    isMine: boolean;
+    amTutor: boolean;
+    canJoin: boolean;
+    canComplete: boolean;
+    canCancel: boolean;
+    canReview: boolean;
+    meeting_url?: string;
+}
+
+export interface Conversation {
+    id: string;
+    student: {
+        id: string;
+        name: string;
+    };
+    tutor: {
+        id: string;
+        name: string;
+    };
+    booking_id?: string | null;
+    subject?: string;
+    counterpart?: {
+        id?: string;
+        name?: string;
+    };
+    last_message_at?: string | null;
+    last_message_preview?: string | null;
+    unread_count: number;
+    isMine: boolean;
+}
+
+export interface Message {
+    id: string;
+    sender_id: string;
+    body: string;
+    is_read: boolean;
+    created_at?: string;
+}
+
+export interface LessonReview {
+    id: string;
+    rating: number;
+    comment?: string | null;
+    reviewer?: {
+        id?: string;
+        name?: string;
+    };
+    created_at?: string;
+}
+
+export interface AppNotification {
+    id: string;
+    type: string;
+    title: string;
+    message: string;
+    data?: Record<string, unknown> | null;
+    is_read: boolean;
+    created_at?: string;
+}
+
 export interface Stats {
     tutors: number;
     students: number;
@@ -178,6 +301,10 @@ export interface TutorProfileData {
     hourly_rate: number;
     currency: string;
     avatar_url?: string | null;
+    stripe_account_id: string;
+    payout_method: string;
+    payout_details: string;
+    username: string;
 }
 
 export interface TutorIndexProps {
@@ -210,6 +337,8 @@ export interface TutorAvailabilityProps {
 export interface CatalogSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
 }
 
 export interface TutorSubjectsProps {
@@ -302,12 +431,29 @@ export interface AdminUsersProps {
 export interface AdminSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
+    status: string;
+    proposed_by?: string | null;
+    proposer_name?: string | null;
     tutor_count: number;
 }
 
 export interface AdminSubjectsProps {
     subjects: AdminSubject[];
     errors: Record<string, string>;
+}
+
+export interface SubjectPageProps {
+    subject: {
+        id: string;
+        name: string;
+        description?: string | null;
+        slug?: string | null;
+    };
+    tutors: Tutor[];
+    totalTutors: number;
+    auth: AuthProps;
 }
 
 export interface AdminTutor {

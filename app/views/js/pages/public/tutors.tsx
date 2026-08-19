@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Search, MapPin, Video, Building2 } from 'lucide-react';
 
 import PublicLayout from '@/components/larnr/public-layout';
 import PageHeader from '@/components/larnr/page-header';
 import EducatorsSection from '@/components/larnr/educators-section';
-import BookTrialModal from '@/components/larnr/book-trial-modal';
 import { useTutorFilters } from '@/hooks/use-tutor-filters';
-import type { HomeProps, Tutor } from '@/types';
+import type { HomeProps } from '@/types';
 
 const FORMATS = [
     { value: '', label: 'All formats' },
@@ -32,16 +30,6 @@ export default function Tutors(props: HomeProps) {
         setPerPage,
         clearFilters,
     } = useTutorFilters(filters, '/tutors');
-
-    const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
-
-    const openBook = (tutor: Tutor) => {
-        if (auth?.user) {
-            setSelectedTutor(tutor);
-        } else {
-            router.visit('/auth/login');
-        }
-    };
 
     return (
         <PublicLayout auth={auth} title="Find Tutors">
@@ -123,13 +111,6 @@ export default function Tutors(props: HomeProps) {
                 onLevelChange={setLevel}
                 onPerPageChange={setPerPage}
                 onClearFilters={clearFilters}
-                onBook={openBook}
-            />
-
-            <BookTrialModal
-                tutor={selectedTutor}
-                auth={auth}
-                onClose={() => setSelectedTutor(null)}
             />
         </PublicLayout>
     );

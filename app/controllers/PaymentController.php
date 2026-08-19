@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Booking;
+use App\Models\Notification;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Payout;
@@ -52,15 +53,15 @@ class PaymentController extends Controller
 
             // Update booking with session ID
             $booking->update([
-                'notes' => ($booking->notes ? $booking->notes . "\n" : '') . "Stripe session: {$session->id}",
+                'notes' => ($booking->notes ? $booking->notes . "\n" : '') . "Stripe session: {$session->id()}",
             ]);
 
             // Show fee breakdown to student
             $fees = $stripe->calculateFees((int) $booking->amount, strtolower($booking->currency));
 
             return response()->json([
-                'sessionId' => $session->id,
-                'url' => $session->url,
+                'sessionId' => $session->id(),
+                'url' => $session->url(),
                 'fee_breakdown' => [
                     'gross_amount' => (int) $booking->amount,
                     'currency' => strtoupper($booking->currency),
@@ -208,27 +209,28 @@ class PaymentController extends Controller
     {
         $payload = file_get_contents('php://input');
         $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-        $secret = config('stripe.webhook_secret') ?? env('STRIPE_WEBHOOK_SECRET');
+        $secret = config('stripe.webhook_secret') ?? _env('STRIPE_WEBHOOK_SECRET');
 
         if (!$secret) {
             return response()->markup('Webhook secret not configured', 500);
         }
 
         try {
-            $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $secret);
+            // Leaf Billing verifies the signature and returns a BillingEvent
+            $event = billing()->webhook();
         } catch (\Exception $e) {
             return response()->markup('Webhook error: ' . $e->getMessage(), 400);
         }
 
         $stripe = new StripeService();
 
-        switch ($event->type) {
+        switch ($event->type()) {
             case 'checkout.session.completed':
-                $stripe->handlePaymentSuccess($event->data->object->id);
+                $stripe->handlePaymentSuccess($event->data()['object']['id'] ?? '');
                 break;
 
             case 'checkout.session.expired':
-                $stripe->handlePaymentFailed($event->data->object->id);
+                $stripe->handlePaymentFailed($event->data()['object']['id'] ?? '');
                 break;
 
             case 'transfer.created':
@@ -250,9 +252,10 @@ class PaymentController extends Controller
         return response()->markup('OK', 200);
     }
 
-    private function handleTransferEvent(\Stripe\Event $event): void
+    private function handleTransferEvent(\Leaf\Billing\Event $event): void
     {
-        $transfer = $event->data->object;
+        $object = $event->data()['object'] ?? [];
+        $transfer = (object) $object;
         $bookingId = $transfer->metadata->booking_id ?? null;
 
         if (!$bookingId) {
@@ -267,9 +270,9 @@ class PaymentController extends Controller
             return;
         }
 
-        switch ($event->type) {
+        switch ($event->type()) {
             case 'transfer.paid':
-                $payout->markAsPaid($transfer->id);
+                $payout->markAsPaid($transfer->id ?? null);
                 // Notify tutor
                 Notification::createForUser(
                     $payout->tutor_id,

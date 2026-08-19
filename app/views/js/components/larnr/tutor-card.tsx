@@ -1,4 +1,5 @@
-import { BadgeCheck, MapPin, Clock, Video, Building2, Star } from 'lucide-react';
+import { BadgeCheck, MapPin, Clock, Video, Building2, Star, MessageSquare } from 'lucide-react';
+import { router } from '@inertiajs/react';
 
 import Avatar from '@/components/larnr/avatar';
 import { displayAmount, getCurrencyCookie } from '@/utils/currency';
@@ -18,15 +19,38 @@ const LEVEL_LABELS = {
 
 interface Props {
     tutor: Tutor;
-    onBook: (tutor: Tutor) => void;
     auth: AuthProps;
 }
 
-export default function TutorCard({ tutor, onBook, auth }: Props) {
+export default function TutorCard({ tutor, auth }: Props) {
     const rate = displayAmount(tutor.rate, tutor.currency, auth);
 
+    const message = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!auth?.user) {
+            router.visit('/auth/login');
+            return;
+        }
+        if (auth.user.role === 'TUTOR') {
+            router.get(`/messages?with=${tutor.id}`);
+            return;
+        }
+        try {
+            const res = await fetch('/messages/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tutor_id: tutor.id }),
+            });
+            const data = await res.json();
+            if (data.conversation_id) router.get(`/messages/${data.conversation_id}`);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
-        <div className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
+        <div onClick={() => router.visit(`/t/${tutor.username}`)} className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
             <div className="card-body gap-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -140,12 +164,21 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
                     <p className="font-display text-lg font-bold text-primary sm:hidden">
                         {tutor.rate > 0 ? `${rate.text}/hr` : 'Rate on request'}
                     </p>
-                    <button
-                        onClick={() => onBook(tutor)}
-                        className="btn btn-primary btn-sm rounded-full px-5"
-                    >
-                        Book a Trial Lesson
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={message}
+                            className="btn btn-outline btn-sm rounded-full"
+                            aria-label={`Message ${tutor.name}`}
+                        >
+                            <MessageSquare className="size-4" /> Message
+                        </button>
+                        <button
+                            onClick={() => router.visit(`/t/${tutor.username}`)}
+                            className="btn btn-primary btn-sm rounded-full px-5"
+                        >
+                            Book a Trial Lesson
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

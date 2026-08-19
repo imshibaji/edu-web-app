@@ -22,7 +22,6 @@ interface Props {
     onLevelChange: (level: string) => void;
     onPerPageChange: (perPage: number) => void;
     onClearFilters: () => void;
-    onBook: (tutor: Tutor) => void;
 }
 
 export default function EducatorsSection({
@@ -34,7 +33,6 @@ export default function EducatorsSection({
     onLevelChange,
     onPerPageChange,
     onClearFilters,
-    onBook,
 }: Props) {
     return (
         <section id="educators" className="scroll-mt-24 py-14">
@@ -101,7 +99,7 @@ export default function EducatorsSection({
                         </div>
                     ) : (
                         tutors.map((t) => (
-                            <TutorCard key={t.id} tutor={t} onBook={onBook} auth={auth} />
+                            <TutorCard key={t.id} tutor={t} auth={auth} />
                         ))
                     )}
                 </div>
