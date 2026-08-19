@@ -23,6 +23,6 @@ export function useAuth(): AuthProps {
 
 export function avatarSrc(src: string | null | undefined): string | null {
     if (!src) return null;
-    if (/^https?:\/\//.test(src)) return src;
+    if (/^(https?:\/\/|blob:)/.test(src)) return src;
     return src.startsWith('/') ? src : `/${src}`;
 }

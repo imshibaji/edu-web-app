@@ -70,6 +70,9 @@ seeds:
       format: BOTH
       experience_level: SENIOR
       rating: 4.9
+      payout_details:
+        upi_id: 'ananya@apay'
+        netbanking: null
     - user_id: 00000000-0000-4000-8000-000000000012
       full_name: Rahul Mehta
       headline: Ex-Banker teaching Economics & Finance
@@ -81,6 +84,9 @@ seeds:
       format: ONLINE
       experience_level: MID
       rating: 4.7
+      payout_details:
+        upi_id: null
+        netbanking: 'Bank of America / Account ending in 1234'
     - user_id: 00000000-0000-4000-8000-000000000013
       full_name: Priya Sharma
       headline: English & Creative Writing Coach

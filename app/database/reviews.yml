@@ -28,4 +28,39 @@ columns:
 timestamps: true
 
 seeds:
-  count: 0
+  data:
+    - id: 00000000-0000-4000-8000-000000000301
+      booking_id: null
+      reviewer_id: 00000000-0000-4000-8000-000000000002
+      reviewee_id: 00000000-0000-4000-8000-000000000011
+      rating: 5
+      comment: Ananya made calculus finally click for me. She breaks problems down into tiny steps and checks understanding constantly.
+      status: APPROVED
+    - id: 00000000-0000-4000-8000-000000000302
+      booking_id: null
+      reviewer_id: 00000000-0000-4000-8000-000000000013
+      reviewee_id: 00000000-0000-4000-8000-000000000011
+      rating: 5
+      comment: Structured lessons, clear explanations, and a very patient approach. Highly recommended for JEE prep.
+      status: APPROVED
+    - id: 00000000-0000-4000-8000-000000000303
+      booking_id: null
+      reviewer_id: 00000000-0000-4000-8000-000000000014
+      reviewee_id: 00000000-0000-4000-8000-000000000011
+      rating: 4
+      comment: Great tutor. Very thorough with the theory before jumping into practice problems.
+      status: APPROVED
+    - id: 00000000-0000-4000-8000-000000000304
+      booking_id: null
+      reviewer_id: 00000000-0000-4000-8000-000000000002
+      reviewee_id: 00000000-0000-4000-8000-000000000012
+      rating: 5
+      comment: Rahul's real-world examples from banking make economics easy to grasp. Loved every session.
+      status: APPROVED
+    - id: 00000000-0000-4000-8000-000000000305
+      booking_id: null
+      reviewer_id: 00000000-0000-4000-8000-000000000002
+      reviewee_id: 00000000-0000-4000-8000-000000000013
+      rating: 5
+      comment: Priya helped me polish my essays and speak with confidence. A wonderful writing coach.
+      status: APPROVED

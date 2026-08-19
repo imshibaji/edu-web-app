@@ -32,8 +32,54 @@ export default function TutorProfile(props: TutorProfileProps) {
         stripeAccountId: source.stripe_account_id ?? '',
         payoutMethod: source.payout_method ?? '',
         payoutDetails: source.payout_details ?? '',
+        username: source.username ?? '',
         avatar: null as File | null,
     });
+
+    const [usernameAvailability, setUsernameAvailability] = useState<'available' | 'taken' | null>(null);
+    const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+
+    const generateUsername = (name: string): string => {
+        if (!name) return '';
+        return name
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s]+/g, '-')
+            .replace(/[-]+/g, '-')
+            .trim('-');
+    };
+
+    const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        setData('fullName', name);
+        const generated = generateUsername(name);
+        setData('username', generated);
+        setUsernameAvailability(null);
+        setIsCheckingUsername(false);
+    };
+
+    const checkUsernameAvailability = async (username: string) => {
+        if (!username.trim()) {
+            setUsernameAvailability(null);
+            return;
+        }
+        setIsCheckingUsername(true);
+        try {
+            const response = await fetch('/username-available', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username }),
+            });
+            const data = await response.json();
+            setUsernameAvailability(data.available ? 'available' : 'taken');
+        } catch (error) {
+            setUsernameAvailability('taken');
+        } finally {
+            setIsCheckingUsername(false);
+        }
+    };
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -121,7 +167,7 @@ export default function TutorProfile(props: TutorProfileProps) {
 
                                     <div className="divider divider-neutral my-0" />
 
-                                    <div className="grid gap-4 sm:grid-cols-2">
+<div className="grid gap-4 sm:grid-cols-2">
                                         <div className="fieldset sm:col-span-2">
                                             <legend className="fieldset-legend">Full name</legend>
                                             <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
@@ -134,6 +180,29 @@ export default function TutorProfile(props: TutorProfileProps) {
                                             </label>
                                             {props.errors?.fullName && (
                                                 <span className="text-xs text-error">{props.errors.fullName}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="fieldset">
+                                            <legend className="fieldset-legend">Username</legend>
+                                            <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
+                                                <input
+                                                    type="text"
+                                                    name="username"
+                                                    value={data.username}
+                                                    onChange={(e) => setData('username', e.target.value)}
+                                                    onBlur={() => checkUsernameAvailability(data.username)}
+                                                    placeholder="e.g. ananya-math-tutor"
+                                                />
+                                            </label>
+                                            {props.errors?.username && (
+                                                <span className="text-xs text-error">{props.errors.username}</span>
+                                            )}
+                                            {usernameAvailability !== null && (
+                                                <span className="text-xs mt-1 flex items-center gap-1.5">
+                                                    {usernameAvailability === 'available' && <span className="text-success">Available</span>}
+                                                    {usernameAvailability === 'taken' && <span className="text-error">Taken</span>}
+                                                </span>
                                             )}
                                         </div>
 

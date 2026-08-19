@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { Plus, Trash2, Pencil, X, Check, BookOpen } from 'lucide-react';
+import { Plus, Trash2, Pencil, X, Check, BookOpen, Sparkles, Loader2 } from 'lucide-react';
 
 import Navbar from '@/components/larnr/navbar';
 import Footer from '@/components/larnr/footer';
@@ -91,6 +91,123 @@ function AddSubjectForm({ catalog, currency, errors }: { catalog: CatalogSubject
     );
 }
 
+function ProposeSubjectForm({ currency, errors }: { currency: string; errors: Record<string, string> }) {
+    const [open, setOpen] = useState(false);
+    const { data, setData, post, processing, reset } = useForm({
+        name: '',
+        description: '',
+        rate: '',
+    });
+
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post('/tutor/subjects/propose', {
+            onSuccess: () => {
+                reset();
+                setOpen(false);
+            },
+            preserveScroll: true,
+        });
+    };
+
+    if (!open) {
+        return (
+            <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="btn btn-outline btn-sm w-full rounded-full gap-2 border-base-content/15 text-base-content/70 hover:bg-base-content/5"
+            >
+                <Sparkles className="size-4" /> Can&apos;t find your subject? Propose a new one
+            </button>
+        );
+    }
+
+    return (
+        <div className="card card-border border-warning/30 bg-warning/5">
+            <div className="card-body gap-4">
+                <div className="flex items-center gap-3">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-warning/15 text-warning">
+                        <Sparkles className="size-5" />
+                    </span>
+                    <div>
+                        <h3 className="font-display font-semibold text-base-content">Propose a new subject</h3>
+                        <p className="text-xs text-base-content/50">
+                            Your proposal goes to admin review before it appears publicly.
+                        </p>
+                    </div>
+                </div>
+
+                <form onSubmit={submit} className="space-y-3">
+                    <div className="fieldset">
+                        <legend className="fieldset-legend">Subject name</legend>
+                        <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
+                            <input
+                                type="text"
+                                name="name"
+                                maxLength={150}
+                                placeholder="e.g. Sanskrit"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                            />
+                        </label>
+                        {errors?.name && <span className="text-xs text-error">{errors.name}</span>}
+                    </div>
+
+                    <div className="fieldset">
+                        <legend className="fieldset-legend">Short description (for SEO)</legend>
+                        <label className="textarea w-full rounded-xl border-base-content/10 bg-base-content/5">
+                            <textarea
+                                name="description"
+                                rows={3}
+                                className="resize-none w-full bg-transparent text-base-content/80 placeholder:text-base-content/50 focus:outline-none"
+                                placeholder="e.g. Learn Sanskrit grammar, shlokas and conversation with expert guidance."
+                                value={data.description}
+                                onChange={(e) => setData('description', e.target.value)}
+                            />
+                        </label>
+                    </div>
+
+                    <div className="fieldset">
+                        <legend className="fieldset-legend">Charge per hour</legend>
+                        <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
+                            <span className="text-base-content/50">
+                                {SYMBOLS[currency as CurrencyCode] ?? currency + ' '}
+                            </span>
+                            <input
+                                type="number"
+                                name="rate"
+                                min="0"
+                                step="0.01"
+                                placeholder="e.g. 25"
+                                value={data.rate}
+                                onChange={(e) => setData('rate', e.target.value)}
+                            />
+                        </label>
+                        {errors?.rate && <span className="text-xs text-error">{errors.rate}</span>}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="submit"
+                            className="btn btn-primary btn-sm w-full rounded-full"
+                            disabled={processing || !data.name.trim()}
+                        >
+                            {processing ? 'Submitting…' : 'Submit for review'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            className="btn btn-ghost btn-sm rounded-full text-base-content/60"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
 function SubjectRow({ subject, currency, auth, onRemove }: { subject: TutorSubject; currency: string; auth: AuthProps; onRemove: (id: string) => void }) {
     const [editing, setEditing] = useState(false);
     const { data, setData, post, processing } = useForm({
@@ -116,9 +233,17 @@ function SubjectRow({ subject, currency, auth, onRemove }: { subject: TutorSubje
                         <BookOpen className="size-4" />
                     </span>
                     <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-base-content">
-                            {subject.name}
-                        </p>
+                        <div className="flex items-center gap-2">
+                            <p className="truncate text-sm font-medium text-base-content">
+                                {subject.name}
+                            </p>
+                            {subject.status === 'PENDING' && (
+                                <span className="badge badge-sm badge-warning gap-1 whitespace-nowrap">
+                                    <Loader2 className="size-3 animate-spin" />
+                                    Pending review
+                                </span>
+                            )}
+                        </div>
                         {editing ? (
                             <form onSubmit={save} className="mt-1 flex items-center gap-2">
                                 <label className="input input-sm w-32 rounded-xl border-base-content/10 bg-base-content/5">
@@ -235,6 +360,9 @@ export default function TutorSubjects(props: TutorSubjectsProps) {
                         <div className="grid gap-6 lg:grid-cols-5">
                             <div className="lg:col-span-2">
                                 <AddSubjectForm catalog={props.catalog} currency={props.profile.currency} errors={props.errors} />
+                                <div className="mt-4">
+                                    <ProposeSubjectForm currency={props.profile.currency} errors={props.errors} />
+                                </div>
                             </div>
 
                             <div className="lg:col-span-3">

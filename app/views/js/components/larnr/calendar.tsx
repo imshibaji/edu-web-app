@@ -1,6 +1,15 @@
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useState } from 'react';
 
+function parseSlotDate(value: string): Date {
+    if (!value) return new Date(NaN);
+    const trimmed = value.trim();
+    if (/[zZ]|[+-]\d{2}:?\d{2}$/.test(trimmed)) {
+        return new Date(trimmed);
+    }
+    return new Date(trimmed.replace(' ', 'T') + 'Z');
+}
+
 interface CalendarProps {
     value: Date;
     onChange: (date: Date) => void;
@@ -35,11 +44,13 @@ export default function Calendar({
         return new Date(year, month, 1).getDay();
     };
 
-    const formatDateKey = (date: Date) => date.toISOString().split('T')[0];
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const formatDateKey = (date: Date) => (isNaN(date.getTime()) ? '' : `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`);
 
     const slotsByDate: Record<string, Array<{ id: string; start: string; end: string; booked?: boolean }>> = {};
     slots.forEach((slot) => {
-        const startDate = new Date(slot.start.replace(' ', 'T') + 'Z');
+        const startDate = parseSlotDate(slot.start);
+        if (isNaN(startDate.getTime())) return;
         const key = formatDateKey(startDate);
         if (!slotsByDate[key]) slotsByDate[key] = [];
         slotsByDate[key].push(slot);
@@ -194,8 +205,8 @@ export default function Calendar({
                 {mode === 'student' && (
                     <div className="mt-4 space-y-2">
                         {slotsByDate[formatDateKey(value)]?.map((slot) => {
-                            const start = new Date(slot.start.replace(' ', 'T') + 'Z');
-                            const end = new Date(slot.end.replace(' ', 'T') + 'Z');
+                            const start = parseSlotDate(slot.start);
+                            const end = parseSlotDate(slot.end);
                             return (
                                 <div
                                     key={slot.id}

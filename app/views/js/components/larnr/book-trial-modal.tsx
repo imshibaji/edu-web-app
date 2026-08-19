@@ -19,9 +19,18 @@ interface Props {
     onClose: () => void;
 }
 
+function parseSlotDate(value: string): Date {
+    if (!value) return new Date(NaN);
+    const trimmed = value.trim();
+    if (/[zZ]|[+-]\d{2}:?\d{2}$/.test(trimmed)) {
+        return new Date(trimmed);
+    }
+    return new Date(trimmed.replace(' ', 'T') + 'Z');
+}
+
 function formatSlotDisplay(slot: AvailableSlot): string {
-    const start = new Date(slot.start.replace(' ', 'T') + 'Z');
-    const end = new Date(slot.end.replace(' ', 'T') + 'Z');
+    const start = parseSlotDate(slot.start);
+    const end = parseSlotDate(slot.end);
     const opts: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         month: 'short',
@@ -165,7 +174,7 @@ export default function BookTrialModal({ tutor, auth, onClose }: Props) {
                                     <div className="space-y-2">
                                         {slots
                                             .filter((slot) => {
-                                                const slotStart = new Date(slot.start.replace(' ', 'T') + 'Z');
+                                                const slotStart = parseSlotDate(slot.start);
                                                 return slotStart.toDateString() === selectedDate.toDateString();
                                             })
                                             .map((slot) => (
@@ -174,7 +183,7 @@ export default function BookTrialModal({ tutor, auth, onClose }: Props) {
                                                     type="button"
                                                     onClick={() => {
                                                         setData('slot_id', slot.id);
-                                                        setSelectedDate(new Date(slot.start.replace(' ', 'T') + 'Z'));
+                                                        setSelectedDate(parseSlotDate(slot.start));
                                                     }}
                                                     className={`btn btn-sm rounded-xl w-full justify-start gap-3 ${
                                                         data.slot_id === slot.id

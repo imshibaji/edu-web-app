@@ -51,7 +51,7 @@ class Controller extends \Leaf\Controller
         }
 
         $query = TutorProfile::query()
-            ->with(['subjects'])
+            ->with(['subjects' => fn ($q) => $q->active(), 'user'])
             ->orderByDesc('rating')
             ->orderBy('user_id');
 
@@ -111,6 +111,7 @@ class Controller extends \Leaf\Controller
             ->all();
 
         $specialtyBreakdown = Subject::query()
+            ->active()
             ->withCount('tutors')
             ->orderByDesc('tutors_count')
             ->get()
@@ -155,22 +156,27 @@ class Controller extends \Leaf\Controller
                 'subjects' => $t->subjects
                     ->map(fn ($subject) => [
                         'name' => $subject->name,
+                        'slug' => $subject->slug,
                         'rate_cents' => (int) $subject->pivot->rate_cents,
                     ])
                     ->values()
                     ->all(),
-                'slotsAvailable' => $availableByTutor[$t->user_id] ?? 0,
-            ])->values()->all(),
-            'total' => $total,
-            'cities' => $allCities,
+'slotsAvailable' => $availableByTutor[$t->user_id] ?? 0,
+            'username' => $t->user?->username,
+        ])->values()->all(),
+        'total' => $total,
+        'cities' => $allCities,
             'cityBreakdown' => $cityBreakdown,
             'specialties' => $specialtyBreakdown,
             'subjects' => Subject::query()
+                ->active()
                 ->orderBy('name')
                 ->get()
                 ->map(fn ($subject) => [
                     'id' => $subject->id,
                     'name' => $subject->name,
+                    'description' => $subject->description,
+                    'slug' => $subject->slug,
                 ])
                 ->values()
                 ->all(),

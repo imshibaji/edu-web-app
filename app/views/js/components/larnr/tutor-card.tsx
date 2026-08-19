@@ -19,11 +19,10 @@ const LEVEL_LABELS = {
 
 interface Props {
     tutor: Tutor;
-    onBook: (tutor: Tutor) => void;
     auth: AuthProps;
 }
 
-export default function TutorCard({ tutor, onBook, auth }: Props) {
+export default function TutorCard({ tutor, auth }: Props) {
     const rate = displayAmount(tutor.rate, tutor.currency, auth);
 
     const message = async (e: React.MouseEvent) => {
@@ -51,7 +50,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
     };
 
     return (
-        <div className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
+        <div onClick={() => router.visit(`/t/${tutor.username}`)} className="card card-border border-base-content/10 bg-base-content/4 transition-colors hover:border-primary/40 hover:bg-base-content/6">
             <div className="card-body gap-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -174,7 +173,7 @@ export default function TutorCard({ tutor, onBook, auth }: Props) {
                             <MessageSquare className="size-4" /> Message
                         </button>
                         <button
-                            onClick={() => onBook(tutor)}
+                            onClick={() => router.visit(`/t/${tutor.username}`)}
                             className="btn btn-primary btn-sm rounded-full px-5"
                         >
                             Book a Trial Lesson

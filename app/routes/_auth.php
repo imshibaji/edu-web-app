@@ -60,7 +60,7 @@ app()->post('/auth/logout', [
 ]);
 
 app()->group('/dashboard', [
-    'middleware' => ['auth.required', 'role.both'],
+    'middleware' => ['auth.required'],
     function () {
         app()->get('/', 'Auth\DashboardController@index');
     },
@@ -81,6 +81,7 @@ app()->group('/tutor', [
         app()->get('/enquiries', 'TutorController@enquiries');
         app()->get('/subjects', 'TutorController@subjects');
         app()->post('/subjects', 'TutorController@addSubject');
+        app()->post('/subjects/propose', 'TutorController@proposeSubject');
         app()->post('/subjects/update', 'TutorController@updateSubject');
         app()->post('/subjects/remove', 'TutorController@removeSubject');
         app()->post('/slots', 'TutorController@addSlot');
@@ -107,6 +108,8 @@ app()->group('/admin', [
         app()->post('/subjects/create', 'Auth\admin\SubjectsController@create');
         app()->post('/subjects/update', 'Auth\admin\SubjectsController@update');
         app()->post('/subjects/delete', 'Auth\admin\SubjectsController@delete');
+        app()->post('/subjects/approve', 'Auth\admin\SubjectsController@approve');
+        app()->post('/subjects/reject', 'Auth\admin\SubjectsController@reject');
         app()->get('/payments', 'Auth\admin\PaymentsController@index');
         app()->get('/payment-settings', 'Auth\admin\AdminPaymentSettingsController@index');
         app()->post('/payment-settings', 'Auth\admin\AdminPaymentSettingsController@update');

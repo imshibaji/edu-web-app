@@ -1,5 +1,4 @@
 import PublicLayout from '@/components/larnr/public-layout';
-import BookTrialModal from '@/components/larnr/book-trial-modal';
 import Hero from '@/components/larnr/hero';
 import EducatorsSection from '@/components/larnr/educators-section';
 import StatsSection from '@/components/larnr/stats-section';
@@ -20,10 +19,7 @@ export default function Home(props: HomeProps) {
         setPerPage,
         setQuery,
         clearFilters,
-        selectedTutor,
-        openBook,
-        closeBook,
-    } = useHomePage(filters, auth);
+    } = useHomePage(filters);
 
     return (
         <PublicLayout auth={auth} title="Find Premium Tutors & Mentors">
@@ -38,7 +34,6 @@ export default function Home(props: HomeProps) {
                 onLevelChange={setLevel}
                 onPerPageChange={setPerPage}
                 onClearFilters={clearFilters}
-                onBook={openBook}
             />
 
             <StatsSection stats={stats} />
@@ -54,12 +49,6 @@ export default function Home(props: HomeProps) {
             <InterviewPrepSection />
 
             <CtaSection auth={auth} />
-
-            <BookTrialModal
-                tutor={selectedTutor}
-                auth={auth}
-                onClose={closeBook}
-            />
         </PublicLayout>
     );
 }

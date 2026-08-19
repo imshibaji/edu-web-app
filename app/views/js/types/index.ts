@@ -33,6 +33,9 @@ export interface TutorProfile {
 export interface TutorSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
+    status?: string;
     rate_cents: number;
 }
 
@@ -58,6 +61,41 @@ export interface Tutor {
     bio: string;
     subjects: TutorSubject[];
     level: string;
+    username?: string | null;
+}
+
+export interface PublicReview {
+    id: string;
+    rating: number;
+    comment: string | null;
+    reviewer: {
+        id: string;
+        name: string;
+    };
+    created_at: string;
+}
+
+export interface RelatedTutor {
+    id: string;
+    name: string;
+    headline: string | null;
+    avatar: string | null;
+    rate: number;
+    currency: string;
+    rating: number;
+    verified: boolean;
+    city: string | null;
+    username?: string | null;
+}
+
+export interface TutorProfilePageProps {
+    auth: AuthProps;
+    tutor: Tutor;
+    slots: AvailableSlot[];
+    reviews: PublicReview[];
+    reviewCount: number;
+    lessonCount: number;
+    related: RelatedTutor[];
 }
 
 export interface CityBreakdownItem {
@@ -73,6 +111,8 @@ export interface SpecialtyItem {
 export interface SubjectItem {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
 }
 
 export interface TutorStats {
@@ -261,6 +301,10 @@ export interface TutorProfileData {
     hourly_rate: number;
     currency: string;
     avatar_url?: string | null;
+    stripe_account_id: string;
+    payout_method: string;
+    payout_details: string;
+    username: string;
 }
 
 export interface TutorIndexProps {
@@ -293,6 +337,8 @@ export interface TutorAvailabilityProps {
 export interface CatalogSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
 }
 
 export interface TutorSubjectsProps {
@@ -385,12 +431,29 @@ export interface AdminUsersProps {
 export interface AdminSubject {
     id: string;
     name: string;
+    description?: string | null;
+    slug?: string | null;
+    status: string;
+    proposed_by?: string | null;
+    proposer_name?: string | null;
     tutor_count: number;
 }
 
 export interface AdminSubjectsProps {
     subjects: AdminSubject[];
     errors: Record<string, string>;
+}
+
+export interface SubjectPageProps {
+    subject: {
+        id: string;
+        name: string;
+        description?: string | null;
+        slug?: string | null;
+    };
+    tutors: Tutor[];
+    totalTutors: number;
+    auth: AuthProps;
 }
 
 export interface AdminTutor {
