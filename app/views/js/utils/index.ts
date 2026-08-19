@@ -18,7 +18,7 @@ export function getInitials(fullName: string): string {
 }
 
 export function useAuth(): AuthProps {
-    return usePage().props.auth as AuthProps;
+    return (usePage().props.auth as AuthProps) ?? { user: null };
 }
 
 export function avatarSrc(src: string | null | undefined): string | null {

@@ -7,6 +7,7 @@ use App\Models\PasswordReset;
 use App\Models\User;
 use App\Services\MailService;
 use Exception;
+use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
@@ -18,11 +19,16 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Show the forgot password form.
+     * Show the forgot password form (Inertia page).
      */
-    public function show(): \Leaf\View|string
+    public function show(): \Leaf\Response
     {
-        return view('auth.forgot-password');
+        $form = flash()->display('form') ?? [];
+
+        response()->inertia('auth/forgot-password', array_merge($form, [
+            'errors' => flash()->display('error') ?? [],
+            'success' => flash()->display('success') ?? null,
+        ]));
     }
 
     /**
@@ -30,38 +36,33 @@ class ForgotPasswordController extends Controller
      */
     public function store(): \Leaf\Response
     {
-        $data = request()->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
+        $email = strtolower(trim((string) request()->get('email', '')));
 
-        $user = User::query()->where('email', $data['email'])->first();
-
-        if (!$user) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return response()
-                ->withFlash('error', ['email' => 'No account found with that email address.'])
+                ->withFlash('form', ['email' => $email])
+                ->withFlash('error', ['email' => 'Please enter a valid email address.'])
                 ->redirect('/auth/forgot-password', 303);
         }
 
-        // Generate a random token
-        $token = Str::random(60);
+        $user = User::query()->where('email', $email)->first();
 
-        // Store the password reset record (upsert - create or update)
-        PasswordReset::query()
-            ->where('email', $data['email'])
-            ->updateOrCreate(
-                ['email' => $data['email']],
-                ['token' => $token, 'created_at' => now()]
+        // Always show the same generic message to prevent email enumeration.
+        if ($user) {
+            $token = Str::random(64);
+
+            PasswordReset::query()->updateOrCreate(
+                ['email' => $email],
+                ['token' => $token, 'created_at' => \Carbon\Carbon::now()],
             );
 
-        // Send reset email
-        try {
-            $this->mailService->sendForgotPasswordEmail($data['email']);
-        } catch (Exception $e) {
-            // Log the error but don't fail the request
-            \Leaf\Log::error('Forgot password email failed: ' . $e->getMessage());
+            try {
+                $this->mailService->sendPasswordResetEmail($email, $token);
+            } catch (Exception $e) {
+                error_log('Forgot password email failed: ' . $e->getMessage());
+            }
         }
 
-        // Respond with a success message that prevents email enumeration
         return response()
             ->withFlash('success', 'If an account with that email exists, a password reset link has been sent.')
             ->redirect('/auth/forgot-password', 303);

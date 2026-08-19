@@ -33,12 +33,30 @@ export default function MessagesShow(props: Props) {
     const send = () => {
         if (!body.trim() || busy) return;
         setBusy(true);
-        router.post(`/messages/${conversation.id}`, { body }, {
-            preserveScroll: true,
-            onSuccess: () => setBody(''),
-            onError: (err) => console.error(err),
-            onFinish: () => setBusy(false),
-        });
+        const currentBody = body;
+        setBody('');
+        fetch(`/messages/${conversation.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ body: currentBody }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success && data.message) {
+                    setLocalMessages((prev) => [...prev, {
+                        id: data.message.id,
+                        sender_id: data.message.sender_id,
+                        body: data.message.body,
+                        is_read: data.message.is_read,
+                        created_at: data.message.created_at,
+                    }]);
+                }
+            })
+            .catch((err) => console.error(err))
+            .finally(() => setBusy(false));
     };
 
     const myId = auth.user?.id;
@@ -57,9 +75,6 @@ export default function MessagesShow(props: Props) {
 
                 <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between gap-3">
-                        <Link href="/messages" className="btn btn-ghost btn-sm rounded-full gap-2">
-                            <ArrowLeft className="size-4" /> All conversations
-                        </Link>
                         <div className="flex items-center gap-2">
                             {conversation.subject && (
                                 <span className="badge badge-outline badge-sm border-base-content/20 text-base-content/60">
@@ -75,6 +90,9 @@ export default function MessagesShow(props: Props) {
                                 </span>
                             )}
                         </div>
+                        <Link href="/messages" className="btn btn-ghost btn-sm rounded-full gap-2">
+                            <ArrowLeft className="size-4" /> All conversations
+                        </Link>
                     </div>
 
                     <div className="card card-border border-base-content/10">

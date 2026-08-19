@@ -2,12 +2,11 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { Plus, Trash2, Pencil, X, Check, BookOpen, Sparkles, Loader2 } from 'lucide-react';
 
-import Navbar from '@/components/larnr/navbar';
-import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import { getInitials } from '@/utils/index';
 import { displayAmount, SYMBOLS, type CurrencyCode } from '@/utils/currency';
 import type { TutorSubjectsProps, TutorSubject, CatalogSubject, AuthProps } from '@/types';
+import TutorLayout from '@/components/larnr/tutor-layout';
 
 function AddSubjectForm({ catalog, currency, errors }: { catalog: CatalogSubject[]; currency: string; errors: Record<string, string> }) {
     const { data, setData, post, processing, reset } = useForm({
@@ -325,85 +324,74 @@ export default function TutorSubjects(props: TutorSubjectsProps) {
     };
 
     return (
-        <div className="min-h-screen bg-base-100 text-base-content">
+        <TutorLayout title="Subjects & Charges">
             <Head title="Subjects & Charges · Larnr" />
 
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-primary/15 blur-[140px]" />
-            </div>
+            <FlashToast />
 
-            <div className="relative z-10">
-                <Navbar auth={props.auth} />
-                <FlashToast />
-
-                <div className="space-y-6 py-6">
-                    <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div>
-                                <h1 className="font-display text-2xl font-bold text-base-content">
-                                    Subjects & Charges
-                                </h1>
-                                <p className="text-sm text-base-content/60">
-                                    Set which subjects you teach and what you charge for each.
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
-                                    {getInitials(props.profile.name)}
-                                </span>
-                                <span className="text-sm font-medium text-base-content/80">
-                                    {props.profile.name}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="grid gap-6 lg:grid-cols-5">
-                            <div className="lg:col-span-2">
-                                <AddSubjectForm catalog={props.catalog} currency={props.profile.currency} errors={props.errors} />
-                                <div className="mt-4">
-                                    <ProposeSubjectForm currency={props.profile.currency} errors={props.errors} />
-                                </div>
-                            </div>
-
-                            <div className="lg:col-span-3">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h2 className="font-display text-lg font-semibold text-base-content">
-                                            Your subjects
-                                        </h2>
-                                        <p className="text-xs text-base-content/50">
-                                            {props.subjects.length} total · shown on your public profile
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-4 space-y-2">
-                                    {props.subjects.length === 0 && (
-                                        <div className="rounded-xl border border-dashed border-base-content/10 p-10 text-center">
-                                            <BookOpen className="mx-auto size-8 text-base-content/40" />
-                                            <p className="mt-2 text-sm text-base-content/50">
-                                                No subjects yet. Add your first one to appear on your
-                                                public profile.
-                                            </p>
-                                        </div>
-                                    )}
-                                    {props.subjects.map((s) => (
-                                        <SubjectRow
-                                            key={s.id}
-                                            subject={s}
-                                            currency={props.profile.currency}
-                                            auth={props.auth}
-                                            onRemove={removeSubject}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+            <div className="space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h1 className="font-display text-2xl font-bold text-base-content">
+                            Subjects & Charges
+                        </h1>
+                        <p className="text-sm text-base-content/60">
+                            Set which subjects you teach and what you charge for each.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
+                            {getInitials(props.profile.name)}
+                        </span>
+                        <span className="text-sm font-medium text-base-content/80">
+                            {props.profile.name}
+                        </span>
                     </div>
                 </div>
 
-                <Footer />
+                <div className="grid gap-6 lg:grid-cols-5">
+                    <div className="lg:col-span-2">
+                        <AddSubjectForm catalog={props.catalog} currency={props.profile.currency} errors={props.errors} />
+                        <div className="mt-4">
+                            <ProposeSubjectForm currency={props.profile.currency} errors={props.errors} />
+                        </div>
+                    </div>
+
+                    <div className="lg:col-span-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="font-display text-lg font-semibold text-base-content">
+                                    Your subjects
+                                </h2>
+                                <p className="text-xs text-base-content/50">
+                                    {props.subjects.length} total · shown on your public profile
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 space-y-2">
+                            {props.subjects.length === 0 && (
+                                <div className="rounded-xl border border-dashed border-base-content/10 p-10 text-center">
+                                    <BookOpen className="mx-auto size-8 text-base-content/40" />
+                                    <p className="mt-2 text-sm text-base-content/50">
+                                        No subjects yet. Add your first one to appear on your
+                                        public profile.
+                                    </p>
+                                </div>
+                            )}
+                            {props.subjects.map((s) => (
+                                <SubjectRow
+                                    key={s.id}
+                                    subject={s}
+                                    currency={props.profile.currency}
+                                    auth={props.auth}
+                                    onRemove={removeSubject}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </TutorLayout>
     );
 }

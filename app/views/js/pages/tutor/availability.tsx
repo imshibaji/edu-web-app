@@ -1,15 +1,13 @@
 import { Head, router } from '@inertiajs/react';
 import { Trash2, CalendarClock, Clock } from 'lucide-react';
 
-import Navbar from '@/components/larnr/navbar';
-import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import { getInitials } from '@/utils/index';
 import { formatDateTime } from '@/utils/tutor';
 import type { TutorAvailabilityProps } from '@/types';
 import Calendar from '@/components/larnr/calendar';
-
 import { useState } from 'react';
+import TutorLayout from '@/components/larnr/tutor-layout';
 
 function SlotList({ slots, onDelete }: { slots: TutorAvailabilityProps['slots']; onDelete: (id: string) => void }) {
     const upcoming = slots.filter((s) => !s.booked && new Date(s.start) > new Date()).length;
@@ -104,56 +102,44 @@ export default function TutorAvailability(props: TutorAvailabilityProps) {
     };
 
     return (
-        <div className="min-h-screen bg-base-100 text-base-content">
+        <TutorLayout title="Availability">
             <Head title="Availability · Larnr" />
+            <FlashToast />
 
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-primary/15 blur-[140px]" />
-            </div>
-
-            <div className="relative z-10">
-                <Navbar auth={props.auth} />
-                <FlashToast />
-
-                <div className="space-y-6 py-6">
-                    <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div>
-                                <h1 className="font-display text-2xl font-bold text-base-content">
-                                    Availability
-                                </h1>
-                                <p className="text-sm text-base-content/60">
-                                    Manage the slots students can book for trial lessons.
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
-                                    {getInitials(props.profile.name)}
-                                </span>
-                                <span className="text-sm font-medium text-base-content/80">{props.profile.name}</span>
-                            </div>
-                        </div>
-
-                        <div className="grid gap-6 lg:grid-cols-5">
-                            <div className="lg:col-span-2">
-                                <Calendar
-                                    value={viewDate}
-                                    onChange={setViewDate}
-                                    slots={props.slots}
-                                    onAddSlot={addSlot}
-                                    mode="tutor"
-                                    minDate={new Date(new Date().setHours(0, 0, 0, 0))}
-                                />
-                            </div>
-                            <div className="lg:col-span-3">
-                                <SlotList slots={props.slots} onDelete={deleteSlot} />
-                            </div>
-                        </div>
+            <div className="space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h1 className="font-display text-2xl font-bold text-base-content">
+                            Availability
+                        </h1>
+                        <p className="text-sm text-base-content/60">
+                            Manage the slots students can book for trial lessons.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-xs font-bold text-white">
+                            {getInitials(props.profile.name)}
+                        </span>
+                        <span className="text-sm font-medium text-base-content/80">{props.profile.name}</span>
                     </div>
                 </div>
 
-                <Footer />
+                <div className="grid gap-6 lg:grid-cols-5">
+                    <div className="lg:col-span-2">
+                        <Calendar
+                            value={viewDate}
+                            onChange={setViewDate}
+                            slots={props.slots}
+                            onAddSlot={addSlot}
+                            mode="tutor"
+                            minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                        />
+                    </div>
+                    <div className="lg:col-span-3">
+                        <SlotList slots={props.slots} onDelete={deleteSlot} />
+                    </div>
+                </div>
             </div>
-        </div>
+        </TutorLayout>
     );
 }

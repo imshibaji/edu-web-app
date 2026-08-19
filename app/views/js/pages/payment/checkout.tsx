@@ -39,16 +39,41 @@ export default function PaymentCheckout(props: Props) {
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setRedirecting(true);
-        post(`/payment/checkout/${props.booking.id}`, {
-            onSuccess: (page) => {
-                if (page.props.url) {
-                    window.location.href = page.props.url;
+        try {
+            const res = await fetch(`/payment/checkout/${props.booking.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({}),
+            });
+            const data = await res.json();
+            if (data.url) {
+                if (data.method === 'GET') {
+                    window.location.href = data.url;
+                } else {
+                    // POST form submission for PayU
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = data.url;
+                    for (const [key, value] of Object.entries(data.params)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value as string;
+                        form.appendChild(input);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
                 }
-            },
-            onError: () => {
+            } else {
                 setRedirecting(false);
-            },
-        });
+            }
+        } catch {
+            setRedirecting(false);
+        }
     };
 
     return (

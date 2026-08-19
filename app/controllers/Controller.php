@@ -35,6 +35,23 @@ class Controller extends \Leaf\Controller
     }
 
     /**
+     * Build auth payload for Inertia pages.
+     */
+    protected function inertiaAuth(User $user): array
+    {
+        return [
+            'id' => $user->id,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name ?? $user->email,
+                'email' => $user->email,
+                'role' => $user->role,
+                'base_currency' => $user->base_currency,
+            ],
+        ];
+    }
+
+    /**
      * Build the shared public tutor-listing payload (filters, tutors,
      * breakdowns and stats) used by the home and /tutors pages.
      */

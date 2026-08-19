@@ -75,6 +75,7 @@ class MessageController extends Controller
             ->all();
 
         return response()->inertia('messages/show', [
+            'auth' => $this->inertiaAuth($user),
             'conversation' => $this->presentConversation($conversation, $user, includeMessages: false),
             'messages' => $messages,
         ]);

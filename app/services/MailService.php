@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
 
 class MailService
@@ -15,11 +16,31 @@ class MailService
 
     public function __construct()
     {
-        $transport = Transport::smtp()
-            ->env()
-            ->setOption('tls', true);
+        $this->mailer = new Mailer($this->buildTransport());
+    }
 
-        $this->mailer = new Mailer($transport);
+    /**
+     * Build a Symfony Mailer v8 transport from the configured SMTP settings.
+     */
+    private function buildTransport(): TransportInterface
+    {
+        $host = (string) env('MAIL_HOST', 'smtp.mailtrap.io');
+        $port = (int) env('MAIL_PORT', 2525);
+        $username = (string) env('MAIL_USERNAME', '');
+        $password = (string) env('MAIL_PASSWORD', '');
+        $encryption = strtolower((string) env('MAIL_ENCRYPTION', 'tls'));
+
+        $auth = $username !== ''
+            ? rawurlencode($username) . ':' . rawurlencode($password) . '@'
+            : '';
+
+        $dsn = "smtp://{$auth}{$host}:{$port}";
+
+        if ($encryption === 'tls' || $encryption === 'starttls') {
+            $dsn .= '?encryption=tls';
+        }
+
+        return Transport::fromDsn($dsn);
     }
 
     /**
@@ -27,7 +48,8 @@ class MailService
      */
     public function sendPasswordResetEmail(string $email, string $token): void
     {
-        $resetUrl = url("/auth/reset-password/{$token}");
+        $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
+        $resetUrl = "{$appUrl}/auth/reset-password/{$token}";
 
         $email = (new Email())
             ->from(env('MAIL_FROM_ADDRESS', 'no-reply@example.com'), env('MAIL_FROM_NAME', 'Larnr'))

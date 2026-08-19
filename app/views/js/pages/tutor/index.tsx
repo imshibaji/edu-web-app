@@ -14,13 +14,12 @@ import {
     ArrowUpRight,
 } from 'lucide-react';
 
-import Navbar from '@/components/larnr/navbar';
-import Footer from '@/components/larnr/footer';
 import FlashToast from '@/components/larnr/flash-toast';
 import Avatar from '@/components/larnr/avatar';
 import { FORMAT_LABELS, LEVEL_LABELS, STATUS_BADGE, statusLabel, formatDateTime } from '@/utils/tutor';
 import { displayAmount } from '@/utils/currency';
 import type { TutorIndexProps, TutorProfile, TutorSubject, AuthProps, Enquiry, Stats } from '@/types';
+import TutorLayout from '@/components/larnr/tutor-layout';
 
 function StatCard({ icon: Icon, label, value, accent, href }: {
     icon: React.ComponentType<{ className?: string }>;
@@ -167,141 +166,132 @@ function EnquiriesPreview({ enquiries }: { enquiries: Enquiry[] }) {
 }
 
 export default function TutorIndex(props: TutorIndexProps) {
+    const pendingReviewBanner = props.pendingReview && (
+        <div className="mb-6">
+            <div className="card card-border border-warning/30 bg-warning/10">
+                <div className="card-body flex-row items-center gap-3 py-3">
+                    <Clock className="size-4 shrink-0 text-warning" />
+                    <p className="text-sm text-base-content/80">
+                        You have profile changes awaiting admin review. They will
+                        appear publicly once approved.
+                    </p>
+                    <Link
+                        href="/tutor/profile"
+                        className="btn btn-ghost btn-xs ml-auto rounded-full text-primary"
+                    >
+                        View
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
-        <div className="min-h-screen bg-base-100 text-base-content">
+        <TutorLayout title="Dashboard">
             <Head title="Tutor Dashboard" />
 
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-primary/15 blur-[140px]" />
+            <FlashToast />
+
+            {pendingReviewBanner}
+
+            <ProfileHeader profile={props.profile} auth={props.auth} />
+
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mt-6">
+                <StatCard icon={CalendarCheck} label="Total slots" value={props.stats.slots} href="/tutor/availability" />
+                <StatCard icon={Clock} label="Upcoming & open" value={props.stats.open} accent="text-success" href="/tutor/availability" />
+                <StatCard icon={Inbox} label="Enquiries" value={props.stats.enquiries} accent="text-info" href="/tutor/enquiries" />
+                <StatCard icon={MessageSquare} label="Pending requests" value={props.stats.pending} accent="text-warning" href="/tutor/enquiries" />
             </div>
 
-            <div className="relative z-10">
-                <Navbar auth={props.auth} />
-                <FlashToast />
-
-                <div className="space-y-6 py-6">
-                    <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                        {props.pendingReview && (
-                            <div className="card card-border border-warning/30 bg-warning/10">
-                                <div className="card-body flex-row items-center gap-3 py-3">
-                                    <Clock className="size-4 shrink-0 text-warning" />
-                                    <p className="text-sm text-base-content/80">
-                                        You have profile changes awaiting admin review. They will
-                                        appear publicly once approved.
+            <div className="grid gap-6 lg:grid-cols-5 mt-6">
+                <div className="space-y-6 lg:col-span-2">
+                    <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
+                        <div className="card-body">
+                            <div className="flex items-center justify-between gap-2">
+                                <div>
+                                    <h2 className="font-display text-lg font-semibold text-base-content">
+                                        Subjects
+                                    </h2>
+                                    <p className="text-xs text-base-content/50">
+                                        What you teach on Larnr.
                                     </p>
-                                    <Link
-                                        href="/tutor/profile"
-                                        className="btn btn-ghost btn-xs ml-auto rounded-full text-primary"
-                                    >
-                                        View
-                                    </Link>
                                 </div>
+                                <Link
+                                    href="/tutor/subjects"
+                                    className="btn btn-ghost btn-xs rounded-full text-primary"
+                                >
+                                    Manage <ArrowUpRight className="size-3.5" />
+                                </Link>
                             </div>
-                        )}
-
-                        <ProfileHeader profile={props.profile} auth={props.auth} />
-
-                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                            <StatCard icon={CalendarCheck} label="Total slots" value={props.stats.slots} href="/tutor/availability" />
-                            <StatCard icon={Clock} label="Upcoming & open" value={props.stats.open} accent="text-success" href="/tutor/availability" />
-                            <StatCard icon={Inbox} label="Enquiries" value={props.stats.enquiries} accent="text-info" href="/tutor/enquiries" />
-                            <StatCard icon={MessageSquare} label="Pending requests" value={props.stats.pending} accent="text-warning" href="/tutor/enquiries" />
-                        </div>
-
-                        <div className="grid gap-6 lg:grid-cols-5">
-                            <div className="space-y-6 lg:col-span-2">
-                                <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
-                                    <div className="card-body">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div>
-                                                <h2 className="font-display text-lg font-semibold text-base-content">
-                                                    Subjects
-                                                </h2>
-                                                <p className="text-xs text-base-content/50">
-                                                    What you teach on Larnr.
-                                                </p>
-                                            </div>
-                                            <Link
-                                                href="/tutor/subjects"
-                                                className="btn btn-ghost btn-xs rounded-full text-primary"
-                                            >
-                                                Manage <ArrowUpRight className="size-3.5" />
-                                            </Link>
-                                        </div>
-                                        <div className="mt-3 flex flex-wrap gap-2">
-                                            {props.subjects.length === 0 && (
-                                                <span className="text-sm text-base-content/50">
-                                                    No subjects linked yet.
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {props.subjects.length === 0 && (
+                                    <span className="text-sm text-base-content/50">
+                                        No subjects linked yet.
+                                    </span>
+                                )}
+                                {props.subjects.map((s) => {
+                                    const subj = displayAmount(s.rate_cents, props.profile.currency, props.auth);
+                                    return (
+                                        <span
+                                            key={s.id}
+                                            className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary"
+                                        >
+                                            {s.name}
+                                            {s.rate_cents > 0 && (
+                                                <span className="ml-1 text-primary/60">
+                                                    · {subj.text}/hr
                                                 </span>
                                             )}
-                                            {props.subjects.map((s) => {
-                                                const subj = displayAmount(s.rate_cents, props.profile.currency, props.auth);
-                                                return (
-                                                    <span
-                                                        key={s.id}
-                                                        className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary"
-                                                    >
-                                                        {s.name}
-                                                        {s.rate_cents > 0 && (
-                                                            <span className="ml-1 text-primary/60">
-                                                                · {subj.text}/hr
-                                                            </span>
-                                                        )}
-                                                    </span>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
-                                    <div className="card-body gap-3">
-                                        <h2 className="font-display text-lg font-semibold text-base-content">
-                                            Quick actions
-                                        </h2>
-                                        <Link
-                                            href="/tutor/availability"
-                                            className="btn btn-primary btn-sm w-full rounded-full"
-                                        >
-                                            Manage availability
-                                        </Link>
-                                        <Link
-                                            href="/tutor/subjects"
-                                            className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
-                                        >
-                                            Manage subjects & charges
-                                        </Link>
-                                        <Link
-                                            href="/tutor/enquiries"
-                                            className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
-                                        >
-                                            Review enquiries
-                                        </Link>
-                                        <Link
-                                            href="/tutor/profile"
-                                            className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
-                                        >
-                                            Edit public profile
-                                        </Link>
-                                        <Link
-                                            href="/settings/profile"
-                                            className="btn btn-ghost btn-xs w-full rounded-full text-base-content/60 hover:bg-base-content/5"
-                                        >
-                                            Account settings
-                                        </Link>
-                                    </div>
-                                </div>
+                                        </span>
+                                    );
+                                })}
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="lg:col-span-3">
-                                <EnquiriesPreview enquiries={props.recentEnquiries} />
-                            </div>
+                    <div className="card card-border border-base-content/10 bg-base-content/[0.04]">
+                        <div className="card-body gap-3">
+                            <h2 className="font-display text-lg font-semibold text-base-content">
+                                Quick actions
+                            </h2>
+                            <Link
+                                href="/tutor/availability"
+                                className="btn btn-primary btn-sm w-full rounded-full"
+                            >
+                                Manage availability
+                            </Link>
+                            <Link
+                                href="/tutor/subjects"
+                                className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
+                            >
+                                Manage subjects & charges
+                            </Link>
+                            <Link
+                                href="/tutor/enquiries"
+                                className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
+                            >
+                                Review enquiries
+                            </Link>
+                            <Link
+                                href="/tutor/profile"
+                                className="btn btn-outline btn-sm w-full rounded-full border-base-content/15 text-base-content/80 hover:bg-base-content/5"
+                            >
+                                Edit public profile
+                            </Link>
+                            <Link
+                                href="/settings/profile"
+                                className="btn btn-ghost btn-xs w-full rounded-full text-base-content/60 hover:bg-base-content/5"
+                            >
+                                Account settings
+                            </Link>
                         </div>
                     </div>
                 </div>
 
-                <Footer />
+                <div className="lg:col-span-3">
+                    <EnquiriesPreview enquiries={props.recentEnquiries} />
+                </div>
             </div>
-        </div>
+        </TutorLayout>
     );
 }

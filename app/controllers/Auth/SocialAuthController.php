@@ -6,6 +6,7 @@ use App\Controllers\Controller;
 use App\Models\User;
 use App\Models\PasswordReset;
 use Exception;
+use Leaf\Helpers\Password;
 
 class SocialAuthController extends Controller
 {
@@ -69,7 +70,7 @@ class SocialAuthController extends Controller
                 $user = User::create([
                     'id' => (string) \Ramsey\Uuid\Uuid::uuid4(),
                     'email' => $userData['email'],
-                    'password_hash' => '' . \Leaf\Hash::make(uniqid()), // Empty password for social login
+                    'password_hash' => Password::hash(uniqid()), // Empty password for social login
                     'role' => $userData['role'] ?? User::ROLE_STUDENT,
                     'is_active' => true,
                     'base_currency' => 'USD',
@@ -199,12 +200,12 @@ class SocialAuthController extends Controller
         ];
 
         $ch = curl_init($tokenUrl);
-        curl_init_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => http_build_query($params),
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_SSL_VERIFYHOST => false,
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query($params),
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ]);
 
         $response = curl_exec($ch);
@@ -221,7 +222,7 @@ class SocialAuthController extends Controller
     private function fetchGoogleUser(string $accessToken): array
     {
         $ch = curl_init('https://www.googleapis.com/oauth2/v2/userinfo');
-        curl_init_array($ch, [
+        curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $accessToken],
             CURLOPT_SSL_VERIFYPEER => false,
@@ -247,13 +248,12 @@ class SocialAuthController extends Controller
      */
     private function fetchFacebookUser(string $accessToken): array
     {
-        $ch = curl_init('https://graph.facebook.com/v18.0/me');
-        curl_init_array($ch, [
+        $ch = curl_init('https://graph.facebook.com/v18.0/me?fields=id,name,email');
+        curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $accessToken],
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_PARAMS => ['fields' => 'id,name,email'],
         ]);
 
         $response = curl_exec($ch);

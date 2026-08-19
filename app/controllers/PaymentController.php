@@ -8,9 +8,19 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Payout;
 use App\Services\StripeService;
+use App\Services\PayUService;
 
 class PaymentController extends Controller
 {
+    /**
+     * Get the appropriate payment service based on billing provider.
+     */
+    private function getPaymentService()
+    {
+        // Force PayU for testing since .env has BILLING_PROVIDER=payu
+        return new PayUService();
+    }
+
     public function createCheckout(?string $id = null)
     {
         $user = $this->authUser();
@@ -42,26 +52,31 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Booking is not pending payment'], 400);
         }
 
-        $stripe = new StripeService();
+        $paymentService = $this->getPaymentService();
 
-        $baseUrl = rtrim(config('app.url') ?? 'http://localhost', '/');
+        $baseUrl = rtrim(env('APP_URL') ?? 'http://localhost', '/');
         $successUrl = "{$baseUrl}/payment/success";
         $cancelUrl = "{$baseUrl}/payment/cancel";
 
         try {
-            $session = $stripe->createCheckoutSession($booking, $successUrl, $cancelUrl);
+            $paymentData = $paymentService->createPaymentData($booking, $successUrl, $cancelUrl);
 
-            // Update booking with session ID
-            $booking->update([
-                'notes' => ($booking->notes ? $booking->notes . "\n" : '') . "Stripe session: {$session->id()}",
-            ]);
+            // Update booking with session/txn ID
+            $sessionId = $paymentData['txnid'] ?? $paymentData['sessionId'] ?? $paymentData['session_id'] ?? null;
+            if ($sessionId) {
+                $booking->update([
+                    'notes' => ($booking->notes ? $booking->notes . "\n" : '') . "Payment session: {$sessionId}",
+                ]);
+            }
 
             // Show fee breakdown to student
-            $fees = $stripe->calculateFees((int) $booking->amount, strtolower($booking->currency));
+            $fees = $paymentData['fees'] ?? $paymentService->calculateFees((int) $booking->amount, strtolower($booking->currency));
 
             return response()->json([
-                'sessionId' => $session->id(),
-                'url' => $session->url(),
+                'sessionId' => $sessionId,
+                'url' => $paymentData['url'] ?? ($paymentData['action_url'] ?? ''),
+                'method' => $paymentData['method'] ?? 'POST',
+                'params' => $paymentData['params'] ?? [],
                 'fee_breakdown' => [
                     'gross_amount' => (int) $booking->amount,
                     'currency' => strtoupper($booking->currency),
@@ -74,7 +89,7 @@ class PaymentController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            error_log('StripeService error: ' . $e->getMessage());
+            error_log('PaymentService error: ' . $e->getMessage());
             error_log('Trace: ' . $e->getTraceAsString());
             return response()->json(['error' => 'Payment service error: ' . $e->getMessage()], 500);
         }
@@ -104,8 +119,10 @@ class PaymentController extends Controller
             return response()->redirect('/dashboard', 303);
         }
 
-        $stripe = new StripeService();
-        $fees = $stripe->calculateFees((int) $booking->amount, strtolower($booking->currency));
+        $paymentService = $this->getPaymentService();
+        $fees = $paymentService->calculateFees((int) $booking->amount, strtolower($booking->currency));
+
+        $provider = 'payu';
 
         return response()->inertia('payment/checkout', [
             'auth' => [
@@ -122,6 +139,7 @@ class PaymentController extends Controller
                 'currency' => $booking->currency,
                 'status' => $booking->status,
             ],
+            'provider' => $provider,
             'fees' => [
                 'gross_amount' => (int) $booking->amount,
                 'currency' => strtoupper($booking->currency),
@@ -137,16 +155,24 @@ class PaymentController extends Controller
 
     public function success()
     {
-        $sessionId = request()->get('session_id');
+        $sessionId = request()->get('session_id') ?? request()->get('txnid') ?? request()->get('txnid');
 
         if (!$sessionId) {
             return response()->redirect('/', 303);
         }
 
-        $stripe = new StripeService();
+        $paymentService = $this->getPaymentService();
+        $provider = 'payu';
 
         try {
-            $stripe->handlePaymentSuccess($sessionId);
+            if ($provider === 'payu') {
+                // For PayU, the success callback comes with POST data
+                $verification = (new PayUService())->verifyPayment(request()->params());
+                $paymentService->handlePaymentSuccess($verification);
+            } else {
+                $stripe = new StripeService();
+                $stripe->handlePaymentSuccess($sessionId);
+            }
 
             return response()->inertia('payment/success', [
                 'auth' => $this->authUser() ? [
@@ -154,6 +180,7 @@ class PaymentController extends Controller
                     'email' => $this->authUser()->email,
                     'role' => $this->authUser()->role,
                 ] : null,
+                'provider' => $provider,
             ]);
         } catch (\Exception $e) {
             return response()
@@ -164,12 +191,25 @@ class PaymentController extends Controller
 
     public function cancel()
     {
+        $provider = 'payu'; // Force PayU since .env has BILLING_PROVIDER=payu
+        error_log("Cancel method called, provider: $provider, method: " . $_SERVER['REQUEST_METHOD'] . ", params: " . json_encode(request()->params()));
+
+        if ($provider === 'payu') {
+            $payuService = new PayUService();
+            $params = request()->params();
+            error_log("Cancel callback params: " . json_encode($params));
+            $verification = $payuService->verifyPayment($params);
+            error_log("Verification result: " . json_encode($verification));
+            $payuService->handlePaymentFailed($verification);
+        }
+
         return response()->inertia('payment/cancel', [
             'auth' => $this->authUser() ? [
                 'id' => $this->authUser()->id,
                 'email' => $this->authUser()->email,
                 'role' => $this->authUser()->role,
             ] : null,
+            'provider' => $provider,
         ]);
     }
 
@@ -207,9 +247,15 @@ class PaymentController extends Controller
 
     public function webhook()
     {
+        $provider = 'payu';
+
+        if ($provider === 'payu') {
+            return $this->handlePayUWebhook();
+        }
+
         $payload = file_get_contents('php://input');
         $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-        $secret = config('stripe.webhook_secret') ?? _env('STRIPE_WEBHOOK_SECRET');
+        $secret = _env('STRIPE_WEBHOOK_SECRET') ?? _env('STRIPE_WEBHOOK_SECRET');
 
         if (!$secret) {
             return response()->markup('Webhook secret not configured', 500);
@@ -247,6 +293,29 @@ class PaymentController extends Controller
 
             default:
                 break;
+        }
+
+        return response()->markup('OK', 200);
+    }
+
+    /**
+     * Handle PayU webhook (success/failure callbacks).
+     */
+    private function handlePayUWebhook()
+    {
+        $postData = request()->params();
+
+        if (empty($postData)) {
+            $postData = $_POST;
+        }
+
+        $payuService = new PayUService();
+        $verification = $payuService->verifyPayment($postData);
+
+        if ($verification['success']) {
+            $payuService->handlePaymentSuccess($verification);
+        } else {
+            $payuService->handlePaymentFailed($verification);
         }
 
         return response()->markup('OK', 200);

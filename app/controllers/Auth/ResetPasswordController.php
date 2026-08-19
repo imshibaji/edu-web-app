@@ -3,28 +3,46 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
-use App\Models\User;
 use App\Models\PasswordReset;
+use App\Models\User;
+use App\Services\MailService;
 use Exception;
+use Leaf\Database;
+use Leaf\Helpers\Password;
 
 class ResetPasswordController extends Controller
 {
     /**
-     * Show the reset password form with token validation.
+     * Show the reset password form with token validation (Inertia page).
      */
-    public function show(string $token): \Leaf\View|string
+    public function show(string $token): \Leaf\Response
     {
-        // Validate the token exists and is not expired
+        // Ensure Eloquent resolver is booted
+        if (!\Illuminate\Database\Eloquent\Model::getConnectionResolver()) {
+            Database::connect();
+        }
+
+        if ($token === '') {
+            return response()
+                ->withFlash('error', ['general' => 'Invalid or expired reset token.'])
+                ->redirect('/auth/forgot-password', 303);
+        }
+
         $passwordReset = PasswordReset::query()
             ->where('token', $token)
-            ->where('created_at', '>=', now()->subHours(1))
+            ->where('created_at', '>=', \Carbon\Carbon::now()->subHours(1))
             ->first();
 
         if (!$passwordReset) {
-            return view('auth.reset-password', ['token' => $token, 'error' => 'Invalid or expired reset token.']);
+            return response()
+                ->withFlash('error', ['general' => 'Invalid or expired reset token.'])
+                ->redirect('/auth/forgot-password', 303);
         }
 
-        return view('auth.reset-password', ['token' => $token]);
+        response()->inertia('auth/reset-password', [
+            'token' => $token,
+            'errors' => flash()->display('error') ?? [],
+        ]);
     }
 
     /**
@@ -32,17 +50,39 @@ class ResetPasswordController extends Controller
      */
     public function store(): \Leaf\Response
     {
-        $data = request()->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        // Ensure Eloquent resolver is booted
+        if (!\Illuminate\Database\Eloquent\Model::getConnectionResolver()) {
+            Database::connect();
+        }
 
-        // Validate the token matches the email and is not expired
+        $token = trim((string) request()->get('token', ''));
+        $email = strtolower(trim((string) request()->get('email', '')));
+        $password = (string) request()->get('password', '');
+        $passwordConfirmation = (string) request()->get('password_confirmation', '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()
+                ->withFlash('error', ['general' => 'Please enter a valid email address.'])
+                ->redirect('/auth/reset-password/' . $token, 303);
+        }
+
+        if (mb_strlen($password) < 8) {
+            return response()
+                ->withFlash('error', ['password' => 'Password must be at least 8 characters.'])
+                ->redirect('/auth/reset-password/' . $token, 303);
+        }
+
+        if ($password !== $passwordConfirmation) {
+            return response()
+                ->withFlash('error', ['password' => 'Passwords do not match.'])
+                ->redirect('/auth/reset-password/' . $token, 303);
+        }
+
+        // Validate the token matches the email and is not expired.
         $passwordReset = PasswordReset::query()
-            ->where('token', $data['token'])
-            ->where('email', $data['email'])
-            ->where('created_at', '>=', now()->subHours(1))
+            ->where('token', $token)
+            ->where('email', $email)
+            ->where('created_at', '>=', \Carbon\Carbon::now()->subHours(1))
             ->first();
 
         if (!$passwordReset) {
@@ -51,8 +91,7 @@ class ResetPasswordController extends Controller
                 ->redirect('/auth/login', 303);
         }
 
-        // Update the user's password
-        $user = User::query()->where('email', $data['email'])->first();
+        $user = User::query()->where('email', $email)->first();
 
         if (!$user) {
             return response()
@@ -60,18 +99,17 @@ class ResetPasswordController extends Controller
                 ->redirect('/auth/login', 303);
         }
 
-        // Hash the password using Leaf's password helper
-        $user->password_hash = \Leaf\Hash::make($data['password']);
+        // Hash using the same helper as auth()->register().
+        $user->password_hash = Password::hash($password);
         $user->save();
 
-        // Remove the used token
+        // Remove the used token.
         $passwordReset->delete();
 
-        // Send reset success email
         try {
-            (new \App\Services\MailService())->sendResetSuccessEmail($data['email']);
+            (new MailService())->sendResetSuccessEmail($email);
         } catch (Exception $e) {
-            \Leaf\Log::error('Reset success email failed: ' . $e->getMessage());
+            error_log('Reset success email failed: ' . $e->getMessage());
         }
 
         return response()

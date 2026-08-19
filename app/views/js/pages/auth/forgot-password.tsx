@@ -1,31 +1,27 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { GraduationCap, Mail, Lock, AlertCircle } from 'lucide-react';
+import { GraduationCap, Mail, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 import ThemeToggle from '@/components/larnr/theme-toggle';
 
-interface FormData {
-    email: string;
-    password: string;
-    remember: boolean;
+interface Props {
+    errors: Record<string, string>;
+    success?: string | null;
+    email?: string;
 }
 
-export default function Login() {
-    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
-        email: '',
-        password: '',
-        remember: false,
+export default function ForgotPassword(props: Props) {
+    const { data, setData, post, processing, errors } = useForm<{ email: string }>({
+        email: props.email ?? '',
     });
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/auth/login', {
-            onFinish: () => reset('password'),
-        });
+        post('/auth/forgot-password');
     };
 
     return (
         <div className="relative flex min-h-screen flex-col items-center justify-center bg-base-100 px-4 py-10">
-            <Head title="Log in" />
+            <Head title="Forgot password" />
 
             <div className="absolute right-4 top-4 z-20">
                 <ThemeToggle />
@@ -45,17 +41,24 @@ export default function Login() {
                         <span className="font-display text-2xl font-bold text-base-content">Larnr</span>
                     </Link>
                     <h1 className="font-display mt-6 text-2xl font-bold text-base-content">
-                        Welcome back
+                        Forgot your password?
                     </h1>
                     <p className="mt-1 text-sm text-base-content/60">
-                        Sign in to continue your learning journey
+                        Enter your email and we&apos;ll send you a link to reset it.
                     </p>
                 </div>
 
-                {(errors.auth || errors?.email) && (
+                {props.success && (
+                    <div className="alert alert-success mt-6 rounded-xl py-2.5 text-sm">
+                        <CheckCircle2 className="size-4 shrink-0" />
+                        <span>{props.success}</span>
+                    </div>
+                )}
+
+                {(errors.email || errors.general) && (
                     <div className="alert alert-error mt-6 rounded-xl py-2.5 text-sm">
                         <AlertCircle className="size-4 shrink-0" />
-                        <span>{errors.auth || errors.email}</span>
+                        <span>{errors.email || errors.general}</span>
                     </div>
                 )}
 
@@ -67,29 +70,14 @@ export default function Login() {
                             <input
                                 type="email"
                                 name="email"
-                                autoComplete="username"
+                                autoComplete="email"
                                 placeholder="you@example.com"
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                             />
                         </label>
-                    </div>
-
-                    <div className="fieldset">
-                        <legend className="fieldset-legend">Password</legend>
-                        <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
-                            <Lock className="size-4 text-base-content/50" />
-                            <input
-                                type="password"
-                                name="password"
-                                autoComplete="current-password"
-                                placeholder="••••••••"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                            />
-                        </label>
-                        {errors.password && (
-                            <span className="text-xs text-error">{errors.password}</span>
+                        {errors.email && (
+                            <span className="text-xs text-error">{errors.email}</span>
                         )}
                     </div>
 
@@ -98,32 +86,15 @@ export default function Login() {
                         className="btn btn-primary mt-2 w-full rounded-full"
                         disabled={processing}
                     >
-                        {processing ? 'Signing in...' : 'Log in'}
+                        {processing ? 'Sending...' : 'Send reset link'}
                     </button>
                 </form>
 
-                <div className="mt-4 text-center text-sm">
-                    <Link
-                        href="/auth/forgot-password"
-                        className="font-medium text-base-content/60 hover:text-primary"
-                    >
-                        Forgot your password?
-                    </Link>
-                </div>
-
                 <div className="mt-6 text-center text-sm text-base-content/60">
-                    Don't have an account?{' '}
-                    <Link
-                        href="/auth/register"
-                        className="font-medium text-primary hover:text-primary"
-                    >
-                        Sign up
+                    Remembered it?{' '}
+                    <Link href="/auth/login" className="font-medium text-primary hover:text-primary">
+                        Back to login
                     </Link>
-                </div>
-
-                <div className="mt-8 text-center text-xs text-base-content/40">
-                    Demo accounts: demo@larnr.app · tutor1@larnr.app · admin@larnr.app (all
-                    password: password)
                 </div>
             </div>
         </div>

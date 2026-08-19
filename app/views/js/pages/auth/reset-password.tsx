@@ -1,31 +1,37 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { GraduationCap, Mail, Lock, AlertCircle } from 'lucide-react';
+import { GraduationCap, Lock, Mail, AlertCircle } from 'lucide-react';
 
 import ThemeToggle from '@/components/larnr/theme-toggle';
 
-interface FormData {
-    email: string;
-    password: string;
-    remember: boolean;
+interface Props {
+    token: string;
+    errors: Record<string, string>;
+    email?: string;
 }
 
-export default function Login() {
-    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
-        email: '',
+export default function ResetPassword(props: Props) {
+    const { data, setData, post, processing, errors, reset } = useForm<{
+        token: string;
+        email: string;
+        password: string;
+        password_confirmation: string;
+    }>({
+        token: props.token,
+        email: props.email ?? '',
         password: '',
-        remember: false,
+        password_confirmation: '',
     });
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/auth/login', {
-            onFinish: () => reset('password'),
+        post('/auth/reset-password', {
+            onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
         <div className="relative flex min-h-screen flex-col items-center justify-center bg-base-100 px-4 py-10">
-            <Head title="Log in" />
+            <Head title="Reset password" />
 
             <div className="absolute right-4 top-4 z-20">
                 <ThemeToggle />
@@ -45,17 +51,17 @@ export default function Login() {
                         <span className="font-display text-2xl font-bold text-base-content">Larnr</span>
                     </Link>
                     <h1 className="font-display mt-6 text-2xl font-bold text-base-content">
-                        Welcome back
+                        Set a new password
                     </h1>
                     <p className="mt-1 text-sm text-base-content/60">
-                        Sign in to continue your learning journey
+                        Choose a strong password for your account.
                     </p>
                 </div>
 
-                {(errors.auth || errors?.email) && (
+                {(errors.general || errors.password) && (
                     <div className="alert alert-error mt-6 rounded-xl py-2.5 text-sm">
                         <AlertCircle className="size-4 shrink-0" />
-                        <span>{errors.auth || errors.email}</span>
+                        <span>{errors.general || errors.password}</span>
                     </div>
                 )}
 
@@ -76,14 +82,14 @@ export default function Login() {
                     </div>
 
                     <div className="fieldset">
-                        <legend className="fieldset-legend">Password</legend>
+                        <legend className="fieldset-legend">New password</legend>
                         <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
                             <Lock className="size-4 text-base-content/50" />
                             <input
                                 type="password"
                                 name="password"
-                                autoComplete="current-password"
-                                placeholder="••••••••"
+                                autoComplete="new-password"
+                                placeholder="At least 8 characters"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                             />
@@ -93,37 +99,35 @@ export default function Login() {
                         )}
                     </div>
 
+                    <div className="fieldset">
+                        <legend className="fieldset-legend">Confirm new password</legend>
+                        <label className="input w-full rounded-xl border-base-content/10 bg-base-content/5">
+                            <Lock className="size-4 text-base-content/50" />
+                            <input
+                                type="password"
+                                name="password_confirmation"
+                                autoComplete="new-password"
+                                placeholder="••••••••"
+                                value={data.password_confirmation}
+                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                            />
+                        </label>
+                    </div>
+
                     <button
                         type="submit"
                         className="btn btn-primary mt-2 w-full rounded-full"
                         disabled={processing}
                     >
-                        {processing ? 'Signing in...' : 'Log in'}
+                        {processing ? 'Resetting...' : 'Reset password'}
                     </button>
                 </form>
 
-                <div className="mt-4 text-center text-sm">
-                    <Link
-                        href="/auth/forgot-password"
-                        className="font-medium text-base-content/60 hover:text-primary"
-                    >
-                        Forgot your password?
-                    </Link>
-                </div>
-
                 <div className="mt-6 text-center text-sm text-base-content/60">
-                    Don't have an account?{' '}
-                    <Link
-                        href="/auth/register"
-                        className="font-medium text-primary hover:text-primary"
-                    >
-                        Sign up
+                    Remembered it?{' '}
+                    <Link href="/auth/login" className="font-medium text-primary hover:text-primary">
+                        Back to login
                     </Link>
-                </div>
-
-                <div className="mt-8 text-center text-xs text-base-content/40">
-                    Demo accounts: demo@larnr.app · tutor1@larnr.app · admin@larnr.app (all
-                    password: password)
                 </div>
             </div>
         </div>
